@@ -65,9 +65,22 @@
       </exclusions>
     </dependency>
   </dependencies>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.lwjgl</groupId>
+        <artifactId>lwjgl-bom</artifactId>
+        <version>${lwjgl.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <properties>
     <maven.compiler.target>17</maven.compiler.target>
     <maven.compiler.source>17</maven.compiler.source>
+    <lwjgl.natives>natives-linux</lwjgl.natives>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <lwjgl.version>3.3.4</lwjgl.version>
   </properties>
 </project>
