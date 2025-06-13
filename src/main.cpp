@@ -1,7 +1,7 @@
 #include <external/glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include <utility/file/FileUtility.hpp>
+#include <engine/shader/Shader.hpp>
 
 int main() {
     glfwInit();
@@ -26,9 +26,8 @@ int main() {
         return -1;
     }
 
-    std::string content = utility::file::FileUtility::getFileToString("brhu");
-
-    std::cout << content << std::endl;
+    engine::shader::Shader shader("shaders/game/singleplayer/play/play");
+    shader.initialise();
 
     while (!glfwWindowShouldClose(window)) {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
