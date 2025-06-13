@@ -4,6 +4,7 @@ project(ducky_jam VERSION 0.0.1)
 add_executable(ducky_jam
     src/main.cpp
     src/external/glad/glad.c
+    src/utility/file/FileUtility.cpp
 )
 
 target_include_directories(ducky_jam
