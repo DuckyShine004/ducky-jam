@@ -10,10 +10,10 @@ class Rectangle final : public Shape {
   public:
     Rectangle(glm::vec2 position);
 
-    void translate(glm::vec2 offset) const override;
+    void translate(glm::vec2 offset) override;
 
-    void scale(glm::vec2 scale) const override;
-    void scale(float scale) const override;
+    void scale(glm::vec2 scale) override;
+    void scale(float scale) override;
 
   private:
     // clang-format off
@@ -28,6 +28,8 @@ class Rectangle final : public Shape {
         0, 1, 2, 2, 0, 3,
     };
     // clang-format on
+
+    void initialise();
 };
 
 } // namespace engine::shape::rectangle

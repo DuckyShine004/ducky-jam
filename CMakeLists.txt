@@ -5,6 +5,7 @@ add_executable(ducky_jam
     src/main.cpp
     src/external/glad/glad.c
     src/engine/shader/Shader.cpp
+    src/utility/datatype/ConvertUtility.cpp
     src/utility/file/FileUtility.cpp
 )
 
