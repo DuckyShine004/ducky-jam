@@ -1,5 +1,8 @@
 #include <utility/file/FileUtility.hpp>
 
+#include <sstream>
+#include <fstream>
+
 using namespace utility::file;
 
 std::string FileUtility::getFileToString(const std::string &filename) {

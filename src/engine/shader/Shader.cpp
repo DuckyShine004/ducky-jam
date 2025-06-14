@@ -6,9 +6,9 @@
 
 #include <utility/file/FileUtility.hpp>
 
-using namespace engine::shader;
-
 using namespace utility::file;
+
+namespace engine::shader {
 
 Shader::Shader(const std::string &name) : _name(name) {
     this->_name = name;
@@ -24,6 +24,14 @@ void Shader::initialise() {
     this->linkProgram();
 
     this->deleteShaders();
+}
+
+void Shader::use() {
+    glUseProgram(this->_program);
+}
+
+void Shader::detach() {
+    glUseProgram(0);
 }
 
 void Shader::createShaders() {
@@ -95,3 +103,5 @@ void Shader::checkProgramLinkStatus() {
         std::cout << "Link Error\n" << infoLog << std::endl;
     }
 }
+
+} // namespace engine::shader

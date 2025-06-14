@@ -1,7 +1,6 @@
 #pragma once
 
-namespace engine {
-namespace scene {
+namespace engine::scene {
 
 class Scene {
     Scene();
@@ -12,5 +11,4 @@ class Scene {
   private:
 };
 
-} // namespace scene
-} // namespace engine
+} // namespace engine::scene

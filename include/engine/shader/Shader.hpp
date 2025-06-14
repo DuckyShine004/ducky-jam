@@ -4,14 +4,16 @@
 
 #include <string>
 
-namespace engine {
-namespace shader {
+namespace engine::shader {
 
 class Shader {
   public:
     Shader(const std::string &name);
 
     void initialise();
+
+    void use();
+    void detach();
 
   private:
     std::string _name;
@@ -31,5 +33,4 @@ class Shader {
     void checkProgramLinkStatus();
 };
 
-} // namespace shader
-} // namespace engine
+} // namespace engine::shader
