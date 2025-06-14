@@ -1,10 +1,10 @@
-#include <engine/shader/Shader.hpp>
-
-#include <utility/file/FileUtility.hpp>
-
 #include <external/glad/glad.h>
 
 #include <iostream>
+
+#include <engine/shader/Shader.hpp>
+
+#include <utility/file/FileUtility.hpp>
 
 using namespace engine::shader;
 
