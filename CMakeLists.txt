@@ -1,23 +1,14 @@
 cmake_minimum_required(VERSION 3.10)
+
 project(ducky_jam VERSION 0.0.1)
 
-add_executable(ducky_jam
-    src/main.cpp
-    src/external/glad/glad.c
-    src/engine/shader/Shader.cpp
-    src/engine/shape/Shape.cpp
-    src/engine/shape/rectangle/Rectangle.cpp
-    src/engine/scene/Scene.cpp
-    src/engine/mesh/Mesh.cpp
-    src/component/Component.cpp
-    src/component/game/singleplayer/play/area/Area.cpp
-    src/component/game/singleplayer/play/area/Lane.cpp
-    src/component/game/singleplayer/play/area/Note.cpp
-    src/manager/SceneManager.cpp
-    src/application/Application.cpp
-    src/application/game/singleplayer/play/Play.cpp
-    src/utility/file/FileUtility.cpp
+# Find all source files
+file(GLOB_RECURSE DUCKY_JAM_SOURCES
+    "${CMAKE_SOURCE_DIR}/src/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/*.c"
 )
+
+add_executable(ducky_jam ${DUCKY_JAM_SOURCES})
 
 target_include_directories(ducky_jam
     PRIVATE
