@@ -16,6 +16,10 @@ class Component {
 
     virtual void create() = 0;
 
+    virtual void load() = 0;
+
+    virtual void generateMesh() = 0;
+
     virtual std::vector<std::unique_ptr<Shape>> &getShapes();
 
     void addShape(std::unique_ptr<Shape> shape);

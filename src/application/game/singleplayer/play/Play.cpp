@@ -20,12 +20,14 @@ void Play::initialise() {
 }
 
 void Play::create() {
+    this->_area.create();
 }
 
 void Play::update(float deltaTime) {
 }
 
 void Play::render() {
+
     for (Shader &shader : this->_shaders) {
         shader.use();
     }
