@@ -17,22 +17,6 @@ assignees: ''
 
 <!--- Explain why the refactoring should be done. What problem does it solve? -->
 
-## Current State
-
-<!--- Describe the current state of the files that need refactoring -->
-
-## Proposed Changes
-
-<!--- Provide a detailed description of the refactor you are proposing -->
-
-## Additional Context
-
-<!--- Add any other context, screenshots, or code snippets about the refactoring here -->
-
-## Potential Challenges
-
-<!--- Add potential challenges you see with this refactoring -->
-
 ## Notes
 
 <!--- Any other Notes you want to add here -->
