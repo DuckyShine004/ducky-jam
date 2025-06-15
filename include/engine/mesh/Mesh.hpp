@@ -13,8 +13,12 @@ class Mesh {
     void setVertices(std::vector<float> &vertices);
     void setIndices(std::vector<unsigned int> &indices);
 
+    void setPrimitive(GLenum primitive);
+
     std::vector<float> &getVertices();
     std::vector<unsigned int> &getIndices();
+
+    GLenum getPrimitive();
 
     std::size_t getVertexCount();
     std::size_t getIndexCount();
@@ -25,6 +29,8 @@ class Mesh {
 
     std::size_t _vertexCount;
     std::size_t _indexCount;
+
+    GLenum _primitive;
 };
 
 } // namespace engine::mesh

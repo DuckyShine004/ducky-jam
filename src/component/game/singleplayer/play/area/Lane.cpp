@@ -14,6 +14,12 @@ void Lane::create() {
     this->_notes.push_back(std::move(note));
 }
 
+void Lane::load() {
+}
+
+void Lane::generateMesh() {
+}
+
 std::vector<std::unique_ptr<Note>> &Lane::getNotes() {
     return this->_notes;
 }

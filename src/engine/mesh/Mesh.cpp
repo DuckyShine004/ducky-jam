@@ -20,12 +20,20 @@ void Mesh::setIndices(std::vector<unsigned int> &indices) {
     this->_indexCount = indices.size();
 }
 
+void Mesh::setPrimitive(GLenum primitive) {
+    this->_primitive = primitive;
+}
+
 std::vector<float> &Mesh::getVertices() {
     return this->_vertices;
 }
 
 std::vector<unsigned int> &Mesh::getIndices() {
     return this->_indices;
+}
+
+GLenum Mesh::getPrimitive() {
+    return this->_primitive;
 }
 
 std::size_t Mesh::getVertexCount() {

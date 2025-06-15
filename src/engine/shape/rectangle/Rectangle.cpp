@@ -6,13 +6,20 @@ using namespace utility::datatype;
 
 namespace engine::shape::rectangle {
 
-Rectangle::Rectangle(glm::vec2 position) : Shape(position) {
+constexpr float Rectangle::_VERTICES[];
+
+constexpr unsigned int Rectangle::_INDICES[];
+
+constexpr GLenum Rectangle::_PRIMITIVE;
+
+Rectangle::Rectangle(glm::vec2 position) : Shape(position, _PRIMITIVE) {
     this->initialise();
 }
 
-Rectangle::Rectangle(float x, float y) : Shape(x, y) {
-    this->initialise();
+Rectangle::Rectangle(float x, float y) : Rectangle(glm::vec2(x, y)) {
 }
+
+Rectangle::~Rectangle() = default;
 
 void Rectangle::initialise() {
     this->_vertices = ConvertUtility::convertToVectorFloat1D(this->_VERTICES);

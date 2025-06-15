@@ -14,4 +14,10 @@ void Note::create() {
     addShape(std::move(shape));
 }
 
+void Note::load() {
+}
+
+void Note::generateMesh() {
+}
+
 } // namespace component::game::singleplayer::play::area

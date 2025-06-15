@@ -9,6 +9,10 @@ class Note final : Component {
     Note();
 
     void create() override;
+
+    void load() override;
+
+    void generateMesh() override;
 };
 
 } // namespace component::game::singleplayer::play::area

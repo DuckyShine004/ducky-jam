@@ -14,4 +14,8 @@ std::vector<std::unique_ptr<Shape>> &Component::getShapes() {
     return this->_shapes;
 }
 
+Mesh Component::getMesh() {
+    return this->_mesh;
+}
+
 } // namespace component

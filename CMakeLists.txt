@@ -5,10 +5,15 @@ add_executable(ducky_jam
     src/main.cpp
     src/external/glad/glad.c
     src/engine/shader/Shader.cpp
+    src/engine/shape/Shape.cpp
+    src/engine/shape/rectangle/Rectangle.cpp
     src/engine/scene/Scene.cpp
+    src/engine/mesh/Mesh.cpp
     src/component/Component.cpp
+    src/component/game/singleplayer/play/area/Area.cpp
+    src/component/game/singleplayer/play/area/Lane.cpp
+    src/component/game/singleplayer/play/area/Note.cpp
     src/application/game/singleplayer/play/Play.cpp
-    src/utility/datatype/ConvertUtility.cpp
     src/utility/file/FileUtility.cpp
 )
 

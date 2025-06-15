@@ -27,7 +27,6 @@ void Play::update(float deltaTime) {
 }
 
 void Play::render() {
-
     for (Shader &shader : this->_shaders) {
         shader.use();
     }

@@ -2,9 +2,13 @@
 
 #include <engine/shape/Shape.hpp>
 
+#include <engine/mesh/Mesh.hpp>
+
 #include <memory>
 
 using namespace engine::shape;
+
+using namespace engine::mesh;
 
 namespace component {
 
@@ -24,8 +28,12 @@ class Component {
 
     void addShape(std::unique_ptr<Shape> shape);
 
+    Mesh getMesh();
+
   protected:
     std::vector<std::unique_ptr<Shape>> _shapes;
+
+    Mesh _mesh;
 };
 
 } // namespace component

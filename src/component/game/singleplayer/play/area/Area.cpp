@@ -14,6 +14,15 @@ void Area::create() {
     }
 }
 
+void Area::load() {
+    for (std::unique_ptr<Lane> &lane : this->_lanes) {
+        lane->load();
+    }
+}
+
+void Area::generateMesh() {
+}
+
 std::vector<std::unique_ptr<Lane>> &Area::getLanes() {
     return this->_lanes;
 }

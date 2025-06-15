@@ -14,6 +14,10 @@ class Lane final : public Component {
 
     void create() override;
 
+    void load() override;
+
+    void generateMesh() override;
+
     std::vector<std::unique_ptr<Note>> &getNotes();
 
   private:

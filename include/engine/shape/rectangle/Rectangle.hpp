@@ -4,12 +4,16 @@
 
 #include <glm/glm.hpp>
 
+#include <array>
+
 namespace engine::shape::rectangle {
 
 class Rectangle final : public Shape {
   public:
     Rectangle(glm::vec2 position);
     Rectangle(float x, float y);
+
+    virtual ~Rectangle();
 
     void translate(glm::vec2 offset) override;
 
@@ -19,16 +23,18 @@ class Rectangle final : public Shape {
   private:
     // clang-format off
     static constexpr float _VERTICES[] = {
-        -0.5f, 0.5f, 0.0f,
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.5f, 0.5f, 0.0f,
+      -0.5f, 0.5f, 0.0f,
+      -0.5f, -0.5f, 0.0f,
+      0.5f, -0.5f, 0.0f,
+      0.5f, 0.5f, 0.0f,
     };
 
     static constexpr unsigned int _INDICES[] = {
-        0, 1, 2, 2, 0, 3,
+      0, 1, 2, 2, 0, 3,
     };
     // clang-format on
+
+    static constexpr GLenum _PRIMITIVE = GL_TRIANGLES;
 
     void initialise();
 };
