@@ -14,6 +14,7 @@ add_executable(ducky_jam
     src/component/game/singleplayer/play/area/Lane.cpp
     src/component/game/singleplayer/play/area/Note.cpp
     src/manager/SceneManager.cpp
+    src/application/Application.cpp
     src/application/game/singleplayer/play/Play.cpp
     src/utility/file/FileUtility.cpp
 )
