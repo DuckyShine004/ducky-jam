@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.10)
 project(ducky_jam VERSION 0.0.1)
 
 add_executable(ducky_jam
@@ -13,6 +13,7 @@ add_executable(ducky_jam
     src/component/game/singleplayer/play/area/Area.cpp
     src/component/game/singleplayer/play/area/Lane.cpp
     src/component/game/singleplayer/play/area/Note.cpp
+    src/manager/SceneManager.cpp
     src/application/game/singleplayer/play/Play.cpp
     src/utility/file/FileUtility.cpp
 )

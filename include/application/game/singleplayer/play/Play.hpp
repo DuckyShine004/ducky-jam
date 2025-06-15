@@ -18,6 +18,8 @@ class Play final : public Scene {
 
     void create() override;
 
+    void load() override;
+
     void update(float deltaTime) override;
 
     void render() override;
@@ -28,6 +30,8 @@ class Play final : public Scene {
     };
 
     Area _area;
+
+    void renderNotes();
 };
 
 } // namespace application::game::singleplayer::play

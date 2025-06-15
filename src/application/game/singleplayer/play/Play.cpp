@@ -23,6 +23,10 @@ void Play::create() {
     this->_area.create();
 }
 
+void Play::load() {
+    this->_area.load();
+}
+
 void Play::update(float deltaTime) {
 }
 

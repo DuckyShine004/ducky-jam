@@ -8,13 +8,13 @@ Mesh::Mesh() {
     this->_indexCount = 0;
 };
 
-void Mesh::setVertices(std::vector<float> &vertices) {
+void Mesh::setVertices(std::vector<float> vertices) {
     this->_vertices = vertices;
 
     this->_vertexCount = vertices.size();
 }
 
-void Mesh::setIndices(std::vector<unsigned int> &indices) {
+void Mesh::setIndices(std::vector<unsigned int> indices) {
     this->_indices = indices;
 
     this->_indexCount = indices.size();

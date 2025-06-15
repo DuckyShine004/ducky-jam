@@ -22,6 +22,8 @@ class Scene {
 
     virtual void create() = 0;
 
+    virtual void load() = 0;
+
     virtual void update(float deltaTime) = 0;
 
     virtual void render() = 0;

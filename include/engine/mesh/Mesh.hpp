@@ -10,8 +10,8 @@ class Mesh {
   public:
     Mesh();
 
-    void setVertices(std::vector<float> &vertices);
-    void setIndices(std::vector<unsigned int> &indices);
+    void setVertices(std::vector<float> vertices);
+    void setIndices(std::vector<unsigned int> indices);
 
     void setPrimitive(GLenum primitive);
 
