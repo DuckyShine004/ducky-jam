@@ -16,9 +16,9 @@ class Component {
 
     virtual void create() = 0;
 
-    void addShape(std::unique_ptr<Shape> shape);
+    virtual std::vector<std::unique_ptr<Shape>> &getShapes();
 
-    std::vector<std::unique_ptr<Shape>> &getShapes();
+    void addShape(std::unique_ptr<Shape> shape);
 
   protected:
     std::vector<std::unique_ptr<Shape>> _shapes;
