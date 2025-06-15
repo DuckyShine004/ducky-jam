@@ -1,8 +1,16 @@
-#include <application/Application.hpp>
-
 #include <external/glad/glad.h>
 
+#include <application/Application.hpp>
+
+#include <manager/SceneManager.hpp>
+
+#include <application/game/singleplayer/play/Play.hpp>
+
 #include <iostream>
+
+using namespace manager;
+
+using namespace application::game::singleplayer::play;
 
 namespace application {
 
@@ -32,6 +40,8 @@ void Application::initialise() {
     }
 
     this->_window = window;
+
+    SceneManager::getInstance().setScene(std::make_unique<Play>());
 }
 
 void Application::run() {
@@ -51,8 +61,13 @@ void Application::update() {
 }
 
 void Application::render() {
+    Scene &scene = SceneManager::getInstance().getScene();
+
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    scene.render();
 }
 
 } // namespace application
