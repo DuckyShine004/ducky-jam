@@ -8,6 +8,10 @@ namespace engine::shape {
 
 class Shape {
   public:
+    Shape(glm::vec2 position);
+
+    Shape(float x, float y);
+
     virtual ~Shape();
 
     virtual void translate(glm::vec2 offset) = 0;
@@ -19,8 +23,6 @@ class Shape {
     std::vector<unsigned int> getIndices() const;
 
   protected:
-    Shape() = default;
-
     glm::vec2 _position;
 
     std::vector<float> _vertices;

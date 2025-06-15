@@ -6,6 +6,14 @@
 
 namespace engine::shape {
 
+Shape::Shape(glm::vec2 position) {
+    this->_position = position;
+}
+
+Shape::Shape(float x, float y) {
+    this->_position = glm::vec2(x, y);
+}
+
 Shape::~Shape() = default;
 
 std::vector<float> Shape::getVertices() const {

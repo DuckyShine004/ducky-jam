@@ -6,14 +6,11 @@ using namespace utility::datatype;
 
 namespace engine::shape::rectangle {
 
-Rectangle::Rectangle(glm::vec2 position) {
-    this->_position = position;
-
+Rectangle::Rectangle(glm::vec2 position) : Shape(position) {
     this->initialise();
 }
 
-Rectangle::Rectangle(float x, float y) {
-    this->_position = glm::vec2(x, y);
+Rectangle::Rectangle(float x, float y) : Shape(x, y) {
     this->initialise();
 }
 
