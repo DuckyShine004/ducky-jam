@@ -1,14 +1,35 @@
 #pragma once
 
+#include <engine/shader/Shader.hpp>
+
+#include <engine/shape/Shape.hpp>
+
+#include <vector>
+
+using namespace engine::shader;
+
+using namespace engine::shape;
+
 namespace engine::scene {
 
 class Scene {
+  public:
     Scene();
 
-    void update(float deltaTime);
-    void render() const;
+    virtual ~Scene();
 
-  private:
+    virtual void initialise() = 0;
+
+    virtual void create() = 0;
+
+    virtual void update(float deltaTime) = 0;
+
+    virtual void render() = 0;
+
+  protected:
+    std::vector<Shader> _shaders;
+
+    std::vector<Shape> _shapes;
 };
 
 } // namespace engine::scene

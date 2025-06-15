@@ -12,6 +12,11 @@ Rectangle::Rectangle(glm::vec2 position) {
     this->initialise();
 }
 
+Rectangle::Rectangle(float x, float y) {
+    this->_position = glm::vec2(x, y);
+    this->initialise();
+}
+
 void Rectangle::initialise() {
     this->_vertices = ConvertUtility::convertToVectorFloat1D(this->_VERTICES);
     this->_indices = ConvertUtility::convertToVectorUnsignedInt1D(this->_INDICES);

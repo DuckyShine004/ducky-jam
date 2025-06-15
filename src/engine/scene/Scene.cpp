@@ -1,9 +1,9 @@
 #include <engine/scene/Scene.hpp>
 
-using namespace engine::scene;
+namespace engine::scene {
 
-Scene::Scene(const std::string &name) : _name(name) {
-}
+Scene::Scene() = default;
 
-void Scene::load() {
-}
+Scene::~Scene() = default;
+
+} // namespace engine::scene

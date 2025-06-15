@@ -9,6 +9,7 @@ namespace engine::shape::rectangle {
 class Rectangle final : public Shape {
   public:
     Rectangle(glm::vec2 position);
+    Rectangle(float x, float y);
 
     void translate(glm::vec2 offset) override;
 
