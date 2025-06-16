@@ -15,6 +15,8 @@ class Application {
   private:
     GLFWwindow *_window;
 
+    float _lastTime;
+
     void update();
 
     void render();

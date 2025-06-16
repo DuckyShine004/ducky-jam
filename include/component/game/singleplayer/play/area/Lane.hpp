@@ -14,6 +14,8 @@ class Lane final : public Component {
 
     void create() override;
 
+    void update(float deltaTime) override;
+
     std::vector<std::unique_ptr<Note>> &getNotes();
 
   private:

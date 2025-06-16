@@ -47,6 +47,8 @@ void Application::initialise() {
 }
 
 void Application::run() {
+    this->_lastTime = 0.0f;
+
     while (!glfwWindowShouldClose(this->_window)) {
         this->update();
 
@@ -60,6 +62,15 @@ void Application::run() {
 }
 
 void Application::update() {
+    float time = glfwGetTime();
+
+    float deltaTime = time - this->_lastTime;
+
+    Scene &scene = SceneManager::getInstance().getScene();
+
+    scene.update(deltaTime);
+
+    this->_lastTime = time;
 }
 
 void Application::render() {

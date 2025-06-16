@@ -34,6 +34,7 @@ void Play::load() {
 }
 
 void Play::update(float deltaTime) {
+    this->_area.update(deltaTime);
 }
 
 void Play::render() {

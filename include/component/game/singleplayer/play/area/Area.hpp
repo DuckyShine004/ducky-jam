@@ -14,6 +14,8 @@ class Area final : public Component {
 
     void load() override;
 
+    void update(float deltaTime) override;
+
     void generateMesh() override;
 
     void generateNoteMesh();

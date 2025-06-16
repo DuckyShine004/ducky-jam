@@ -33,6 +33,8 @@ void Rectangle::translate(glm::vec2 offset) {
         this->_vertices[i] += offset.x;
         this->_vertices[i + 1] += offset.y;
     }
+
+    this->_position += offset;
 }
 
 void Rectangle::scale(glm::vec2 scale) {

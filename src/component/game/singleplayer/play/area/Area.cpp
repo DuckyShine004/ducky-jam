@@ -20,6 +20,14 @@ void Area::load() {
     generateMesh();
 }
 
+void Area::update(float deltaTime) {
+    for (std::unique_ptr<Lane> &lane : this->_lanes) {
+        lane->update(deltaTime);
+    }
+
+    generateNoteMesh();
+}
+
 void Area::generateMesh() {
     generateNoteMesh();
 }
