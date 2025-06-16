@@ -17,6 +17,10 @@ void Play::initialise() {
 
         this->_shaders.push_back(shader);
     }
+
+    create();
+
+    load();
 }
 
 void Play::create() {

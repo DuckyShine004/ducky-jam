@@ -7,6 +7,18 @@ Mesh::Mesh() {
 
     this->_indexCount = 0;
 
+    this->_isInitialised = false;
+};
+
+void Mesh::initialise(GLenum primitive, GLenum usage) {
+    if (!this->_isInitialised) {
+        return;
+    }
+
+    this->setPrimitive(primitive);
+
+    this->setUsage(usage);
+
     glGenVertexArrays(1, &this->_vao);
 
     glGenBuffers(1, &this->_vbo);
@@ -15,18 +27,41 @@ Mesh::Mesh() {
     glBindVertexArray(this->_vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, this->_vbo);
-};
+    glBufferData(GL_ARRAY_BUFFER, 0, nullptr, primitive);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->_ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 0, nullptr, primitive);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+
+    glBindVertexArray(0);
+
+    this->_isInitialised = true;
+}
 
 void Mesh::setVertices(std::vector<float> vertices) {
     this->_vertices = vertices;
 
-    this->_vertexCount = vertices.size();
+    size_t vertexCount = vertices.size();
+
+    glBindBuffer(GL_ARRAY_BUFFER, this->_vbo);
+    glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(float), vertices.data(), this->_primitive);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    this->_vertexCount = vertexCount;
 }
 
 void Mesh::setIndices(std::vector<unsigned int> indices) {
     this->_indices = indices;
 
-    this->_indexCount = indices.size();
+    size_t indexCount = indices.size();
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->_ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(unsigned int), indices.data(), this->_primitive);
+
+    this->_indexCount = indexCount;
 }
 
 void Mesh::setPrimitive(GLenum primitive) {

@@ -10,6 +10,8 @@ class Mesh {
   public:
     Mesh();
 
+    void initialise(GLenum primitive, GLenum usage);
+
     void setVertices(std::vector<float> vertices);
     void setIndices(std::vector<unsigned int> indices);
 
@@ -41,6 +43,8 @@ class Mesh {
     GLuint _vao;
     GLuint _vbo;
     GLuint _ebo;
+
+    bool _isInitialised;
 };
 
 } // namespace engine::mesh
