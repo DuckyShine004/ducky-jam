@@ -18,6 +18,8 @@ class Application {
     void update();
 
     void render();
+
+    static void onResize(GLFWwindow *window, int width, int height);
 };
 
 } // namespace application

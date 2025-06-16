@@ -76,4 +76,8 @@ std::vector<std::unique_ptr<Lane>> &Area::getLanes() {
     return this->_lanes;
 }
 
+Mesh &Area::getNoteMesh() {
+    return this->_noteMesh;
+}
+
 } // namespace component::game::singleplayer::play::area

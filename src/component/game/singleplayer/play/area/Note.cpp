@@ -2,6 +2,8 @@
 
 #include <engine/shape/rectangle/Rectangle.hpp>
 
+#include <iostream>
+
 using namespace engine::shape::rectangle;
 
 namespace component::game::singleplayer::play::area {

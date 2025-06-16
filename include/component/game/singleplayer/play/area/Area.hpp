@@ -20,6 +20,8 @@ class Area final : public Component {
 
     std::vector<std::unique_ptr<Lane>> &getLanes();
 
+    Mesh &getNoteMesh();
+
   private:
     std::vector<std::unique_ptr<Lane>> _lanes;
 

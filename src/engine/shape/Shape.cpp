@@ -14,6 +14,10 @@ Shape::Shape(float x, float y) : _position{x, y} {
 
 Shape::~Shape() = default;
 
+glm::vec2 Shape::getPosition() {
+    return this->_position;
+}
+
 std::vector<float> Shape::getVertices() const {
     return this->_vertices;
 }

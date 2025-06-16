@@ -39,6 +39,8 @@ void Application::initialise() {
         return;
     }
 
+    glfwSetFramebufferSizeCallback(window, Application::onResize);
+
     this->_window = window;
 
     SceneManager::getInstance().setScene(std::make_unique<Play>());
@@ -68,6 +70,10 @@ void Application::render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     scene.render();
+}
+
+void Application::onResize(GLFWwindow *window, int width, int height) {
+    glViewport(0, 0, width, height);
 }
 
 } // namespace application

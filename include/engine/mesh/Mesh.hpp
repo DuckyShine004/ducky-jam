@@ -26,6 +26,8 @@ class Mesh {
 
     GLenum getUsage();
 
+    GLuint getVao();
+
     std::size_t getVertexCount();
     std::size_t getIndexCount();
 

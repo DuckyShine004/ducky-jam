@@ -21,6 +21,8 @@ class Shape {
     virtual void scale(glm::vec2 scale) = 0;
     virtual void scale(float scale) = 0;
 
+    glm::vec2 getPosition();
+
     std::vector<float> getVertices() const;
     std::vector<unsigned int> getIndices() const;
 
