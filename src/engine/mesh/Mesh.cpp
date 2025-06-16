@@ -27,13 +27,13 @@ void Mesh::initialise(GLenum primitive, GLenum usage) {
     glBindVertexArray(this->_vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, this->_vbo);
-    glBufferData(GL_ARRAY_BUFFER, 0, nullptr, primitive);
+    glBufferData(GL_ARRAY_BUFFER, 0, nullptr, usage);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->_ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 0, nullptr, primitive);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 0, nullptr, usage);
 
-    glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+    glEnableVertexAttribArray(0);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -48,7 +48,7 @@ void Mesh::setVertices(std::vector<float> vertices) {
     size_t vertexCount = vertices.size();
 
     glBindBuffer(GL_ARRAY_BUFFER, this->_vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(float), vertices.data(), this->_primitive);
+    glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(float), vertices.data(), this->_usage);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -61,7 +61,7 @@ void Mesh::setIndices(std::vector<unsigned int> indices) {
     size_t indexCount = indices.size();
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->_ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(unsigned int), indices.data(), this->_primitive);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(unsigned int), indices.data(), this->_usage);
 
     this->_indexCount = indexCount;
 }

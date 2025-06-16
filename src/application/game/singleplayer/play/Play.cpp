@@ -45,7 +45,7 @@ void Play::renderNotes() {
 
     shader.use();
 
-    Mesh noteMesh = this->_area.getNoteMesh();
+    Mesh &noteMesh = this->_area.getNoteMesh();
 
     glBindVertexArray(noteMesh.getVao());
 
