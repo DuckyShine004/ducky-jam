@@ -15,12 +15,27 @@ void Area::create() {
 }
 
 void Area::load() {
-    for (std::unique_ptr<Lane> &lane : this->_lanes) {
-        lane->load();
-    }
 }
 
 void Area::generateMesh() {
+    generateNoteMesh();
+}
+
+void Area::generateNoteMesh() {
+    std::vector<float> vertices;
+    std::vector<unsigned int> indices;
+
+    for (std::unique_ptr<Lane> &lane : this->_lanes) {
+        std::vector<std::unique_ptr<Note>> &notes = lane->getNotes();
+
+        for (std::unique_ptr<Note> &note : notes) {
+            std::vector<std::unique_ptr<Shape>> &shapes = note->getShapes();
+        }
+    }
+
+    this->_noteMesh.setPrimitive(GL_TRIANGLES);
+
+    this->_noteMesh.setUsage(GL_DYNAMIC_DRAW);
 }
 
 std::vector<std::unique_ptr<Lane>> &Area::getLanes() {

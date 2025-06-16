@@ -31,9 +31,14 @@ void Play::update(float deltaTime) {
 }
 
 void Play::render() {
-    for (Shader &shader : this->_shaders) {
-        shader.use();
-    }
+    Shader &shader = this->_shaders[0];
+
+    shader.use();
+
+    this->renderNotes();
+}
+
+void Play::renderNotes() {
 }
 
 } // namespace application::game::singleplayer::play

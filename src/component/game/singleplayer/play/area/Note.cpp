@@ -14,16 +14,4 @@ void Note::create() {
     addShape(std::move(shape));
 }
 
-void Note::load() {
-    generateMesh();
-}
-
-void Note::generateMesh() {
-    const Shape *shape = this->_shapes[0].get();
-
-    this->_mesh.setVertices(shape->getVertices());
-
-    this->_mesh.setIndices(shape->getIndices());
-}
-
 } // namespace component::game::singleplayer::play::area

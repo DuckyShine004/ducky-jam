@@ -10,15 +10,14 @@ void Component::addShape(std::unique_ptr<Shape> shape) {
     this->_shapes.push_back(std::move(shape));
 }
 
+void Component::load() {
+}
+
 void Component::generateMesh() {
 }
 
 std::vector<std::unique_ptr<Shape>> &Component::getShapes() {
     return this->_shapes;
-}
-
-Mesh Component::getMesh() {
-    return this->_mesh;
 }
 
 } // namespace component

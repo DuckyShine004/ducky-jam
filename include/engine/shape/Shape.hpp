@@ -10,9 +10,9 @@ namespace engine::shape {
 
 class Shape {
   public:
-    Shape(glm::vec2 position, GLenum primitive);
+    Shape(glm::vec2 position);
 
-    Shape(float x, float y, GLenum primitive);
+    Shape(float x, float y);
 
     virtual ~Shape();
 
@@ -24,15 +24,11 @@ class Shape {
     std::vector<float> getVertices() const;
     std::vector<unsigned int> getIndices() const;
 
-    GLenum getPrimitive();
-
   protected:
     glm::vec2 _position;
 
     std::vector<float> _vertices;
     std::vector<unsigned int> _indices;
-
-    GLenum _primitive;
 };
 
 } // namespace engine::shape

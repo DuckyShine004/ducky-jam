@@ -20,7 +20,7 @@ class Component {
 
     virtual void create() = 0;
 
-    virtual void load() = 0;
+    virtual void load();
 
     virtual void generateMesh();
 
@@ -28,12 +28,8 @@ class Component {
 
     void addShape(std::unique_ptr<Shape> shape);
 
-    Mesh getMesh();
-
   protected:
     std::vector<std::unique_ptr<Shape>> _shapes;
-
-    Mesh _mesh;
 };
 
 } // namespace component

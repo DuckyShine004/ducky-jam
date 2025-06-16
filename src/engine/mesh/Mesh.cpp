@@ -6,6 +6,15 @@ Mesh::Mesh() {
     this->_vertexCount = 0;
 
     this->_indexCount = 0;
+
+    glGenVertexArrays(1, &this->_vao);
+
+    glGenBuffers(1, &this->_vbo);
+    glGenBuffers(1, &this->_ebo);
+
+    glBindVertexArray(this->_vao);
+
+    glBindBuffer(GL_ARRAY_BUFFER, this->_vbo);
 };
 
 void Mesh::setVertices(std::vector<float> vertices) {
@@ -24,6 +33,10 @@ void Mesh::setPrimitive(GLenum primitive) {
     this->_primitive = primitive;
 }
 
+void Mesh::setUsage(GLenum usage) {
+    this->_usage = usage;
+}
+
 std::vector<float> &Mesh::getVertices() {
     return this->_vertices;
 }
@@ -34,6 +47,10 @@ std::vector<unsigned int> &Mesh::getIndices() {
 
 GLenum Mesh::getPrimitive() {
     return this->_primitive;
+}
+
+GLenum Mesh::getUsage() {
+    return this->_usage;
 }
 
 std::size_t Mesh::getVertexCount() {
