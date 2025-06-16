@@ -10,9 +10,7 @@ constexpr float Rectangle::_VERTICES[];
 
 constexpr unsigned int Rectangle::_INDICES[];
 
-constexpr GLenum Rectangle::_PRIMITIVE;
-
-Rectangle::Rectangle(glm::vec2 position) : Shape(position, _PRIMITIVE) {
+Rectangle::Rectangle(glm::vec2 position) : Shape(position) {
     this->initialise();
 }
 

@@ -4,15 +4,11 @@
 
 namespace component::game::singleplayer::play::area {
 
-class Note final : Component {
+class Note final : public Component {
   public:
     Note();
 
     void create() override;
-
-    void load() override;
-
-    void generateMesh() override;
 };
 
 } // namespace component::game::singleplayer::play::area

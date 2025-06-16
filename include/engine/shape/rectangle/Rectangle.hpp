@@ -34,8 +34,6 @@ class Rectangle final : public Shape {
     };
     // clang-format on
 
-    static constexpr GLenum _PRIMITIVE = GL_TRIANGLES;
-
     void initialise();
 };
 

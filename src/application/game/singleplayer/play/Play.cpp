@@ -2,6 +2,8 @@
 
 #include <application/game/singleplayer/play/Play.hpp>
 
+#include <iostream>
+
 // remember to create asset pool to load all shaders first
 namespace application::game::singleplayer::play {
 
@@ -17,6 +19,10 @@ void Play::initialise() {
 
         this->_shaders.push_back(shader);
     }
+
+    create();
+
+    load();
 }
 
 void Play::create() {
@@ -31,9 +37,21 @@ void Play::update(float deltaTime) {
 }
 
 void Play::render() {
-    for (Shader &shader : this->_shaders) {
-        shader.use();
-    }
+    this->renderNotes();
+}
+
+void Play::renderNotes() {
+    Shader &shader = this->_shaders[0];
+
+    shader.use();
+
+    Mesh &noteMesh = this->_area.getNoteMesh();
+
+    glBindVertexArray(noteMesh.getVao());
+
+    glDrawElements(noteMesh.getPrimitive(), noteMesh.getIndexCount(), GL_UNSIGNED_INT, 0);
+
+    glBindVertexArray(0);
 }
 
 } // namespace application::game::singleplayer::play

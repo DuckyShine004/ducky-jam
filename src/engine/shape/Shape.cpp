@@ -6,13 +6,17 @@
 
 namespace engine::shape {
 
-Shape::Shape(glm::vec2 position, GLenum primitive) : _position(position), _primitive(primitive) {
+Shape::Shape(glm::vec2 position) : _position(position) {
 }
 
-Shape::Shape(float x, float y, GLenum primitive) : _position{x, y}, _primitive(primitive) {
+Shape::Shape(float x, float y) : _position{x, y} {
 }
 
 Shape::~Shape() = default;
+
+glm::vec2 Shape::getPosition() {
+    return this->_position;
+}
 
 std::vector<float> Shape::getVertices() const {
     return this->_vertices;
@@ -20,10 +24,6 @@ std::vector<float> Shape::getVertices() const {
 
 std::vector<unsigned int> Shape::getIndices() const {
     return this->_indices;
-}
-
-GLenum Shape::getPrimitive() {
-    return this->_primitive;
 }
 
 } // namespace engine::shape

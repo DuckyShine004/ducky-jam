@@ -16,10 +16,16 @@ class Area final : public Component {
 
     void generateMesh() override;
 
+    void generateNoteMesh();
+
     std::vector<std::unique_ptr<Lane>> &getLanes();
+
+    Mesh &getNoteMesh();
 
   private:
     std::vector<std::unique_ptr<Lane>> _lanes;
+
+    Mesh _noteMesh;
 };
 
 } // namespace component::game::singleplayer::play::area
