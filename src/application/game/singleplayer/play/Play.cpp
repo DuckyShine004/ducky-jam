@@ -46,6 +46,8 @@ void Play::renderNotes() {
 
     shader.use();
 
+    shader.setMatrix4fv("model", this->_area.getNoteModel());
+
     Mesh &noteMesh = this->_area.getNoteMesh();
 
     glBindVertexArray(noteMesh.getVao());

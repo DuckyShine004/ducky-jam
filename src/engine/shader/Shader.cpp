@@ -1,5 +1,7 @@
 #include <external/glad/glad.h>
 
+#include <glm/gtc/type_ptr.hpp>
+
 #include <iostream>
 
 #include <engine/shader/Shader.hpp>
@@ -102,6 +104,12 @@ void Shader::checkProgramLinkStatus() {
 
         std::cout << "Link Error\n" << infoLog << std::endl;
     }
+}
+
+void Shader::setMatrix4fv(const GLchar *name, glm::mat4 matrix) {
+    GLint location = glGetUniformLocation(this->_program, name);
+
+    glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
 } // namespace engine::shader

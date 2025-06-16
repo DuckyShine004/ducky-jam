@@ -2,6 +2,8 @@
 
 #include <external/glad/glad.h>
 
+#include <glm/glm.hpp>
+
 #include <string>
 
 namespace engine::shader {
@@ -14,6 +16,8 @@ class Shader {
 
     void use();
     void detach();
+
+    void setMatrix4fv(const GLchar *name, glm::mat4 matrix);
 
   private:
     std::string _name;

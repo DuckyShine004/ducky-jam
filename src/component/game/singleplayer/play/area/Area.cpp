@@ -1,10 +1,13 @@
 #include <component/game/singleplayer/play/area/Area.hpp>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <iostream>
 
 namespace component::game::singleplayer::play::area {
 
-Area::Area() = default;
+Area::Area() : _noteModel(glm::mat4(1.0f)) {
+}
 
 void Area::create() {
     for (int i = 0; i < 1; i++) {
@@ -25,7 +28,7 @@ void Area::update(float deltaTime) {
         lane->update(deltaTime);
     }
 
-    generateNoteMesh();
+    this->_noteModel = glm::translate(this->_noteModel, glm::vec3(0.0f, -0.01f, 0.0f));
 }
 
 void Area::generateMesh() {
@@ -80,12 +83,16 @@ void Area::generateNoteMesh() {
     this->_noteMesh.setIndices(indices);
 }
 
+Mesh &Area::getNoteMesh() {
+    return this->_noteMesh;
+}
+
 std::vector<std::unique_ptr<Lane>> &Area::getLanes() {
     return this->_lanes;
 }
 
-Mesh &Area::getNoteMesh() {
-    return this->_noteMesh;
+glm::mat4 &Area::getNoteModel() {
+    return this->_noteModel;
 }
 
 } // namespace component::game::singleplayer::play::area
