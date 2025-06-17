@@ -23,6 +23,8 @@ void DisplayConfiguration::initialise() {
     this->_height = this->_HEIGHT;
 
     this->toJson();
+
+    this->save();
 }
 
 void DisplayConfiguration::load(const std::string configurationPath) {
@@ -36,8 +38,8 @@ void DisplayConfiguration::load(const std::string configurationPath) {
 
     FileUtility::loadJson(this->_configuration, configurationPath);
 
-    this->_width = this->_configuration["width"];
-    this->_height = this->_configuration["height"];
+    this->_width = this->_configuration.value("width", this->_WIDTH);
+    this->_height = this->_configuration.value("height", this->_HEIGHT);
 }
 
 void DisplayConfiguration::save() {
