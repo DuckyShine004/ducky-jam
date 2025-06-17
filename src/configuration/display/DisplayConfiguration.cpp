@@ -38,13 +38,17 @@ void DisplayConfiguration::load(const std::string configurationPath) {
 
     FileUtility::loadJson(this->_configuration, configurationPath);
 
-    this->_width = this->_configuration.value("width", this->_WIDTH);
-    this->_height = this->_configuration.value("height", this->_HEIGHT);
+    this->toAttribute();
 }
 
 void DisplayConfiguration::toJson() {
     this->_configuration["width"] = this->_width;
     this->_configuration["height"] = this->_height;
+}
+
+void DisplayConfiguration::toAttribute() {
+    this->_width = this->_configuration.value("width", this->_WIDTH);
+    this->_height = this->_configuration.value("height", this->_HEIGHT);
 }
 
 int DisplayConfiguration::getWidth() {

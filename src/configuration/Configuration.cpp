@@ -16,4 +16,8 @@ void Configuration::save() {
     FileUtility::saveJson(this->_configuration, this->_configurationPath);
 }
 
+nlohmann::json Configuration::getConfiguration() {
+    return this->_configuration;
+}
+
 } // namespace configuration

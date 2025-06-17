@@ -10,6 +10,8 @@ class Application {
 
     void initialise();
 
+    void load();
+
     void run();
 
   private:

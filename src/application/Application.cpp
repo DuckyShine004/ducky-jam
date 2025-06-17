@@ -6,9 +6,17 @@
 
 #include <application/game/singleplayer/play/Play.hpp>
 
+#include <configuration/Configuration.hpp>
+
+#include <configuration/display/DisplayConfiguration.hpp>
+
 #include <iostream>
 
 using namespace manager;
+
+using namespace configuration;
+
+using namespace configuration::display;
 
 using namespace application::game::singleplayer::play;
 
@@ -42,8 +50,16 @@ void Application::initialise() {
     glfwSetFramebufferSizeCallback(window, Application::onResize);
 
     this->_window = window;
+}
 
+void Application::load() {
     SceneManager::getInstance().setScene(std::make_unique<Play>());
+
+    Configuration &displayConfiguration = DisplayConfiguration::getInstance();
+
+    displayConfiguration.load(".config/display.conf");
+
+    std::cout << displayConfiguration.getConfiguration() << std::endl;
 }
 
 void Application::run() {

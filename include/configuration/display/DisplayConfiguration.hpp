@@ -32,6 +32,8 @@ class DisplayConfiguration final : public Configuration {
     void initialise();
 
     void toJson() override;
+
+    void toAttribute() override;
 };
 
 } // namespace configuration::display

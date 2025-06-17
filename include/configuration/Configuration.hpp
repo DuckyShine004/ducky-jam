@@ -16,12 +16,16 @@ class Configuration {
 
     virtual void save();
 
+    nlohmann::json getConfiguration();
+
   protected:
     Configuration();
 
     ~Configuration();
 
     virtual void toJson() = 0;
+
+    virtual void toAttribute() = 0;
 
     std::string _configurationPath;
 
