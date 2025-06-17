@@ -10,7 +10,13 @@ class DisplayConfiguration final : public Configuration {
 
     void load(const std::string configurationPath) override;
 
-    void save() override;
+    int getWidth();
+
+    int getHeight();
+
+    void setWidth(int width);
+
+    void setHeight(int height);
 
   private:
     static inline constexpr int _WIDTH = 1080;

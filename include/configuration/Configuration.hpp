@@ -14,7 +14,7 @@ class Configuration {
 
     virtual void load(const std::string configurationPath) = 0;
 
-    virtual void save() = 0;
+    virtual void save();
 
   protected:
     Configuration();
