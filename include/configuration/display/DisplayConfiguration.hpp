@@ -8,8 +8,6 @@ class DisplayConfiguration final : public Configuration {
   public:
     static DisplayConfiguration &getInstance();
 
-    void load(const std::string configurationPath) override;
-
     int getWidth();
 
     int getHeight();
@@ -29,7 +27,7 @@ class DisplayConfiguration final : public Configuration {
 
     ~DisplayConfiguration();
 
-    void initialise();
+    void initialise() override;
 
     void toJson() override;
 

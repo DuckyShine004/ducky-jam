@@ -27,20 +27,6 @@ void DisplayConfiguration::initialise() {
     this->save();
 }
 
-void DisplayConfiguration::load(const std::string configurationPath) {
-    this->_configurationPath = configurationPath;
-
-    if (!FileUtility::pathExists(configurationPath)) {
-        this->initialise();
-
-        return;
-    }
-
-    FileUtility::loadJson(this->_configuration, configurationPath);
-
-    this->toAttribute();
-}
-
 void DisplayConfiguration::toJson() {
     this->_configuration["width"] = this->_width;
     this->_configuration["height"] = this->_height;

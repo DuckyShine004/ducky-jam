@@ -12,7 +12,7 @@ class Configuration {
 
     Configuration &operator=(const Configuration &) = delete;
 
-    virtual void load(const std::string configurationPath) = 0;
+    virtual void load(const std::string configurationPath);
 
     virtual void save();
 
@@ -22,6 +22,8 @@ class Configuration {
     Configuration();
 
     ~Configuration();
+
+    virtual void initialise() = 0;
 
     virtual void toJson() = 0;
 
