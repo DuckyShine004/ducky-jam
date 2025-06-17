@@ -26,6 +26,10 @@ class Entry {
     std::string _message;
 
     std::string _severityName;
+
+    std::string _date;
+
+    std::string _time;
 };
 
 } // namespace logger
