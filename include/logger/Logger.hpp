@@ -15,9 +15,9 @@ class Logger {
 
     static Logger &getInstance();
 
-    void log();
+    void log(Severity severity, std::string message);
 
-    void addEntry();
+    void addEntry(Severity severity, std::string message);
 
     void save();
 
@@ -25,6 +25,8 @@ class Logger {
     Logger();
 
     ~Logger();
+
+    void initialise();
 
     std::string _logPath;
 
