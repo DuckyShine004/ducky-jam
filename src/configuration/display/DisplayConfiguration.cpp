@@ -23,13 +23,13 @@ void DisplayConfiguration::initialise() {
     this->_height = this->_HEIGHT;
 
     this->toJson();
-
-    this->save();
 }
 
 void DisplayConfiguration::toJson() {
     this->_configuration["width"] = this->_width;
     this->_configuration["height"] = this->_height;
+
+    this->save();
 }
 
 void DisplayConfiguration::toAttribute() {
@@ -52,6 +52,13 @@ void DisplayConfiguration::setWidth(int width) {
 }
 
 void DisplayConfiguration::setHeight(int height) {
+    this->_height = height;
+
+    this->toJson();
+}
+
+void DisplayConfiguration::updateResolution(int width, int height) {
+    this->_width = width;
     this->_height = height;
 
     this->toJson();

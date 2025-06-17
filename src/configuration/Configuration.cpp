@@ -25,8 +25,6 @@ void Configuration::load(const std::string configurationPath) {
 }
 
 void Configuration::save() {
-    this->toJson();
-
     FileUtility::saveJson(this->_configuration, this->_configurationPath);
 }
 

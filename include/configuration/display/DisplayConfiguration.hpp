@@ -16,6 +16,8 @@ class DisplayConfiguration final : public Configuration {
 
     void setHeight(int height);
 
+    void updateResolution(int width, int height);
+
   private:
     static inline constexpr int _WIDTH = 1080;
     static inline constexpr int _HEIGHT = 720;

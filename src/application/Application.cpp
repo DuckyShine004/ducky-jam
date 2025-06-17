@@ -101,6 +101,8 @@ void Application::render() {
 
 void Application::onResize(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
+
+    DisplayConfiguration::getInstance().updateResolution(width, height);
 }
 
 } // namespace application

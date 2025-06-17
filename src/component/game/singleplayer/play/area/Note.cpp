@@ -21,8 +21,6 @@ void Note::update(float deltaTime) {
 
     for (std::unique_ptr<Shape> &shape : this->_shapes) {
         shape->translate(offset);
-
-        std::cout << shape->getPosition().y << std::endl;
     }
 }
 
