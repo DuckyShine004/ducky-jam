@@ -13,6 +13,9 @@ void Component::addShape(std::unique_ptr<Shape> shape) {
 void Component::load() {
 }
 
+void Component::update(float deltaTime) {
+}
+
 void Component::generateMesh() {
 }
 

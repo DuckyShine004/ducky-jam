@@ -9,6 +9,8 @@ class Note final : public Component {
     Note();
 
     void create() override;
+
+    void update(float deltaTime) override;
 };
 
 } // namespace component::game::singleplayer::play::area

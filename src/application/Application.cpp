@@ -6,9 +6,17 @@
 
 #include <application/game/singleplayer/play/Play.hpp>
 
+#include <configuration/Configuration.hpp>
+
+#include <configuration/display/DisplayConfiguration.hpp>
+
 #include <iostream>
 
 using namespace manager;
+
+using namespace configuration;
+
+using namespace configuration::display;
 
 using namespace application::game::singleplayer::play;
 
@@ -42,11 +50,21 @@ void Application::initialise() {
     glfwSetFramebufferSizeCallback(window, Application::onResize);
 
     this->_window = window;
+}
 
+void Application::load() {
     SceneManager::getInstance().setScene(std::make_unique<Play>());
+
+    Configuration &displayConfiguration = DisplayConfiguration::getInstance();
+
+    displayConfiguration.load(".config/display.conf");
+
+    std::cout << displayConfiguration.getConfiguration() << std::endl;
 }
 
 void Application::run() {
+    this->_lastTime = 0.0f;
+
     while (!glfwWindowShouldClose(this->_window)) {
         this->update();
 
@@ -60,6 +78,15 @@ void Application::run() {
 }
 
 void Application::update() {
+    float time = glfwGetTime();
+
+    float deltaTime = time - this->_lastTime;
+
+    Scene &scene = SceneManager::getInstance().getScene();
+
+    scene.update(deltaTime);
+
+    this->_lastTime = time;
 }
 
 void Application::render() {
@@ -74,6 +101,8 @@ void Application::render() {
 
 void Application::onResize(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
+
+    DisplayConfiguration::getInstance().updateResolution(width, height);
 }
 
 } // namespace application

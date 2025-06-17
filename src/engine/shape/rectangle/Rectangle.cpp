@@ -27,12 +27,7 @@ void Rectangle::initialise() {
 }
 
 void Rectangle::translate(glm::vec2 offset) {
-    int size = this->_vertices.size();
-
-    for (int i = 0; i < size; i += 3) {
-        this->_vertices[i] += offset.x;
-        this->_vertices[i + 1] += offset.y;
-    }
+    this->_position += offset;
 }
 
 void Rectangle::scale(glm::vec2 scale) {

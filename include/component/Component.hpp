@@ -22,6 +22,8 @@ class Component {
 
     virtual void load();
 
+    virtual void update(float deltaTime);
+
     virtual void generateMesh();
 
     virtual std::vector<std::unique_ptr<Shape>> &getShapes();

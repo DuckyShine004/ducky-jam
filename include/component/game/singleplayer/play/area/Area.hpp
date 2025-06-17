@@ -14,18 +14,24 @@ class Area final : public Component {
 
     void load() override;
 
+    void update(float deltaTime) override;
+
     void generateMesh() override;
 
     void generateNoteMesh();
 
-    std::vector<std::unique_ptr<Lane>> &getLanes();
-
     Mesh &getNoteMesh();
 
+    std::vector<std::unique_ptr<Lane>> &getLanes();
+
+    glm::mat4 &getNoteModel();
+
   private:
+    Mesh _noteMesh;
+
     std::vector<std::unique_ptr<Lane>> _lanes;
 
-    Mesh _noteMesh;
+    glm::mat4 _noteModel;
 };
 
 } // namespace component::game::singleplayer::play::area

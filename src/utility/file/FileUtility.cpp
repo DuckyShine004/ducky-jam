@@ -2,6 +2,7 @@
 
 #include <sstream>
 #include <fstream>
+#include <filesystem>
 
 namespace utility::file {
 
@@ -17,6 +18,38 @@ std::string FileUtility::getFileToString(const std::string &filename) {
     buffer << file.rdbuf();
 
     return buffer.str();
+}
+
+void FileUtility::createFile(const std::string &path) {
+    if (FileUtility::pathExists(path)) {
+        return;
+    }
+
+    std::ofstream(path).close();
+}
+
+bool FileUtility::pathExists(const std::string &path) {
+    return std::filesystem::exists(path);
+}
+
+void FileUtility::loadJson(nlohmann::json &json, const std::string &path) {
+    std::ifstream file(path);
+
+    if (!file.is_open()) {
+        return;
+    }
+
+    file >> json;
+}
+
+void FileUtility::saveJson(const nlohmann::json &json, const std::string &path) {
+    std::ofstream file(path);
+
+    if (!file.is_open()) {
+        return;
+    }
+
+    file << std::setw(2) << json;
 }
 
 } // namespace utility::file

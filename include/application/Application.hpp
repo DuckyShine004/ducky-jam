@@ -10,10 +10,14 @@ class Application {
 
     void initialise();
 
+    void load();
+
     void run();
 
   private:
     GLFWwindow *_window;
+
+    float _lastTime;
 
     void update();
 

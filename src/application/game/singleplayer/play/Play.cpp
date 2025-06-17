@@ -34,6 +34,7 @@ void Play::load() {
 }
 
 void Play::update(float deltaTime) {
+    this->_area.update(deltaTime);
 }
 
 void Play::render() {
@@ -44,6 +45,8 @@ void Play::renderNotes() {
     Shader &shader = this->_shaders[0];
 
     shader.use();
+
+    shader.setMatrix4fv("model", this->_area.getNoteModel());
 
     Mesh &noteMesh = this->_area.getNoteMesh();
 

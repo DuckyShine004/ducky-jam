@@ -16,4 +16,12 @@ void Note::create() {
     addShape(std::move(shape));
 }
 
+void Note::update(float deltaTime) {
+    glm::vec2 offset(0.0f, -0.01f);
+
+    for (std::unique_ptr<Shape> &shape : this->_shapes) {
+        shape->translate(offset);
+    }
+}
+
 } // namespace component::game::singleplayer::play::area

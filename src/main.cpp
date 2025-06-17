@@ -7,6 +7,8 @@ int main() {
 
     application.initialise();
 
+    application.load();
+
     application.run();
 
     return 0;
