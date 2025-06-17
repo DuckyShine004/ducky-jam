@@ -30,7 +30,7 @@ void DisplayConfiguration::initialise() {
 void DisplayConfiguration::load(const std::string configurationPath) {
     this->_configurationPath = configurationPath;
 
-    if (FileUtility::pathExists(configurationPath)) {
+    if (!FileUtility::pathExists(configurationPath)) {
         this->initialise();
 
         return;
