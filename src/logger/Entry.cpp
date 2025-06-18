@@ -26,12 +26,18 @@ Entry::Entry(Severity severity, const char *file, const char *function, int line
     this->_time = DatetimeUtility::getDatetime("%H:%M:%S");
 
     this->_severityLevel = severityLevel;
+
+    this->toJson();
+}
+
+nlohmann::json Entry::getJson() {
+    return this->_json;
 }
 
 std::string Entry::toString() {
     std::ostringstream oss;
 
-    oss << this->_backgroundColour << this->_textColour << "[" << this->_severityName << "]" << "\033[0m";
+    oss << "\033[1m" << this->_backgroundColour << this->_textColour << "[" << this->_severityName << "]" << "\033[0m";
 
     oss << " [" << this->_date << " | " << this->_time << "]";
 
@@ -40,6 +46,20 @@ std::string Entry::toString() {
     oss << "  " << this->_message;
 
     return oss.str();
+}
+
+void Entry::toJson() {
+    this->_json["severity"] = this->_severityName;
+    this->_json["level"] = this->_severityLevel;
+
+    this->_json["date"] = this->_date;
+    this->_json["time"] = this->_time;
+
+    this->_json["file"] = this->_file;
+    this->_json["function"] = this->_function;
+    this->_json["line"] = this->_line;
+
+    this->_json["message"] = this->_message;
 }
 
 } // namespace logger

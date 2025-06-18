@@ -29,6 +29,8 @@ void Logger::initialise() {
 
     this->_logPath = ".cache/logs/" + filename;
 
+    this->_json = nlohmann::json::array();
+
     FileUtility::createFile(this->_logPath);
 }
 
@@ -42,9 +44,14 @@ void Logger::log(Severity severity, const char *file, const char *function, int 
 
 void Logger::addEntry(Entry entry) {
     this->_entries.push_back(entry);
+
+    this->_json.push_back(entry.getJson());
+
+    this->save();
 }
 
-void save() {
+void Logger::save() {
+    FileUtility::saveJson(this->_json, this->_logPath);
 }
 
 } // namespace logger

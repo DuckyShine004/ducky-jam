@@ -28,9 +28,11 @@ class Logger {
 
     void initialise();
 
-    std::string _logPath;
+    nlohmann::json _json;
 
     std::vector<Entry> _entries;
+
+    std::string _logPath;
 };
 
 } // namespace logger

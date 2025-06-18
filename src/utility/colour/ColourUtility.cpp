@@ -28,8 +28,8 @@ std::array<int, 3> ColourUtility::getRgbFromHex(const std::string &hex) {
     std::array<int, 3> rgb;
 
     rgb[0] = std::stoi(digits.substr(0, 2), nullptr, 16);
-    rgb[1] = std::stoi(digits.substr(2, 4), nullptr, 16);
-    rgb[2] = std::stoi(digits.substr(4, 6), nullptr, 16);
+    rgb[1] = std::stoi(digits.substr(2, 2), nullptr, 16);
+    rgb[2] = std::stoi(digits.substr(4, 2), nullptr, 16);
 
     return rgb;
 }
