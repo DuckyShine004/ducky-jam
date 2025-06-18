@@ -1,0 +1,52 @@
+[
+  {
+    "date": "Wednesday 18 2025",
+    "file": "/home/duckyshine04/Documents/work/projects/cpp-projects/ducky-jam/src/main.cpp",
+    "function": "main",
+    "level": 0,
+    "line": 8,
+    "message": "BRUH jsdfjl",
+    "severity": "INFO",
+    "time": "17:05:49"
+  },
+  {
+    "date": "Wednesday 18 2025",
+    "file": "/home/duckyshine04/Documents/work/projects/cpp-projects/ducky-jam/src/main.cpp",
+    "function": "main",
+    "level": 1,
+    "line": 9,
+    "message": "BRUH jsdfjl",
+    "severity": "DEBUG",
+    "time": "17:05:49"
+  },
+  {
+    "date": "Wednesday 18 2025",
+    "file": "/home/duckyshine04/Documents/work/projects/cpp-projects/ducky-jam/src/main.cpp",
+    "function": "main",
+    "level": 2,
+    "line": 10,
+    "message": "BRUH jsdfjl",
+    "severity": "WARN",
+    "time": "17:05:49"
+  },
+  {
+    "date": "Wednesday 18 2025",
+    "file": "/home/duckyshine04/Documents/work/projects/cpp-projects/ducky-jam/src/main.cpp",
+    "function": "main",
+    "level": 3,
+    "line": 11,
+    "message": "BRUH jsdfjl",
+    "severity": "ERROR",
+    "time": "17:05:49"
+  },
+  {
+    "date": "Wednesday 18 2025",
+    "file": "/home/duckyshine04/Documents/work/projects/cpp-projects/ducky-jam/src/main.cpp",
+    "function": "main",
+    "level": 4,
+    "line": 12,
+    "message": "BRUH jsdfjl",
+    "severity": "FATAL",
+    "time": "17:05:49"
+  }
+]

@@ -27,6 +27,8 @@ class Entry {
 
     std::string _file;
 
+    std::string _filename;
+
     std::string _function;
 
     std::string _message;

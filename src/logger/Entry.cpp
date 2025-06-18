@@ -4,11 +4,15 @@
 
 #include <utility/colour/ColourUtility.hpp>
 
+#include <utility/file/FileUtility.hpp>
+
 #include <sstream>
 
 using namespace utility::datetime;
 
 using namespace utility::colour;
+
+using namespace utility::file;
 
 namespace logger {
 
@@ -25,6 +29,8 @@ Entry::Entry(Severity severity, const char *file, const char *function, int line
 
     this->_time = DatetimeUtility::getDatetime("%H:%M:%S");
 
+    this->_filename = FileUtility::getFilenameFromPath(file);
+
     this->_severityLevel = severityLevel;
 
     this->toJson();
@@ -39,9 +45,9 @@ std::string Entry::toString() {
 
     oss << "\033[1m" << this->_backgroundColour << this->_textColour << "[" << this->_severityName << "]" << "\033[0m";
 
-    oss << " [" << this->_date << " | " << this->_time << "]";
+    oss << " [" << this->_date << " ~ " << this->_time << "]";
 
-    oss << " [" << this->_file << " | " << this->_function << " | " << this->_line << "]\n";
+    oss << " [" << this->_filename << " | " << this->_function << ":" << this->_line << "]\n";
 
     oss << "  " << this->_message;
 
