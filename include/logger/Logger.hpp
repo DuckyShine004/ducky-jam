@@ -15,9 +15,9 @@ class Logger {
 
     static Logger &getInstance();
 
-    void log(Severity severity, std::string message);
+    void log(Severity severity, const char *file, const char *function, int line, std::string message);
 
-    void addEntry(Severity severity, std::string message);
+    void addEntry(Entry entry);
 
     void save();
 

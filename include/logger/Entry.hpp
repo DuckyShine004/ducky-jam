@@ -8,20 +8,20 @@ namespace logger {
 
 class Entry {
   public:
-    Entry(Severity severity, std::string message);
+    Entry(Severity severity, const char *file, const char *function, int line, std::string message);
+
+    std::string toString();
 
   private:
-    // clang-format off
-    inline static constexpr const char *_SEVERITY_NAMES[] = {
-        "INFO",
-        "DEBUG",
-        "WARN",
-        "ERROR",
-        "FATAL",
-    };
-    // clang-format on
-
     Severity _severity;
+
+    std::string _backgroundColour;
+
+    std::string _textColour;
+
+    std::string _file;
+
+    std::string _function;
 
     std::string _message;
 
@@ -30,6 +30,10 @@ class Entry {
     std::string _date;
 
     std::string _time;
+
+    int _line;
+
+    int _severityLevel;
 };
 
 } // namespace logger

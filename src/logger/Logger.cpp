@@ -4,6 +4,8 @@
 
 #include <utility/datetime/DatetimeUtility.hpp>
 
+#include <iostream>
+
 using namespace utility::file;
 
 using namespace utility::datetime;
@@ -30,13 +32,15 @@ void Logger::initialise() {
     FileUtility::createFile(this->_logPath);
 }
 
-void Logger::log(Severity severity, std::string message) {
-    this->addEntry(severity, message);
+void Logger::log(Severity severity, const char *file, const char *function, int line, std::string message) {
+    Entry entry(severity, file, function, line, message);
+
+    this->addEntry(entry);
+
+    std::cout << entry.toString() << std::endl;
 }
 
-void Logger::addEntry(Severity severity, std::string message) {
-    Entry entry(severity, message);
-
+void Logger::addEntry(Entry entry) {
     this->_entries.push_back(entry);
 }
 
