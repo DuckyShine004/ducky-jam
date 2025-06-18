@@ -1,7 +1,7 @@
 #!/bin/bash
 
-mkdir -p build && cd build
+mkdir -p build
 
-cmake ..
+cmake -S . -B build -G Ninja
 
-cmake --build .
+cmake --build build

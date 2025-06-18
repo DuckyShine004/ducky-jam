@@ -58,8 +58,6 @@ void Application::load() {
     Configuration &displayConfiguration = DisplayConfiguration::getInstance();
 
     displayConfiguration.load(".config/display.conf");
-
-    std::cout << displayConfiguration.getConfiguration() << std::endl;
 }
 
 void Application::run() {
