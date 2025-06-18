@@ -28,6 +28,8 @@ class Logger {
 
     void initialise();
 
+    void run();
+
     nlohmann::json _json;
 
     std::vector<Entry> _entries;
