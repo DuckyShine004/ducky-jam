@@ -27,7 +27,7 @@ Logger &Logger::getInstance() {
 void Logger::initialise() {
     std::string filename = DatetimeUtility::getDatetime("%d-%m-%Y:%H-%M-%S") + ".log";
 
-    this->_logPath = ".config/" + filename;
+    this->_logPath = ".cache/logs/" + filename;
 
     FileUtility::createFile(this->_logPath);
 }

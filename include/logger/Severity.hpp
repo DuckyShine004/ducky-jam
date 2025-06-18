@@ -18,19 +18,19 @@ inline static constexpr const char *_NAMES[] = {
 };
 
 inline static constexpr const char *_BACKGROUND_COLOURS[] = {
-    "\033[42m",
-    "\033[46m",
-    "\033[43m",
-    "\033[41m",
-    "\033[45m",
+    "#a6e3a1",
+    "#89b4fa",
+    "#f9e2af",
+    "#eba0ac",
+    "#f38ba8",
 };
 
 inline static constexpr const char *_TEXT_COLOURS[] = {
-    "\033[30m",
-    "\033[30m",
-    "\033[30m",
-    "\033[97m",
-    "\033[97m",
+    "#11111b",
+    "#11111b",
+    "#11111b",
+    "#11111b",
+    "#11111b",
 };
 // clang-format on
 

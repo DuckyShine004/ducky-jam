@@ -2,9 +2,13 @@
 
 #include <utility/datetime/DatetimeUtility.hpp>
 
+#include <utility/colour/ColourUtility.hpp>
+
 #include <sstream>
 
 using namespace utility::datetime;
+
+using namespace utility::colour;
 
 namespace logger {
 
@@ -13,9 +17,9 @@ Entry::Entry(Severity severity, const char *file, const char *function, int line
 
     this->_severityName = _NAMES[severityLevel];
 
-    this->_backgroundColour = _BACKGROUND_COLOURS[severityLevel];
+    this->_backgroundColour = ColourUtility::getAnsiBackgroundFromHex(_BACKGROUND_COLOURS[severityLevel]);
 
-    this->_textColour = _TEXT_COLOURS[severityLevel];
+    this->_textColour = ColourUtility::getAnsiForegroundFromHex(_TEXT_COLOURS[severityLevel]);
 
     this->_date = DatetimeUtility::getDatetime("%A %d %Y");
 
@@ -27,13 +31,13 @@ Entry::Entry(Severity severity, const char *file, const char *function, int line
 std::string Entry::toString() {
     std::ostringstream oss;
 
-    oss << _backgroundColour << _textColour << "[" << _severityName << "]" << "\033[0m";
+    oss << this->_backgroundColour << this->_textColour << "[" << this->_severityName << "]" << "\033[0m";
 
-    oss << " [" << _date << " | " << _time << "]";
+    oss << " [" << this->_date << " | " << this->_time << "]";
 
-    oss << " [" << _file << " | " << _function << " | " << _line << "]\n";
+    oss << " [" << this->_file << " | " << this->_function << " | " << this->_line << "]\n";
 
-    oss << "  " << _message;
+    oss << "  " << this->_message;
 
     return oss.str();
 }
