@@ -20,7 +20,7 @@ void Play::initialise() {
         this->_shaders.push_back(shader);
     }
 
-    this->load("data/beatmaps/1831596/1831596.osu");
+    this->load("data/beatmaps/1831596/3759718.osu");
 }
 
 void Play::load(const std::string &beatmapPath) {
