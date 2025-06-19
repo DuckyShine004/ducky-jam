@@ -2,6 +2,8 @@
 
 #include <parser/Parser.hpp>
 
+#include <parser/beatmap/HitObject.hpp>
+
 namespace parser::beatmap {
 
 class BeatmapParser final : public Parser {
@@ -10,8 +12,10 @@ class BeatmapParser final : public Parser {
 
     void parse(const std::string &path) override;
 
+    std::vector<HitObject> getHitObjects();
+
   private:
-    nlohmann::json _hitObjects();
+    std::vector<HitObject> _hitObjects;
 
     void addHitObjects(std::ifstream &file);
 };
