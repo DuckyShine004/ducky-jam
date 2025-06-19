@@ -31,8 +31,14 @@
 *.out
 *.app
 
+# Build Files
 build/
 
+# IDE
 .vscode/
 
+# Cache
 .cache/logs/
+
+# Unnecessary Data
+data/beatmaps/
