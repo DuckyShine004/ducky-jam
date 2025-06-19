@@ -10,6 +10,9 @@ void Component::addShape(std::unique_ptr<Shape> shape) {
     this->_shapes.push_back(std::move(shape));
 }
 
+void Component::create() {
+}
+
 void Component::load() {
 }
 

@@ -12,9 +12,9 @@ class Lane final : public Component {
 
     virtual ~Lane();
 
-    void create() override;
-
     void update(float deltaTime) override;
+
+    void addNote(std::unique_ptr<Note> note);
 
     std::vector<std::unique_ptr<Note>> &getNotes();
 

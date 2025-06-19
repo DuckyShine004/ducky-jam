@@ -13,13 +13,13 @@ void Area::create() {
     for (int i = 0; i < 1; i++) {
         std::unique_ptr<Lane> lane = std::make_unique<Lane>();
 
-        lane->create();
-
         this->_lanes.push_back(std::move(lane));
     }
 }
 
-void Area::load() {
+void Area::load(const std::string &beatmapPath) {
+    this->_beatmapParser.parse(beatmapPath);
+
     generateMesh();
 }
 
