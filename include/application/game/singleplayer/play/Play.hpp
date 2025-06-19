@@ -16,13 +16,11 @@ class Play final : public Scene {
 
     void initialise() override;
 
-    void create() override;
-
-    void load() override;
-
     void update(float deltaTime) override;
 
     void render() override;
+
+    void load(const std::string &beatmapPath);
 
   private:
     static inline const char *_SHADER_NAMES[] = {

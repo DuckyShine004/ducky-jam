@@ -18,7 +18,7 @@ class Component {
 
     virtual ~Component();
 
-    virtual void create() = 0;
+    virtual void create();
 
     virtual void load();
 

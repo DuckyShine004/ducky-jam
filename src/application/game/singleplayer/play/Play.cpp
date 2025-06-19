@@ -20,17 +20,11 @@ void Play::initialise() {
         this->_shaders.push_back(shader);
     }
 
-    create();
-
-    load();
+    this->load("data/beatmaps/1831596/3759718.osu");
 }
 
-void Play::create() {
-    this->_area.create();
-}
-
-void Play::load() {
-    this->_area.load();
+void Play::load(const std::string &beatmapPath) {
+    this->_area.load(beatmapPath);
 }
 
 void Play::update(float deltaTime) {

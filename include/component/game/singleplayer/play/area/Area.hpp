@@ -4,6 +4,10 @@
 
 #include <component/game/singleplayer/play/area/Lane.hpp>
 
+#include <parser/beatmap/BeatmapParser.hpp>
+
+using namespace parser::beatmap;
+
 namespace component::game::singleplayer::play::area {
 
 class Area final : public Component {
@@ -12,11 +16,11 @@ class Area final : public Component {
 
     void create() override;
 
-    void load() override;
-
     void update(float deltaTime) override;
 
     void generateMesh() override;
+
+    void load(const std::string &beatmapPath);
 
     void generateNoteMesh();
 
@@ -28,6 +32,8 @@ class Area final : public Component {
 
   private:
     Mesh _noteMesh;
+
+    BeatmapParser _beatmapParser;
 
     std::vector<std::unique_ptr<Lane>> _lanes;
 

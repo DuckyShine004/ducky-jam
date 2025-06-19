@@ -20,13 +20,11 @@ class Scene {
 
     virtual void initialise() = 0;
 
-    virtual void create() = 0;
-
-    virtual void load() = 0;
-
     virtual void update(float deltaTime) = 0;
 
     virtual void render() = 0;
+
+    virtual void load();
 
   protected:
     std::vector<Shader> _shaders;
