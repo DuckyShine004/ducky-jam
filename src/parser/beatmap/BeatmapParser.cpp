@@ -4,12 +4,16 @@
 
 #include <utility/string/StringUtility.hpp>
 
+#include <utility/bit/BitUtility.hpp>
+
 #include <logger/LoggerMacros.hpp>
 
 #include <limits>
 #include <fstream>
 
 using namespace utility::string;
+
+using namespace utility::bit;
 
 namespace parser::beatmap {
 
@@ -43,8 +47,10 @@ std::vector<int> BeatmapParser::getHitObjectValues(const std::string &line) {
 
     int index = 0;
 
+    hitObjectValues.reserve(5);
+
     while (std::getline(stream, token, ',')) {
-        if (!(this->_HIT_OBJECT_IGNORE_FLAGS & (1 << index))) {
+        if (!(BitUtility::isBitSet(index, this->_HIT_OBJECT_IGNORE_FLAGS))) {
             int value = std::stoi(token);
 
             hitObjectValues.push_back(value);

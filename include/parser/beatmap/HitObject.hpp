@@ -8,8 +8,6 @@ class HitObject {
 
     int getLane();
 
-    int getTiming();
-
     int getType();
 
     int getEndTime();
