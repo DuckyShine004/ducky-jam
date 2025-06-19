@@ -15,7 +15,11 @@ class BeatmapParser final : public Parser {
     std::vector<HitObject> getHitObjects();
 
   private:
+    static constexpr int _HIT_OBJECT_IGNORE_FLAGS = 0b1010000;
+
     std::vector<HitObject> _hitObjects;
+
+    std::vector<int> getHitObjectValues(const std::string &line);
 
     void addHitObjects(std::ifstream &file);
 };

@@ -6,6 +6,7 @@
 
 #include <logger/LoggerMacros.hpp>
 
+#include <limits>
 #include <fstream>
 
 using namespace utility::string;
@@ -23,7 +24,7 @@ void BeatmapParser::parse(const std::string &path) {
     while (std::getline(file, line)) {
         line = StringUtility::trim(line);
 
-        if (line == "[General]") {
+        if (line == "[HitObjects]") {
             addHitObjects(file);
         }
     }
@@ -33,42 +34,70 @@ std::vector<HitObject> BeatmapParser::getHitObjects() {
     return this->_hitObjects;
 }
 
+std::vector<int> BeatmapParser::getHitObjectValues(const std::string &line) {
+    std::stringstream stream(line);
+
+    std::string token;
+
+    std::vector<int> hitObjectValues;
+
+    int index = 0;
+
+    while (std::getline(stream, token, ',')) {
+        if (!(this->_HIT_OBJECT_IGNORE_FLAGS & (1 << index))) {
+            int value = std::stoi(token);
+
+            hitObjectValues.push_back(value);
+        }
+
+        ++index;
+    }
+
+    return hitObjectValues;
+}
+
 void BeatmapParser::addHitObjects(std::ifstream &file) {
     std::string line;
+
+    int first = std::numeric_limits<int>::max();
+    int second = std::numeric_limits<int>::max();
 
     while (std::getline(file, line)) {
         line = StringUtility::trim(line);
 
         if (line.empty()) {
-            LOG_DEBUG("BRUH");
+            break;
         }
 
-        std::stringstream ss(line);
+        std::vector<int> hitObjectValues = this->getHitObjectValues(line);
 
-        std::string token;
+        int x = hitObjectValues[0];
+        int y = hitObjectValues[1];
+        int startTime = hitObjectValues[2];
+        int type = hitObjectValues[3];
+        int endTime = hitObjectValues[4];
 
-        // 1) x
-        std::getline(ss, token, ',');
-        int x = std::stoi(token);
+        if (x < first) {
+            second = first;
+            first = x;
+        } else if (x > first && x < second) {
+            second = x;
+        }
 
-        // 2) y
-        std::getline(ss, token, ',');
-        int y = std::stoi(token);
+        HitObject hitObject(x, y, type, startTime, endTime);
 
-        // 3) time
-        std::getline(ss, token, ',');
-        int timeMs = std::stoi(token);
+        this->_hitObjects.push_back(hitObject);
+    }
 
-        // 4) type
-        std::getline(ss, token, ',');
-        int type = std::stoi(token);
+    if (second == std::numeric_limits<int>::max()) {
+        second = first;
+    }
 
-        // 5) hitSound (we skip it)
-        std::getline(ss, token, ',');
+    int offset = first;
+    int size = second - first;
 
-        // 6) endTime
-        std::getline(ss, token, ',');
-        int endTime = std::stoi(token);
+    for (HitObject &hitObject : this->_hitObjects) {
+        hitObject.calculateLane(offset, size);
     }
 }
 
