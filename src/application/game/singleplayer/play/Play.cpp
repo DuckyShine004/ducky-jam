@@ -16,6 +16,12 @@ Play::Play() : Scene() {
 }
 
 void Play::initialise() {
+    // SoundPlayer &soundPlayer = SoundPlayer::getInstance();
+
+    ALuint soundId = SoundBuffer::getInstance().addSound("data/beatmaps/1831596/3759718/bg.ogg");
+
+    this->_source.play(soundId);
+
     for (const char *shaderName : this->_SHADER_NAMES) {
         Shader shader(shaderName);
 

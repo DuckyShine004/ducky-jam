@@ -119,6 +119,8 @@ ALuint SoundBuffer::addSound(const char *soundPath) {
         return 0;
     }
 
+    LOG_INFO("Sound added to buffer successfully: {}", soundPath);
+
     this->_sounds.push_back(soundBuffer);
 
     return soundBuffer;
