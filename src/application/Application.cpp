@@ -98,9 +98,13 @@ void Application::render() {
 }
 
 void Application::onResize(GLFWwindow *window, int width, int height) {
+    Scene &scene = SceneManager::getInstance().getScene();
+
     glViewport(0, 0, width, height);
 
     DisplayConfiguration::getInstance().updateResolution(width, height);
+
+    scene.updateProjectionMatrix(width, height);
 }
 
 } // namespace application

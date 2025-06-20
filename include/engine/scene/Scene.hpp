@@ -26,10 +26,14 @@ class Scene {
 
     virtual void load();
 
+    virtual void updateProjectionMatrix(int width, int height);
+
   protected:
     std::vector<Shader> _shaders;
 
     std::vector<Shape> _shapes;
+
+    glm::mat4 _projectionMatrix;
 };
 
 } // namespace engine::scene
