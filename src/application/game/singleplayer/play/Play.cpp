@@ -20,7 +20,13 @@ void Play::initialise() {
         this->_shaders.push_back(shader);
     }
 
+    this->create();
+
     this->load("data/beatmaps/1831596/3759718.osu");
+}
+
+void Play::create() {
+    this->_area.create();
 }
 
 void Play::load(const std::string &beatmapPath) {
@@ -37,6 +43,8 @@ void Play::render() {
 
 void Play::renderNotes() {
     Shader &shader = this->_shaders[0];
+
+    this->_shader = shader;
 
     shader.use();
 

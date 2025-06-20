@@ -23,7 +23,9 @@ class Application {
 
     void render();
 
-    static void onResize(GLFWwindow *window, int width, int height);
+    void setWindowSize(int width, int height);
+
+    void onResize(GLFWwindow *window, int width, int height);
 };
 
 } // namespace application

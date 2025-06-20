@@ -28,10 +28,14 @@ class Component {
 
     virtual std::vector<std::unique_ptr<Shape>> &getShapes();
 
+    virtual glm::vec2 getPosition();
+
     void addShape(std::unique_ptr<Shape> shape);
 
   protected:
     std::vector<std::unique_ptr<Shape>> _shapes;
+
+    glm::vec2 _position;
 };
 
 } // namespace component

@@ -47,7 +47,13 @@ void Application::initialise() {
         return;
     }
 
-    glfwSetFramebufferSizeCallback(window, Application::onResize);
+    glfwSetWindowUserPointer(window, this);
+
+    glfwSetFramebufferSizeCallback(window, [](GLFWwindow *window, int width, int height) {
+        Application *application = static_cast<Application *>(glfwGetWindowUserPointer(window));
+
+        application->onResize(window, width, height);
+    });
 
     this->_window = window;
 }
@@ -55,9 +61,16 @@ void Application::initialise() {
 void Application::load() {
     SceneManager::getInstance().setScene(std::make_unique<Play>());
 
-    Configuration &displayConfiguration = DisplayConfiguration::getInstance();
+    DisplayConfiguration &displayConfiguration = DisplayConfiguration::getInstance();
 
     displayConfiguration.load(".config/display.conf");
+
+    int width;
+    int height;
+
+    glfwGetFramebufferSize(this->_window, &width, &height);
+
+    this->setWindowSize(width, height);
 }
 
 void Application::run() {
@@ -90,7 +103,7 @@ void Application::update() {
 void Application::render() {
     Scene &scene = SceneManager::getInstance().getScene();
 
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -98,6 +111,10 @@ void Application::render() {
 }
 
 void Application::onResize(GLFWwindow *window, int width, int height) {
+    this->setWindowSize(width, height);
+}
+
+void Application::setWindowSize(int width, int height) {
     Scene &scene = SceneManager::getInstance().getScene();
 
     glViewport(0, 0, width, height);

@@ -10,8 +10,8 @@ namespace engine::shape::rectangle {
 
 class Rectangle final : public Shape {
   public:
-    Rectangle(glm::vec2 position);
-    Rectangle(float x, float y);
+    Rectangle(glm::vec2 position, float width, float height);
+    Rectangle(float x, float y, float width, float height);
 
     virtual ~Rectangle();
 
@@ -33,6 +33,9 @@ class Rectangle final : public Shape {
       0, 1, 2, 2, 0, 3,
     };
     // clang-format on
+
+    float _width;
+    float _height;
 
     void initialise();
 };

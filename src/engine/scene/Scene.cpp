@@ -8,6 +8,9 @@ Scene::Scene() : _projectionMatrix(glm::mat4(1.0f)) {};
 
 Scene::~Scene() = default;
 
+void Scene::create() {
+}
+
 void Scene::load() {
 }
 

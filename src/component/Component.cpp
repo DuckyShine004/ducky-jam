@@ -26,4 +26,8 @@ std::vector<std::unique_ptr<Shape>> &Component::getShapes() {
     return this->_shapes;
 }
 
+glm::vec2 Component::getPosition() {
+    return this->_position;
+}
+
 } // namespace component

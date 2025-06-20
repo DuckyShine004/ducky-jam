@@ -20,6 +20,17 @@ void Area::create() {
 void Area::load(const std::string &beatmapPath) {
     this->_beatmapParser.parse(beatmapPath);
 
+    std::vector<HitObject> hitObjects = this->_beatmapParser.getHitObjects();
+
+    // for (HitObject &hitObject : hitObjects) {
+    for (int i = 0; i < 1; i++) {
+        // int lane = hitObject.getLane();
+
+        std::unique_ptr<Note> note = std::make_unique<Note>(0.0f, 0.0f, 128.0f, 48.0f);
+
+        this->_lanes[0]->addNote(std::move(note));
+    }
+
     generateMesh();
 }
 
@@ -28,7 +39,7 @@ void Area::update(float deltaTime) {
         lane->update(deltaTime);
     }
 
-    this->_noteModel = glm::translate(this->_noteModel, glm::vec3(0.0f, -0.01f, 0.0f));
+    this->_noteModel = glm::translate(this->_noteModel, glm::vec3(0.0f, 0.001f, 0.0f));
 }
 
 void Area::generateMesh() {

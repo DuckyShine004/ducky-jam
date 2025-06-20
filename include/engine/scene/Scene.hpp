@@ -24,6 +24,8 @@ class Scene {
 
     virtual void render() = 0;
 
+    virtual void create();
+
     virtual void load();
 
     virtual void updateProjectionMatrix(int width, int height);

@@ -10,11 +10,12 @@ constexpr float Rectangle::_VERTICES[];
 
 constexpr unsigned int Rectangle::_INDICES[];
 
-Rectangle::Rectangle(glm::vec2 position) : Shape(position) {
+Rectangle::Rectangle(glm::vec2 position, float width, float height) : Shape(position), _width(width), _height(height) {
     this->initialise();
 }
 
-Rectangle::Rectangle(float x, float y) : Rectangle(glm::vec2(x, y)) {
+Rectangle::Rectangle(float x, float y, float width, float height) : Shape(glm::vec2(x, y)), _width(width), _height(height) {
+    this->initialise();
 }
 
 Rectangle::~Rectangle() = default;
@@ -23,7 +24,15 @@ void Rectangle::initialise() {
     this->_vertices = ConvertUtility::convertToVectorFloat1D(this->_VERTICES);
     this->_indices = ConvertUtility::convertToVectorUnsignedInt1D(this->_INDICES);
 
-    this->translate(this->_position);
+    for (int i = 0; i < 12; i += 3) {
+        this->_vertices[i] += 0.5f;
+        this->_vertices[i + 1] += 0.5f;
+    }
+
+    for (int i = 0; i < 12; i += 3) {
+        this->_vertices[i] = this->_vertices[i] * this->_width + this->_position.x;
+        this->_vertices[i + 1] = this->_vertices[i + 1] * this->_height + this->_position.y;
+    }
 }
 
 void Rectangle::translate(glm::vec2 offset) {

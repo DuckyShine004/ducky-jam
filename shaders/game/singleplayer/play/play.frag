@@ -1,7 +1,7 @@
 #version 330 core
 
-out vec4 fragmentColour;
+out vec4 oFragmentColour;
 
 void main() {
-    fragmentColour = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+    oFragmentColour = vec4(0.0f, 1.0f, 0.0f, 1.0f);
 }
