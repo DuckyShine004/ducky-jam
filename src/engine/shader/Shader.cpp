@@ -12,6 +12,8 @@ using namespace utility::file;
 
 namespace engine::shader {
 
+Shader::Shader() = default;
+
 Shader::Shader(const std::string &name) : _name(name) {
     this->_name = name;
 }
