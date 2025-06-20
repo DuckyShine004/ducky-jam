@@ -2,9 +2,13 @@
 
 #include <application/game/singleplayer/play/Play.hpp>
 
+#include <engine/sound/SoundPlayer.hpp>
+#include <engine/sound/SoundBuffer.hpp>
+
 #include <iostream>
 
-// remember to create asset pool to load all shaders first
+using namespace engine::sound;
+
 namespace application::game::singleplayer::play {
 
 Play::Play() : Scene() {

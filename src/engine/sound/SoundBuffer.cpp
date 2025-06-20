@@ -125,6 +125,7 @@ ALuint SoundBuffer::addSound(const char *soundPath) {
 }
 
 bool SoundBuffer::removeSound(const ALuint &sound) {
+    return false;
 }
 
 } // namespace engine::sound
