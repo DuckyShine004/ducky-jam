@@ -9,6 +9,7 @@ file(GLOB_RECURSE DUCKY_JAM_SOURCES
 )
 
 find_package(fmt REQUIRED)
+find_package(OpenAL REQUIRED)
 
 add_executable(ducky_jam ${DUCKY_JAM_SOURCES})
 
@@ -25,5 +26,6 @@ target_compile_definitions(ducky_jam
 target_link_libraries(ducky_jam
     PRIVATE
     glfw
+    OpenAL::OpenAL
     fmt
 )
