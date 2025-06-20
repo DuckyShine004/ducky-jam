@@ -10,6 +10,8 @@ namespace engine::shader {
 
 class Shader {
   public:
+    Shader();
+
     Shader(const std::string &name);
 
     void initialise();

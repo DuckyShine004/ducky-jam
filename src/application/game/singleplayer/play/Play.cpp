@@ -40,7 +40,8 @@ void Play::renderNotes() {
 
     shader.use();
 
-    shader.setMatrix4fv("model", this->_area.getNoteModel());
+    shader.setMatrix4fv("uModel", this->_area.getNoteModel());
+    shader.setMatrix4fv("uProjection", this->_projectionMatrix);
 
     Mesh &noteMesh = this->_area.getNoteMesh();
 

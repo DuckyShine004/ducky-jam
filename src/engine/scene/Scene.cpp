@@ -12,7 +12,9 @@ void Scene::load() {
 }
 
 void Scene::updateProjectionMatrix(int width, int height) {
-    _projectionMatrix = glm::ortho(0.0f, (float)width, 0.0f, (float)height, -1.0f, 1.0f);
+    this->_projectionMatrix = glm::ortho(0.0f, (float)width, 0.0f, (float)height, -1.0f, 1.0f);
+
+    this->_shader.setMatrix4fv("uProjection", this->_projectionMatrix);
 }
 
 } // namespace engine::scene

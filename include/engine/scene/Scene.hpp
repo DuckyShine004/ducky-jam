@@ -33,6 +33,8 @@ class Scene {
 
     std::vector<Shape> _shapes;
 
+    Shader _shader;
+
     glm::mat4 _projectionMatrix;
 };
 
