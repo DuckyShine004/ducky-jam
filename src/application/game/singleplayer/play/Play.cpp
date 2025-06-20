@@ -22,7 +22,7 @@ void Play::initialise() {
 
     this->create();
 
-    this->load("data/beatmaps/1831596/3759718.osu");
+    this->load("data/beatmaps/1831596/3759718/beatmap.osu");
 }
 
 void Play::create() {
