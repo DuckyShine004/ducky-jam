@@ -1,7 +1,5 @@
 #pragma once
 
-#include <engine/sound/Sound.hpp>
-
 #include <AL/alc.h>
 
 #include <string>
@@ -10,18 +8,20 @@ namespace engine::sound {
 
 class SoundPlayer {
   public:
-    SoundPlayer();
+    SoundPlayer(const SoundPlayer &) = delete;
 
-    void cleanup();
+    SoundPlayer &operator=(const SoundPlayer &) = delete;
+
+    static SoundPlayer &getInstance();
 
   private:
-    Sound _music;
+    SoundPlayer();
+
+    ~SoundPlayer();
 
     ALCdevice *_device;
 
     ALCcontext *_context;
-
-    void initialise();
 };
 
 } // namespace engine::sound

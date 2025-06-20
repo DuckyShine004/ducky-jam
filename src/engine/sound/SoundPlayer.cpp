@@ -2,11 +2,13 @@
 
 namespace engine::sound {
 
-SoundPlayer::SoundPlayer() {
-    this->initialise();
+SoundPlayer &SoundPlayer::getInstance() {
+    static SoundPlayer instance;
+
+    return instance;
 }
 
-void SoundPlayer::initialise() {
+SoundPlayer::SoundPlayer() {
     const ALCchar *deviceName = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
 
     this->_device = alcOpenDevice(deviceName);
@@ -16,10 +18,12 @@ void SoundPlayer::initialise() {
     alcMakeContextCurrent(this->_context);
 }
 
-void SoundPlayer::cleanup() {
+SoundPlayer::~SoundPlayer() {
+    alcMakeContextCurrent(nullptr);
+
     alcDestroyContext(this->_context);
 
     alcCloseDevice(this->_device);
-}
+};
 
 } // namespace engine::sound
