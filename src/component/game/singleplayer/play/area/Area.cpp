@@ -24,7 +24,7 @@ void Area::load(const std::string &beatmapPath) {
 
     // Get the correct height offset based on the skin height, fps, scroll speed, bpm, and start time
     // for (HitObject &hitObject : hitObjects) {
-    float scrollSpeed = 10.0f;
+    float scrollSpeed = 15.0f;
 
     float fps = 155.0f;
 
@@ -56,7 +56,7 @@ void Area::update(float deltaTime) {
         lane->update(deltaTime);
     }
 
-    this->_noteModel = glm::translate(this->_noteModel, glm::vec3(0.0f, -10.0f, 0.0f));
+    this->_noteModel = glm::translate(this->_noteModel, glm::vec3(0.0f, -15.0f, 0.0f));
 }
 
 void Area::generateMesh() {
