@@ -25,13 +25,9 @@ SoundBuffer::~SoundBuffer() {
 }
 
 ALuint SoundBuffer::addSound(const char *soundPath) {
-    ALenum error;
-
     SNDFILE *soundFile;
 
     SF_INFO soundFileInfo;
-
-    short *memoryBuffer;
 
     if (!this->setSoundFile(soundPath, soundFile, soundFileInfo)) {
         return 0;
@@ -43,7 +39,7 @@ ALuint SoundBuffer::addSound(const char *soundPath) {
         return 0;
     }
 
-    memoryBuffer = this->getMemoryBuffer(soundFileInfo);
+    short *memoryBuffer = this->getMemoryBuffer(soundFileInfo);
 
     sf_count_t numberOfFrames;
 
@@ -57,15 +53,7 @@ ALuint SoundBuffer::addSound(const char *soundPath) {
         return 0;
     }
 
-    error = alGetError();
-
-    if (error != AL_NO_ERROR) {
-        LOG_ERROR("OpenAL Error: {}", alGetString(error));
-
-        if (soundBuffer && alIsBuffer(soundBuffer)) {
-            alDeleteBuffers(1, &soundBuffer);
-        }
-
+    if (this->isSoundError(soundBuffer)) {
         return 0;
     }
 
@@ -184,6 +172,22 @@ bool SoundBuffer::setSoundBuffer(ALuint &soundBuffer, SNDFILE *soundFile, const 
     sf_close(soundFile);
 
     return true;
+}
+
+bool SoundBuffer::isSoundError(ALuint soundBuffer) {
+    ALenum error = alGetError();
+
+    if (error != AL_NO_ERROR) {
+        LOG_ERROR("OpenAL Error: {}", alGetString(error));
+
+        if (soundBuffer && alIsBuffer(soundBuffer)) {
+            alDeleteBuffers(1, &soundBuffer);
+        }
+
+        return true;
+    }
+
+    return false;
 }
 
 } // namespace engine::sound

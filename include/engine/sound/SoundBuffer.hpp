@@ -35,6 +35,8 @@ class SoundBuffer {
 
     bool setSoundBuffer(ALuint &soundBuffer, SNDFILE *soundFile, const SF_INFO &soundFileInfo, ALenum &format, sf_count_t &numberOfFrames, short *memoryBuffer);
 
+    bool isSoundError(ALuint soundBuffer);
+
     std::vector<ALuint> _sounds;
 };
 
