@@ -4,8 +4,6 @@
 
 #include <AL/alext.h>
 
-#include <sndfile.h>
-
 #include <cstdlib>
 
 namespace engine::sound {
@@ -28,7 +26,6 @@ SoundBuffer::~SoundBuffer() {
 
 ALuint SoundBuffer::addSound(const char *soundPath) {
     ALenum error;
-    ALenum format;
 
     ALuint soundBuffer;
 
@@ -42,35 +39,17 @@ ALuint SoundBuffer::addSound(const char *soundPath) {
 
     short *memoryBuffer;
 
-    if (!setSoundFile(soundPath, soundFile, soundFileInfo)) {
+    if (!this->setSoundFile(soundPath, soundFile, soundFileInfo)) {
         return 0;
     }
 
-    format = AL_NONE;
+    ALenum format;
 
-    if (soundFileInfo.channels == 1) {
-        format = AL_FORMAT_MONO16;
-    } else if (soundFileInfo.channels == 2) {
-        format = AL_FORMAT_STEREO16;
-    } else if (soundFileInfo.channels == 3) {
-        if (sf_command(soundFile, SFC_WAVEX_GET_AMBISONIC, nullptr, 0) == SF_AMBISONIC_B_FORMAT) {
-            format = AL_FORMAT_BFORMAT2D_16;
-        }
-    } else if (soundFileInfo.channels == 4) {
-        if (sf_command(soundFile, SFC_WAVEX_GET_AMBISONIC, nullptr, 0) == SF_AMBISONIC_B_FORMAT) {
-            format = AL_FORMAT_BFORMAT3D_16;
-        }
-    }
-
-    if (!format) {
-        LOG_ERROR("Unsupported channel count: {}", soundFileInfo.channels);
-
-        sf_close(soundFile);
-
+    if (!this->setSoundFormat(format, soundFile, soundFileInfo)) {
         return 0;
     }
 
-    memoryBuffer = static_cast<short *>(malloc((size_t)(soundFileInfo.frames * soundFileInfo.channels) * sizeof(short)));
+    memoryBuffer = this->getMemoryBuffer(soundFileInfo);
 
     frames = sf_readf_short(soundFile, memoryBuffer, soundFileInfo.frames);
 
@@ -118,6 +97,16 @@ bool SoundBuffer::removeSound(const ALuint &sound) {
     return false;
 }
 
+short *SoundBuffer::getMemoryBuffer(const SF_INFO &soundFileInfo) {
+    int channels = soundFileInfo.channels;
+
+    sf_count_t frames = soundFileInfo.frames;
+
+    size_t memoryBufferSize = (size_t)(frames * channels) * sizeof(short);
+
+    return static_cast<short *>(malloc(memoryBufferSize));
+}
+
 bool SoundBuffer::setSoundFile(const char *soundPath, SNDFILE *&soundFile, SF_INFO &soundFileInfo) {
     soundFile = sf_open(soundPath, SFM_READ, &soundFileInfo);
 
@@ -127,9 +116,9 @@ bool SoundBuffer::setSoundFile(const char *soundPath, SNDFILE *&soundFile, SF_IN
         return false;
     }
 
-    sf_count_t frames = soundFileInfo.frames;
-
     int channels = soundFileInfo.channels;
+
+    sf_count_t frames = soundFileInfo.frames;
 
     unsigned long maxFrames = INT_MAX / (sizeof(short) * channels);
 
@@ -142,6 +131,45 @@ bool SoundBuffer::setSoundFile(const char *soundPath, SNDFILE *&soundFile, SF_IN
     }
 
     return true;
+}
+
+bool SoundBuffer::setSoundFormat(ALenum &format, SNDFILE *soundFile, const SF_INFO &soundFileInfo) {
+    int channels = soundFileInfo.channels;
+
+    switch (channels) {
+    case 1:
+        format = AL_FORMAT_MONO16;
+
+        return true;
+    case 2:
+        format = AL_FORMAT_STEREO16;
+
+        return true;
+    case 3:
+        if (sf_command(soundFile, SFC_WAVEX_GET_AMBISONIC, nullptr, 0) == SF_AMBISONIC_B_FORMAT) {
+            format = AL_FORMAT_BFORMAT2D_16;
+
+            return true;
+        }
+
+        break;
+    case 4:
+        if (sf_command(soundFile, SFC_WAVEX_GET_AMBISONIC, nullptr, 0) == SF_AMBISONIC_B_FORMAT) {
+            format = AL_FORMAT_BFORMAT3D_16;
+
+            return true;
+        }
+
+        break;
+    }
+
+    format = AL_NONE;
+
+    LOG_ERROR("Unsupported channel count: {}", channels);
+
+    sf_close(soundFile);
+
+    return false;
 }
 
 } // namespace engine::sound

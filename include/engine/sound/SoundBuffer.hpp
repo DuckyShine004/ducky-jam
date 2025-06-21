@@ -25,7 +25,11 @@ class SoundBuffer {
 
     ~SoundBuffer();
 
+    short *getMemoryBuffer(const SF_INFO &soundFileInfo);
+
     bool setSoundFile(const char *soundPath, SNDFILE *&soundFile, SF_INFO &soundFileInfo);
+
+    bool setSoundFormat(ALenum &format, SNDFILE *soundFile, const SF_INFO &soundFileInfo);
 
     std::vector<ALuint> _sounds;
 };
