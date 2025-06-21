@@ -42,19 +42,7 @@ ALuint SoundBuffer::addSound(const char *soundPath) {
 
     short *memoryBuffer;
 
-    soundFile = sf_open(soundPath, SFM_READ, &soundFileInfo);
-
-    if (!soundFile) {
-        LOG_ERROR("Could not open audio in {}: {}", soundPath, sf_strerror(soundFile));
-
-        return 0;
-    }
-
-    if (soundFileInfo.frames < 1 || soundFileInfo.frames > (sf_count_t)(INT_MAX / sizeof(short)) / soundFileInfo.channels) {
-        LOG_ERROR("Bad sample count in {} {}", soundPath, soundFileInfo.frames);
-
-        sf_close(soundFile);
-
+    if (!setSoundFile(soundPath, soundFile, soundFileInfo)) {
         return 0;
     }
 
@@ -128,6 +116,32 @@ ALuint SoundBuffer::addSound(const char *soundPath) {
 
 bool SoundBuffer::removeSound(const ALuint &sound) {
     return false;
+}
+
+bool SoundBuffer::setSoundFile(const char *soundPath, SNDFILE *&soundFile, SF_INFO &soundFileInfo) {
+    soundFile = sf_open(soundPath, SFM_READ, &soundFileInfo);
+
+    if (!soundFile) {
+        LOG_ERROR("Could not open audio in {}: {}", soundPath, sf_strerror(soundFile));
+
+        return false;
+    }
+
+    sf_count_t frames = soundFileInfo.frames;
+
+    int channels = soundFileInfo.channels;
+
+    unsigned long maxFrames = INT_MAX / (sizeof(short) * channels);
+
+    if (frames < 1 || frames > maxFrames) {
+        LOG_ERROR("Bad sample count in {} {}", soundPath, frames);
+
+        sf_close(soundFile);
+
+        return false;
+    }
+
+    return true;
 }
 
 } // namespace engine::sound

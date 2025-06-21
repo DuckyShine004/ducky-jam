@@ -16,9 +16,7 @@ Play::Play() : Scene() {
 }
 
 void Play::initialise() {
-    // SoundPlayer &soundPlayer = SoundPlayer::getInstance();
-
-    ALuint soundId = SoundBuffer::getInstance().addSound("data/beatmaps/1831596/3759718/bg.ogg");
+    ALuint soundId = SoundBuffer::getInstance().addSound("data/beatmaps/1831596/3759718/bgm.mp3");
 
     this->_source.play(soundId);
 

@@ -2,6 +2,8 @@
 
 #include <AL/al.h>
 
+#include <sndfile.h>
+
 #include <vector>
 
 namespace engine::sound {
@@ -22,6 +24,8 @@ class SoundBuffer {
     SoundBuffer();
 
     ~SoundBuffer();
+
+    bool setSoundFile(const char *soundPath, SNDFILE *&soundFile, SF_INFO &soundFileInfo);
 
     std::vector<ALuint> _sounds;
 };
