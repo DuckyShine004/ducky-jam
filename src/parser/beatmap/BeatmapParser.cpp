@@ -28,9 +28,7 @@ void BeatmapParser::parse(const std::string &path) {
     while (std::getline(file, line)) {
         line = StringUtility::trim(line);
 
-        if (line == "[HitObjects]") {
-            addHitObjects(file);
-        }
+        this->parseLine(line, file);
     }
 }
 
@@ -38,12 +36,16 @@ std::vector<HitObject> BeatmapParser::getHitObjects() {
     return this->_hitObjects;
 }
 
-std::vector<int> BeatmapParser::getHitObjectValues(const std::string &line) {
+std::vector<TimingPoint> BeatmapParser::getTimingPoints() {
+    return this->_timingPoints;
+}
+
+std::vector<std::string> BeatmapParser::getHitObjectValues(const std::string &line) {
     std::stringstream stream(line);
 
     std::string token;
 
-    std::vector<int> hitObjectValues;
+    std::vector<std::string> hitObjectValues;
 
     int index = 0;
 
@@ -51,15 +53,43 @@ std::vector<int> BeatmapParser::getHitObjectValues(const std::string &line) {
 
     while (std::getline(stream, token, ',')) {
         if (!(BitUtility::isBitSet(index, this->_HIT_OBJECT_IGNORE_FLAGS))) {
-            int value = std::stoi(token);
-
-            hitObjectValues.push_back(value);
+            hitObjectValues.push_back(token);
         }
 
         ++index;
     }
 
     return hitObjectValues;
+}
+
+std::vector<std::string> BeatmapParser::getTimingPointValues(const std::string &line) {
+    std::stringstream stream(line);
+
+    std::string token;
+
+    std::vector<std::string> timingPointValues;
+
+    int index = 0;
+
+    timingPointValues.reserve(4);
+
+    while (std::getline(stream, token, ',')) {
+        if (!(BitUtility::isBitSet(index, this->_TIMING_POINT_IGNORE_FLAGS))) {
+            timingPointValues.push_back(token);
+        }
+
+        ++index;
+    }
+
+    return timingPointValues;
+}
+
+void BeatmapParser::parseLine(const std::string &line, std::ifstream &file) {
+    if (line == "[TimingPoints]") {
+        this->addTimingPoints(file);
+    } else if (line == "[HitObjects]") {
+        this->addHitObjects(file);
+    }
 }
 
 void BeatmapParser::addHitObjects(std::ifstream &file) {
@@ -75,13 +105,13 @@ void BeatmapParser::addHitObjects(std::ifstream &file) {
             break;
         }
 
-        std::vector<int> hitObjectValues = this->getHitObjectValues(line);
+        std::vector<std::string> hitObjectValues = this->getHitObjectValues(line);
 
-        int x = hitObjectValues[0];
-        int y = hitObjectValues[1];
-        int startTime = hitObjectValues[2];
-        int type = hitObjectValues[3];
-        int endTime = hitObjectValues[4];
+        int x = stoi(hitObjectValues[0]);
+        int y = stoi(hitObjectValues[1]);
+        int startTime = stoi(hitObjectValues[2]);
+        int type = stoi(hitObjectValues[3]);
+        int endTime = stoi(hitObjectValues[4]);
 
         if (x < first) {
             second = first;
@@ -104,6 +134,29 @@ void BeatmapParser::addHitObjects(std::ifstream &file) {
 
     for (HitObject &hitObject : this->_hitObjects) {
         hitObject.calculateLane(offset, size);
+    }
+}
+
+void BeatmapParser::addTimingPoints(std::ifstream &file) {
+    std::string line;
+
+    while (std::getline(file, line)) {
+        line = StringUtility::trim(line);
+
+        if (line.empty()) {
+            break;
+        }
+
+        std::vector<std::string> timingPointValues = this->getTimingPointValues(line);
+
+        int time = std::stoi(timingPointValues[0]);
+        float beatLength = std::stof(timingPointValues[1]);
+        int meter = std::stoi(timingPointValues[2]);
+        bool isInherited = StringUtility::stob(timingPointValues[3]);
+
+        TimingPoint timingPoint(time, beatLength, meter, isInherited);
+
+        this->_timingPoints.push_back(timingPoint);
     }
 }
 

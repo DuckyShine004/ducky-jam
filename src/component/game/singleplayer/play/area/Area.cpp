@@ -22,6 +22,8 @@ void Area::load(const std::string &beatmapPath) {
 
     std::vector<HitObject> hitObjects = this->_beatmapParser.getHitObjects();
 
+    std::vector<TimingPoint> timingPoints = this->_beatmapParser.getTimingPoints();
+
     // Get the correct height offset based on the skin height, fps, scroll speed, bpm, and start time
     // for (HitObject &hitObject : hitObjects) {
     float scrollSpeed = 15.0f;
@@ -34,6 +36,7 @@ void Area::load(const std::string &beatmapPath) {
 
     // Suppose fps = 60hz, then scrollSpeed*fps=px/s or 1px/(1/60)ms
     // y = 1*60, 60px/second
+    float offset = pxPerMs * fps;
 
     for (HitObject &hitObject : hitObjects) {
         int lane = hitObject.getLane();
@@ -41,7 +44,7 @@ void Area::load(const std::string &beatmapPath) {
         int startTime = hitObject.getStartTime();
 
         float x = lane * width;
-        float y = pxPerMs * startTime;
+        float y = pxPerMs * startTime + offset;
 
         std::unique_ptr<Note> note = std::make_unique<Note>(x, y, 128.0f, 48.0f);
 

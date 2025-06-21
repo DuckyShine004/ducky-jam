@@ -10,4 +10,8 @@ std::string StringUtility::trim(std::string string) {
     return string;
 }
 
+bool StringUtility::stob(std::string string) {
+    return string == "1";
+}
+
 } // namespace utility::string

@@ -97,7 +97,7 @@ void Application::update() {
     ++this->_framesPerSecond;
 
     if (deltaTime >= 1.0f) {
-        LOG_DEBUG("FPS: {}", this->_framesPerSecond);
+        // LOG_DEBUG("FPS: {}", this->_framesPerSecond);
 
         this->_framesPerSecond = 0.0f;
 

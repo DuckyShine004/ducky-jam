@@ -3,6 +3,7 @@
 namespace parser::beatmap {
 
 class TimingPoint {
+  public:
     TimingPoint(int time, float beatLength, int meter, bool isInherited);
 
     int getTime();
