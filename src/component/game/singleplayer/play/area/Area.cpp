@@ -10,7 +10,7 @@ Area::Area() : _noteModel(glm::mat4(1.0f)) {
 }
 
 void Area::create() {
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 7; i++) {
         std::unique_ptr<Lane> lane = std::make_unique<Lane>();
 
         this->_lanes.push_back(std::move(lane));
@@ -24,12 +24,28 @@ void Area::load(const std::string &beatmapPath) {
 
     // Get the correct height offset based on the skin height, fps, scroll speed, bpm, and start time
     // for (HitObject &hitObject : hitObjects) {
-    for (int i = 0; i < 1; i++) {
-        // int lane = hitObject.getLane();
+    float scrollSpeed = 10.0f;
 
-        std::unique_ptr<Note> note = std::make_unique<Note>(0.0f, 0.0f, 128.0f, 48.0f);
+    float fps = 155.0f;
 
-        this->_lanes[0]->addNote(std::move(note));
+    float pxPerMs = fps * scrollSpeed * 0.001f;
+
+    float width = 128.0f;
+
+    // Suppose fps = 60hz, then scrollSpeed*fps=px/s or 1px/(1/60)ms
+    // y = 1*60, 60px/second
+
+    for (HitObject &hitObject : hitObjects) {
+        int lane = hitObject.getLane();
+
+        int startTime = hitObject.getStartTime();
+
+        float x = lane * width;
+        float y = pxPerMs * startTime;
+
+        std::unique_ptr<Note> note = std::make_unique<Note>(x, y, 128.0f, 48.0f);
+
+        this->_lanes[lane]->addNote(std::move(note));
     }
 
     generateMesh();
@@ -40,7 +56,7 @@ void Area::update(float deltaTime) {
         lane->update(deltaTime);
     }
 
-    this->_noteModel = glm::translate(this->_noteModel, glm::vec3(0.0f, 1.0f, 0.0f));
+    this->_noteModel = glm::translate(this->_noteModel, glm::vec3(0.0f, -10.0f, 0.0f));
 }
 
 void Area::generateMesh() {

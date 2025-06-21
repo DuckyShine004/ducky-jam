@@ -10,6 +10,8 @@
 
 #include <configuration/display/DisplayConfiguration.hpp>
 
+#include <logger/LoggerMacros.hpp>
+
 #include <iostream>
 
 using namespace manager;
@@ -22,7 +24,8 @@ using namespace application::game::singleplayer::play;
 
 namespace application {
 
-Application::Application() = default;
+Application::Application() : _lastTime(0.0f), _framesPerSecond(0.0f) {
+}
 
 void Application::initialise() {
     glfwInit();
@@ -74,8 +77,6 @@ void Application::load() {
 }
 
 void Application::run() {
-    this->_lastTime = 0.0f;
-
     while (!glfwWindowShouldClose(this->_window)) {
         this->update();
 
@@ -93,11 +94,19 @@ void Application::update() {
 
     float deltaTime = time - this->_lastTime;
 
+    ++this->_framesPerSecond;
+
+    if (deltaTime >= 1.0f) {
+        LOG_DEBUG("FPS: {}", this->_framesPerSecond);
+
+        this->_framesPerSecond = 0.0f;
+
+        this->_lastTime = time;
+    }
+
     Scene &scene = SceneManager::getInstance().getScene();
 
     scene.update(deltaTime);
-
-    this->_lastTime = time;
 }
 
 void Application::render() {
