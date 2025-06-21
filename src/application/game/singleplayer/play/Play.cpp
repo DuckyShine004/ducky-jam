@@ -2,9 +2,13 @@
 
 #include <application/game/singleplayer/play/Play.hpp>
 
+#include <engine/sound/SoundPlayer.hpp>
+#include <engine/sound/SoundBuffer.hpp>
+
 #include <iostream>
 
-// remember to create asset pool to load all shaders first
+using namespace engine::sound;
+
 namespace application::game::singleplayer::play {
 
 Play::Play() : Scene() {
@@ -12,6 +16,10 @@ Play::Play() : Scene() {
 }
 
 void Play::initialise() {
+    ALuint soundId = SoundBuffer::getInstance().addSound("data/beatmaps/1831596/3759718/bgm.mp3");
+
+    this->_source.play(soundId);
+
     for (const char *shaderName : this->_SHADER_NAMES) {
         Shader shader(shaderName);
 

@@ -2,9 +2,13 @@
 
 #include <engine/scene/Scene.hpp>
 
+#include <engine/sound/SoundSource.hpp>
+
 #include <component/game/singleplayer/play/area/Area.hpp>
 
 using namespace engine::scene;
+
+using namespace engine::sound;
 
 using namespace component::game::singleplayer::play::area;
 
@@ -30,6 +34,8 @@ class Play final : public Scene {
     };
 
     Area _area;
+
+    SoundSource _source;
 
     void renderNotes();
 };
