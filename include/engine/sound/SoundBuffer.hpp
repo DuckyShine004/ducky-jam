@@ -31,6 +31,10 @@ class SoundBuffer {
 
     bool setSoundFormat(ALenum &format, SNDFILE *soundFile, const SF_INFO &soundFileInfo);
 
+    bool setNumberOfFrames(sf_count_t &numberOfFrames, SNDFILE *soundFile, const SF_INFO &soundFileInfo, short *memoryBuffer);
+
+    bool setSoundBuffer(ALuint &soundBuffer, SNDFILE *soundFile, const SF_INFO &soundFileInfo, ALenum &format, sf_count_t &numberOfFrames, short *memoryBuffer);
+
     std::vector<ALuint> _sounds;
 };
 

@@ -27,15 +27,9 @@ SoundBuffer::~SoundBuffer() {
 ALuint SoundBuffer::addSound(const char *soundPath) {
     ALenum error;
 
-    ALuint soundBuffer;
-
     SNDFILE *soundFile;
 
     SF_INFO soundFileInfo;
-
-    sf_count_t frames;
-
-    ALsizei bytes;
 
     short *memoryBuffer;
 
@@ -51,28 +45,17 @@ ALuint SoundBuffer::addSound(const char *soundPath) {
 
     memoryBuffer = this->getMemoryBuffer(soundFileInfo);
 
-    frames = sf_readf_short(soundFile, memoryBuffer, soundFileInfo.frames);
+    sf_count_t numberOfFrames;
 
-    if (frames < 1) {
-        free(memoryBuffer);
-
-        sf_close(soundFile);
-
-        LOG_ERROR("Failed to read samples in {} {}", soundPath, frames);
-
+    if (!this->setNumberOfFrames(numberOfFrames, soundFile, soundFileInfo, memoryBuffer)) {
         return 0;
     }
 
-    bytes = (ALsizei)(frames * soundFileInfo.channels) * (ALsizei)sizeof(short);
+    ALuint soundBuffer;
 
-    soundBuffer = 0;
-
-    alGenBuffers(1, &soundBuffer);
-    alBufferData(soundBuffer, format, memoryBuffer, bytes, soundFileInfo.samplerate);
-
-    free(memoryBuffer);
-
-    sf_close(soundFile);
+    if (!this->setSoundBuffer(soundBuffer, soundFile, soundFileInfo, format, numberOfFrames, memoryBuffer)) {
+        return 0;
+    }
 
     error = alGetError();
 
@@ -170,6 +153,37 @@ bool SoundBuffer::setSoundFormat(ALenum &format, SNDFILE *soundFile, const SF_IN
     sf_close(soundFile);
 
     return false;
+}
+
+bool SoundBuffer::setNumberOfFrames(sf_count_t &numberOfFrames, SNDFILE *soundFile, const SF_INFO &soundFileInfo, short *memoryBuffer) {
+    numberOfFrames = sf_readf_short(soundFile, memoryBuffer, soundFileInfo.frames);
+
+    if (numberOfFrames < 1) {
+        free(memoryBuffer);
+
+        sf_close(soundFile);
+
+        LOG_ERROR("Failed to read sound file frames");
+
+        return false;
+    }
+
+    return true;
+}
+
+bool SoundBuffer::setSoundBuffer(ALuint &soundBuffer, SNDFILE *soundFile, const SF_INFO &soundFileInfo, ALenum &format, sf_count_t &numberOfFrames, short *memoryBuffer) {
+    ALsizei numberOfBytes = (ALsizei)(numberOfFrames * soundFileInfo.channels) * (ALsizei)sizeof(short);
+
+    soundBuffer = 0;
+
+    alGenBuffers(1, &soundBuffer);
+    alBufferData(soundBuffer, format, memoryBuffer, numberOfBytes, soundFileInfo.samplerate);
+
+    free(memoryBuffer);
+
+    sf_close(soundFile);
+
+    return true;
 }
 
 } // namespace engine::sound
