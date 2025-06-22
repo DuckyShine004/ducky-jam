@@ -2,13 +2,7 @@
 
 namespace engine::mesh {
 
-Mesh::Mesh() {
-    this->_vertexCount = 0;
-
-    this->_indexCount = 0;
-
-    this->_isInitialised = false;
-};
+Mesh::Mesh() : _vertexCount(0), _indexCount(0), _colourCount(0), _isInitialised(false) {};
 
 void Mesh::initialise(GLenum primitive, GLenum usage) {
     if (this->_isInitialised) {
@@ -29,17 +23,36 @@ void Mesh::initialise(GLenum primitive, GLenum usage) {
     glBindBuffer(GL_ARRAY_BUFFER, this->_vbo);
     glBufferData(GL_ARRAY_BUFFER, 0, nullptr, usage);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->_ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 0, nullptr, usage);
-
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, this->_cbo);
+    glBufferData(GL_ARRAY_BUFFER, 0, nullptr, usage);
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->_ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 0, nullptr, usage);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     glBindVertexArray(0);
 
     this->_isInitialised = true;
+}
+
+void Mesh::setColours(std::vector<float> colours) {
+    this->_colours = colours;
+
+    size_t colourCount = colours.size();
+
+    glBindBuffer(GL_ARRAY_BUFFER, this->_cbo);
+    glBufferData(GL_ARRAY_BUFFER, colourCount * sizeof(float), colours.data(), this->_usage);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    this->_colourCount = colourCount;
 }
 
 void Mesh::setVertices(std::vector<float> vertices) {
@@ -74,6 +87,10 @@ void Mesh::setUsage(GLenum usage) {
     this->_usage = usage;
 }
 
+std::vector<float> &Mesh::getColours() {
+    return this->_colours;
+}
+
 std::vector<float> &Mesh::getVertices() {
     return this->_vertices;
 }
@@ -94,12 +111,20 @@ GLuint Mesh::getVao() {
     return this->_vao;
 }
 
+GLuint Mesh::getCbo() {
+    return this->_cbo;
+}
+
 std::size_t Mesh::getVertexCount() {
     return this->_vertexCount;
 }
 
 std::size_t Mesh::getIndexCount() {
     return this->_indexCount;
+}
+
+std::size_t Mesh::getColourCount() {
+    return this->_colourCount;
 }
 
 } // namespace engine::mesh
