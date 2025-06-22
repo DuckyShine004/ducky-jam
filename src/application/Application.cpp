@@ -34,7 +34,7 @@ void Application::initialise() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow *window = glfwCreateWindow(1080, 720, "Ducky Jam", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(1920, 1080, "Ducky Jam", nullptr, nullptr);
 
     if (window == nullptr) {
         std::cout << "Failed to create window" << std::endl;
@@ -77,6 +77,8 @@ void Application::load() {
 }
 
 void Application::run() {
+    glfwSwapInterval(1);
+
     while (!glfwWindowShouldClose(this->_window)) {
         this->update();
 
