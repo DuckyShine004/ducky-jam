@@ -25,15 +25,15 @@ class SoundBuffer {
 
     ~SoundBuffer();
 
-    short *getMemoryBuffer(const SF_INFO &soundFileInfo);
+    float *getMemoryBuffer(const SF_INFO &soundFileInfo);
 
     bool setSoundFile(const char *soundPath, SNDFILE *&soundFile, SF_INFO &soundFileInfo);
 
     bool setSoundFormat(ALenum &format, SNDFILE *soundFile, const SF_INFO &soundFileInfo);
 
-    bool setNumberOfFrames(sf_count_t &numberOfFrames, SNDFILE *soundFile, const SF_INFO &soundFileInfo, short *memoryBuffer);
+    bool setNumberOfFrames(sf_count_t &numberOfFrames, SNDFILE *soundFile, const SF_INFO &soundFileInfo, float *memoryBuffer);
 
-    bool setSoundBuffer(ALuint &soundBuffer, SNDFILE *soundFile, const SF_INFO &soundFileInfo, ALenum &format, sf_count_t &numberOfFrames, short *memoryBuffer);
+    bool setSoundBuffer(ALuint &soundBuffer, SNDFILE *soundFile, const SF_INFO &soundFileInfo, ALenum &format, sf_count_t &numberOfFrames, float *memoryBuffer);
 
     bool isSoundError(ALuint soundBuffer);
 

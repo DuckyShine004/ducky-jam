@@ -16,6 +16,7 @@ void Mesh::initialise(GLenum primitive, GLenum usage) {
     glGenVertexArrays(1, &this->_vao);
 
     glGenBuffers(1, &this->_vbo);
+    glGenBuffers(1, &this->_cbo);
     glGenBuffers(1, &this->_ebo);
 
     glBindVertexArray(this->_vao);

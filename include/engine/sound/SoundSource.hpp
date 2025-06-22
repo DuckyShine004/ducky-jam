@@ -13,7 +13,7 @@ class SoundSource {
     void play(const ALuint soundBuffer);
 
   private:
-    static constexpr float _GAIN = 1.0f;
+    static constexpr float _GAIN = 0.3f;
     static constexpr float _PITCH = 1.0f;
 
     static constexpr float _POSITION[3] = {0, 0, 0};
