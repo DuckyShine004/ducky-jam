@@ -16,8 +16,8 @@ Play::Play() : Scene() {
 }
 
 void Play::initialise() {
-    ALuint soundId = SoundBuffer::getInstance().addSound("data/beatmaps/2325151/4983858/bgm.mp3");
-    // ALuint soundId = SoundBuffer::getInstance().addSound("data/beatmaps/1831596/3759718/bgm.mp3");
+    ALuint soundId = SoundBuffer::getInstance().addSound("data/beatmaps/421541/948777/bgm.mp3");
+    // ALuint soundId = SoundBuffer::getInstance().addSound("data/beatmaps/2325151/4983858/bgm.mp3");
 
     this->_source.play(soundId);
 
@@ -31,7 +31,8 @@ void Play::initialise() {
 
     this->create();
 
-    this->load("data/beatmaps/2325151/4983858/beatmap.osu");
+    this->load("data/beatmaps/421541/948777/beatmap.osu");
+    // this->load("data/beatmaps/2325151/4983858/beatmap.osu");
 }
 
 void Play::create() {
