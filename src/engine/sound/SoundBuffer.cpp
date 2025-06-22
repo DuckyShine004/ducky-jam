@@ -39,7 +39,7 @@ ALuint SoundBuffer::addSound(const char *soundPath) {
         return 0;
     }
 
-    short *memoryBuffer = this->getMemoryBuffer(soundFileInfo);
+    float *memoryBuffer = this->getMemoryBuffer(soundFileInfo);
 
     sf_count_t numberOfFrames;
 
@@ -68,14 +68,14 @@ bool SoundBuffer::removeSound(const ALuint &sound) {
     return false;
 }
 
-short *SoundBuffer::getMemoryBuffer(const SF_INFO &soundFileInfo) {
+float *SoundBuffer::getMemoryBuffer(const SF_INFO &soundFileInfo) {
     int channels = soundFileInfo.channels;
 
     sf_count_t frames = soundFileInfo.frames;
 
-    size_t memoryBufferSize = (size_t)(frames * channels) * sizeof(short);
+    size_t memoryBufferSize = (size_t)(frames * channels) * sizeof(float);
 
-    return static_cast<short *>(malloc(memoryBufferSize));
+    return static_cast<float *>(malloc(memoryBufferSize));
 }
 
 bool SoundBuffer::setSoundFile(const char *soundPath, SNDFILE *&soundFile, SF_INFO &soundFileInfo) {
@@ -91,7 +91,7 @@ bool SoundBuffer::setSoundFile(const char *soundPath, SNDFILE *&soundFile, SF_IN
 
     sf_count_t frames = soundFileInfo.frames;
 
-    unsigned long maxFrames = INT_MAX / (sizeof(short) * channels);
+    auto maxFrames = INT_MAX / (sizeof(float) * channels);
 
     if (frames < 1 || frames > maxFrames) {
         LOG_ERROR("Bad sample count in {} {}", soundPath, frames);
@@ -109,16 +109,16 @@ bool SoundBuffer::setSoundFormat(ALenum &format, SNDFILE *soundFile, const SF_IN
 
     switch (channels) {
     case 1:
-        format = AL_FORMAT_MONO16;
+        format = AL_FORMAT_MONO_FLOAT32;
 
         return true;
     case 2:
-        format = AL_FORMAT_STEREO16;
+        format = AL_FORMAT_STEREO_FLOAT32;
 
         return true;
     case 3:
         if (sf_command(soundFile, SFC_WAVEX_GET_AMBISONIC, nullptr, 0) == SF_AMBISONIC_B_FORMAT) {
-            format = AL_FORMAT_BFORMAT2D_16;
+            format = AL_FORMAT_BFORMAT2D_FLOAT32;
 
             return true;
         }
@@ -126,7 +126,7 @@ bool SoundBuffer::setSoundFormat(ALenum &format, SNDFILE *soundFile, const SF_IN
         break;
     case 4:
         if (sf_command(soundFile, SFC_WAVEX_GET_AMBISONIC, nullptr, 0) == SF_AMBISONIC_B_FORMAT) {
-            format = AL_FORMAT_BFORMAT3D_16;
+            format = AL_FORMAT_BFORMAT3D_FLOAT32;
 
             return true;
         }
@@ -143,8 +143,8 @@ bool SoundBuffer::setSoundFormat(ALenum &format, SNDFILE *soundFile, const SF_IN
     return false;
 }
 
-bool SoundBuffer::setNumberOfFrames(sf_count_t &numberOfFrames, SNDFILE *soundFile, const SF_INFO &soundFileInfo, short *memoryBuffer) {
-    numberOfFrames = sf_readf_short(soundFile, memoryBuffer, soundFileInfo.frames);
+bool SoundBuffer::setNumberOfFrames(sf_count_t &numberOfFrames, SNDFILE *soundFile, const SF_INFO &soundFileInfo, float *memoryBuffer) {
+    numberOfFrames = sf_readf_float(soundFile, memoryBuffer, soundFileInfo.frames);
 
     if (numberOfFrames < 1) {
         free(memoryBuffer);
@@ -159,8 +159,8 @@ bool SoundBuffer::setNumberOfFrames(sf_count_t &numberOfFrames, SNDFILE *soundFi
     return true;
 }
 
-bool SoundBuffer::setSoundBuffer(ALuint &soundBuffer, SNDFILE *soundFile, const SF_INFO &soundFileInfo, ALenum &format, sf_count_t &numberOfFrames, short *memoryBuffer) {
-    ALsizei numberOfBytes = (ALsizei)(numberOfFrames * soundFileInfo.channels) * (ALsizei)sizeof(short);
+bool SoundBuffer::setSoundBuffer(ALuint &soundBuffer, SNDFILE *soundFile, const SF_INFO &soundFileInfo, ALenum &format, sf_count_t &numberOfFrames, float *memoryBuffer) {
+    ALsizei numberOfBytes = (ALsizei)(numberOfFrames * soundFileInfo.channels) * (ALsizei)sizeof(float);
 
     soundBuffer = 0;
 

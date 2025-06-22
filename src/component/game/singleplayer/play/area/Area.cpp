@@ -10,7 +10,7 @@ Area::Area() : _noteModel(glm::mat4(1.0f)) {
 }
 
 void Area::create() {
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 7; i++) {
         std::unique_ptr<Lane> lane = std::make_unique<Lane>();
 
         this->_lanes.push_back(std::move(lane));
@@ -22,14 +22,36 @@ void Area::load(const std::string &beatmapPath) {
 
     std::vector<HitObject> hitObjects = this->_beatmapParser.getHitObjects();
 
+    std::vector<TimingPoint> timingPoints = this->_beatmapParser.getTimingPoints();
+
     // Get the correct height offset based on the skin height, fps, scroll speed, bpm, and start time
     // for (HitObject &hitObject : hitObjects) {
-    for (int i = 0; i < 1; i++) {
-        // int lane = hitObject.getLane();
+    float scrollSpeed = 20.0f;
 
-        std::unique_ptr<Note> note = std::make_unique<Note>(0.0f, 0.0f, 128.0f, 48.0f);
+    float fps = 155.0f;
 
-        this->_lanes[0]->addNote(std::move(note));
+    float pxPerMs = fps * scrollSpeed * 0.001f;
+
+    float width = 128.0f;
+
+    // Suppose fps = 60hz, then scrollSpeed*fps=px/s or 1px/(1/60)ms
+    // y = 1*60, 60px/second
+    float offset = pxPerMs * fps;
+
+    for (HitObject &hitObject : hitObjects) {
+        int lane = hitObject.getLane();
+
+        int startTime = hitObject.getStartTime();
+        int endTime = hitObject.getEndTime();
+
+        float x = lane * width;
+        float y = pxPerMs * startTime;
+
+        float height = (endTime == 0) ? 48.0f : (endTime - startTime) * pxPerMs;
+
+        std::unique_ptr<Note> note = std::make_unique<Note>(x, y, 128.0f, height);
+
+        this->_lanes[lane]->addNote(std::move(note));
     }
 
     generateMesh();
@@ -40,7 +62,7 @@ void Area::update(float deltaTime) {
         lane->update(deltaTime);
     }
 
-    this->_noteModel = glm::translate(this->_noteModel, glm::vec3(0.0f, 1.0f, 0.0f));
+    this->_noteModel = glm::translate(this->_noteModel, glm::vec3(0.0f, -20.0f, 0.0f));
 }
 
 void Area::generateMesh() {
@@ -50,6 +72,7 @@ void Area::generateMesh() {
 void Area::generateNoteMesh() {
     this->_noteMesh.initialise(GL_TRIANGLES, GL_DYNAMIC_DRAW);
 
+    std::vector<float> colours;
     std::vector<float> vertices;
     std::vector<unsigned int> indices;
 
@@ -72,6 +95,8 @@ void Area::generateNoteMesh() {
 
     size_t offset = 0;
 
+    int laneIndex = 0;
+
     for (std::unique_ptr<Lane> &lane : this->_lanes) {
         std::vector<std::unique_ptr<Note>> &notes = lane->getNotes();
 
@@ -82,6 +107,30 @@ void Area::generateNoteMesh() {
             const std::vector<unsigned int> &noteIndices = shapes[0]->getIndices();
 
             vertices.insert(vertices.end(), noteVertices.begin(), noteVertices.end());
+            glm::vec3 laneColour;
+
+            switch (laneIndex) {
+            case 0:
+            case 2:
+            case 4:
+            case 6:
+                laneColour = {1.0f, 1.0f, 1.0f}; // white
+                break;
+            case 1:
+            case 5:
+                laneColour = {0.208f, 0.784f, 1.0f}; // blue
+                break;
+            case 3:
+                laneColour = {0.996f, 0.827f, 0.212f}; // yellow
+                break;
+            }
+
+            size_t nVerts = noteVertices.size() / 3;
+            for (size_t v = 0; v < nVerts; ++v) {
+                colours.push_back(laneColour.r);
+                colours.push_back(laneColour.g);
+                colours.push_back(laneColour.b);
+            }
 
             for (unsigned int index : noteIndices) {
                 indices.push_back(index + offset);
@@ -89,10 +138,12 @@ void Area::generateNoteMesh() {
 
             offset += noteVertices.size() / 3;
         }
+        ++laneIndex;
     }
 
     this->_noteMesh.setVertices(vertices);
     this->_noteMesh.setIndices(indices);
+    this->_noteMesh.setColours(colours);
 }
 
 Mesh &Area::getNoteMesh() {

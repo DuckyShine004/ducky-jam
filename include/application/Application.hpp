@@ -19,6 +19,8 @@ class Application {
 
     float _lastTime;
 
+    float _framesPerSecond;
+
     void update();
 
     void render();

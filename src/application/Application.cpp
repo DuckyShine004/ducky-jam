@@ -10,6 +10,8 @@
 
 #include <configuration/display/DisplayConfiguration.hpp>
 
+#include <logger/LoggerMacros.hpp>
+
 #include <iostream>
 
 using namespace manager;
@@ -22,7 +24,8 @@ using namespace application::game::singleplayer::play;
 
 namespace application {
 
-Application::Application() = default;
+Application::Application() : _lastTime(0.0f), _framesPerSecond(0.0f) {
+}
 
 void Application::initialise() {
     glfwInit();
@@ -31,7 +34,7 @@ void Application::initialise() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow *window = glfwCreateWindow(1080, 720, "Ducky Jam", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(1920, 1080, "Ducky Jam", nullptr, nullptr);
 
     if (window == nullptr) {
         std::cout << "Failed to create window" << std::endl;
@@ -74,7 +77,7 @@ void Application::load() {
 }
 
 void Application::run() {
-    this->_lastTime = 0.0f;
+    glfwSwapInterval(1);
 
     while (!glfwWindowShouldClose(this->_window)) {
         this->update();
@@ -93,11 +96,19 @@ void Application::update() {
 
     float deltaTime = time - this->_lastTime;
 
+    ++this->_framesPerSecond;
+
+    if (deltaTime >= 1.0f) {
+        // LOG_DEBUG("FPS: {}", this->_framesPerSecond);
+
+        this->_framesPerSecond = 0.0f;
+
+        this->_lastTime = time;
+    }
+
     Scene &scene = SceneManager::getInstance().getScene();
 
     scene.update(deltaTime);
-
-    this->_lastTime = time;
 }
 
 void Application::render() {
