@@ -1,5 +1,9 @@
 #include <external/glad/glad.h>
 
+#include "external/imgui/imgui.h"
+#include "external/imgui/imgui_impl_glfw.h"
+#include "external/imgui/imgui_impl_opengl3.h"
+
 #include <application/Application.hpp>
 
 #include <manager/SceneManager.hpp>
@@ -59,6 +63,18 @@ void Application::initialise() {
     });
 
     this->_window = window;
+
+    // Initialise IMGUI after gl
+    IMGUI_CHECKVERSION();
+
+    ImGui::CreateContext();
+
+    ImGuiIO &io = ImGui::GetIO();
+    (void)io;
+    ImGui::StyleColorsDark();
+
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
 }
 
 void Application::load() {
@@ -88,6 +104,10 @@ void Application::run() {
         glfwPollEvents();
     }
 
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
     glfwTerminate();
 }
 
@@ -95,16 +115,6 @@ void Application::update() {
     float time = glfwGetTime();
 
     float deltaTime = time - this->_lastTime;
-
-    ++this->_framesPerSecond;
-
-    if (deltaTime >= 1.0f) {
-        // LOG_DEBUG("FPS: {}", this->_framesPerSecond);
-
-        this->_framesPerSecond = 0.0f;
-
-        this->_lastTime = time;
-    }
 
     Scene &scene = SceneManager::getInstance().getScene();
 
@@ -116,9 +126,31 @@ void Application::render() {
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
 
     scene.render();
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 8.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, IM_COL32(50, 50, 50, 200));
+    ImGui::PushStyleColor(ImGuiCol_Border, IM_COL32(0, 0, 0, 0));
+
+    ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always);
+    ImGui::Begin("##fps_overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav);
+    ImGui::TextColored(ImVec4(1, 1, 1, 1), "FPS: %.1f", ImGui::GetIO().Framerate);
+    ImGui::End();
+
+    ImGui::PopStyleColor();
+    ImGui::PopStyleColor();
+    ImGui::PopStyleVar();
+    ImGui::PopStyleVar();
+
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 void Application::onResize(GLFWwindow *window, int width, int height) {
