@@ -6,7 +6,7 @@
 
 namespace component::game::singleplayer::play::area {
 
-Area::Area() : _noteModel(glm::mat4(1.0f)) {
+Area::Area() : _noteModel(glm::mat4(1.0f)), _notes(0) {
 }
 
 void Area::create() {
@@ -52,6 +52,8 @@ void Area::load(const std::string &beatmapPath) {
         std::unique_ptr<Note> note = std::make_unique<Note>(x, y, 128.0f, height);
 
         this->_lanes[lane]->addNote(std::move(note));
+
+        this->_notes++;
     }
 
     generateMesh();
@@ -70,28 +72,20 @@ void Area::generateMesh() {
 }
 
 void Area::generateNoteMesh() {
-    this->_noteMesh.initialise(GL_TRIANGLES, GL_DYNAMIC_DRAW);
+    this->_noteMesh.initialise(GL_TRIANGLES, GL_DYNAMIC_DRAW, this->_notes);
 
-    std::vector<float> colours;
-    std::vector<float> vertices;
-    std::vector<unsigned int> indices;
+    std::vector<Instance> instances;
 
-    size_t totalVertexCount = 0;
-    size_t totalIndexCount = 0;
+    std::vector<float> quadVerts = {
+        -0.5f, 0.5f, 0.0f, -0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.5f, 0.5f, 0.0f,
+    };
+    std::vector<unsigned int> quadIdx = {
+        0, 1, 2, 2, 3, 0,
+    };
+    this->_noteMesh.setVertices(quadVerts);
+    this->_noteMesh.setIndices(quadIdx);
 
-    for (std::unique_ptr<Lane> &lane : this->_lanes) {
-        std::vector<std::unique_ptr<Note>> &notes = lane->getNotes();
-
-        for (std::unique_ptr<Note> &note : notes) {
-            std::vector<std::unique_ptr<Shape>> &shapes = note->getShapes();
-
-            totalVertexCount += shapes[0]->getVertices().size();
-            totalIndexCount += shapes[0]->getIndices().size();
-        }
-    }
-
-    vertices.reserve(totalVertexCount);
-    indices.reserve(totalIndexCount);
+    instances.reserve(this->_notes);
 
     size_t offset = 0;
 
@@ -103,10 +97,6 @@ void Area::generateNoteMesh() {
         for (std::unique_ptr<Note> &note : notes) {
             std::vector<std::unique_ptr<Shape>> &shapes = note->getShapes();
 
-            const std::vector<float> &noteVertices = shapes[0]->getVertices();
-            const std::vector<unsigned int> &noteIndices = shapes[0]->getIndices();
-
-            vertices.insert(vertices.end(), noteVertices.begin(), noteVertices.end());
             glm::vec3 laneColour;
 
             switch (laneIndex) {
@@ -125,25 +115,12 @@ void Area::generateNoteMesh() {
                 break;
             }
 
-            size_t nVerts = noteVertices.size() / 3;
-            for (size_t v = 0; v < nVerts; ++v) {
-                colours.push_back(laneColour.r);
-                colours.push_back(laneColour.g);
-                colours.push_back(laneColour.b);
-            }
-
-            for (unsigned int index : noteIndices) {
-                indices.push_back(index + offset);
-            }
-
-            offset += noteVertices.size() / 3;
+            instances.push_back({note->getPosition(), note->getSize(), laneColour});
         }
         ++laneIndex;
     }
 
-    this->_noteMesh.setVertices(vertices);
-    this->_noteMesh.setIndices(indices);
-    this->_noteMesh.setColours(colours);
+    this->_noteMesh.setInstances(instances);
 }
 
 Mesh &Area::getNoteMesh() {

@@ -2,6 +2,8 @@
 
 #include <external/glad/glad.h>
 
+#include "engine/mesh/Instance.hpp"
+
 #include <vector>
 
 namespace engine::mesh {
@@ -10,23 +12,23 @@ class Mesh {
   public:
     Mesh();
 
-    void initialise(GLenum primitive, GLenum usage);
-
-    void setColours(std::vector<float> colours);
+    void initialise(GLenum primitive, GLenum usage, int notes);
 
     void setVertices(std::vector<float> vertices);
 
     void setIndices(std::vector<unsigned int> indices);
 
+    void setInstances(std::vector<Instance> instances);
+
     void setPrimitive(GLenum primitive);
 
     void setUsage(GLenum usage);
 
-    std::vector<float> &getColours();
-
     std::vector<float> &getVertices();
 
     std::vector<unsigned int> &getIndices();
+
+    std::vector<Instance> &getInstances();
 
     GLenum getPrimitive();
 
@@ -34,23 +36,24 @@ class Mesh {
 
     GLuint getVao();
 
-    GLuint getCbo();
+    GLuint getInstanceVbo();
 
     std::size_t getVertexCount();
 
     std::size_t getIndexCount();
 
-    std::size_t getColourCount();
+    std::size_t getInstanceCount();
 
   private:
-    std::vector<float> _colours;
     std::vector<float> _vertices;
 
     std::vector<unsigned int> _indices;
 
+    std::vector<Instance> _instances;
+
     std::size_t _vertexCount;
     std::size_t _indexCount;
-    std::size_t _colourCount;
+    std::size_t _instanceCount;
 
     GLenum _primitive;
 
@@ -58,8 +61,8 @@ class Mesh {
 
     GLuint _vao;
     GLuint _vbo;
-    GLuint _cbo;
     GLuint _ebo;
+    GLuint _instanceVbo;
 
     bool _isInitialised;
 };

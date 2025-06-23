@@ -69,7 +69,7 @@ void Play::renderNotes() {
 
     glBindVertexArray(noteMesh.getVao());
 
-    glDrawElements(noteMesh.getPrimitive(), noteMesh.getIndexCount(), GL_UNSIGNED_INT, 0);
+    glDrawElementsInstanced(noteMesh.getPrimitive(), noteMesh.getIndexCount(), GL_UNSIGNED_INT, nullptr, noteMesh.getInstanceCount());
 
     glBindVertexArray(0);
 }
