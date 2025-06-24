@@ -31,4 +31,12 @@ void SoundSource::play(const ALuint buffer) {
     alSourcePlay(this->_source);
 }
 
+float SoundSource::getPosition() {
+    ALfloat position = 0.0f;
+
+    alGetSourcef(this->_source, AL_SEC_OFFSET, &position);
+
+    return position * 1000.0f;
+}
+
 } // namespace engine::sound
