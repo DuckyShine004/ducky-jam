@@ -12,9 +12,13 @@ class Note final : public Component {
 
     void update(float deltaTime) override;
 
+    glm::vec2 getSize();
+
   private:
     float _width;
     float _height;
+
+    glm::vec2 _size;
 };
 
 } // namespace component::game::singleplayer::play::area

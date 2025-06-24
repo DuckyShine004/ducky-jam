@@ -42,3 +42,6 @@ build/
 
 # Unnecessary Data
 data/beatmaps/
+
+# ImGUI
+imgui.ini
