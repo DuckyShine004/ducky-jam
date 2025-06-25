@@ -42,6 +42,8 @@ class Area final : public Component {
     glm::mat4 _noteModel;
 
     int _notes;
+
+    bool isNoteInBound(std::unique_ptr<Note> note);
 };
 
 } // namespace component::game::singleplayer::play::area

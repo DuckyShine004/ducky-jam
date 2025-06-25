@@ -134,4 +134,9 @@ glm::mat4 &Area::getNoteModel() {
     return this->_noteModel;
 }
 
+bool Area::isNoteInBound(std::unique_ptr<Note> note) {
+    // float startTime = (float)note->getStartTime() - position
+    return false;
+}
+
 } // namespace component::game::singleplayer::play::area
