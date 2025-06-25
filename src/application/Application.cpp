@@ -93,7 +93,7 @@ void Application::load() {
 }
 
 void Application::run() {
-    glfwSwapInterval(1);
+    glfwSwapInterval(0);
 
     while (!glfwWindowShouldClose(this->_window)) {
         this->update();

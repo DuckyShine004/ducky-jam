@@ -24,19 +24,7 @@ void Area::load(const std::string &beatmapPath) {
 
     std::vector<TimingPoint> timingPoints = this->_beatmapParser.getTimingPoints();
 
-    // Get the correct height offset based on the skin height, fps, scroll speed, bpm, and start time
-    // for (HitObject &hitObject : hitObjects) {
-    float scrollSpeed = 20.0f;
-
-    float fps = 155.0f;
-
-    float pxPerMs = fps * scrollSpeed * 0.001f;
-
     float width = 128.0f;
-
-    // Suppose fps = 60hz, then scrollSpeed*fps=px/s or 1px/(1/60)ms
-    // y = 1*60, 60px/second
-    float offset = pxPerMs * fps;
 
     for (HitObject &hitObject : hitObjects) {
         int lane = hitObject.getLane();
@@ -45,18 +33,22 @@ void Area::load(const std::string &beatmapPath) {
         int endTime = hitObject.getEndTime();
 
         float x = lane * width;
-        float y = pxPerMs * startTime;
 
-        float height = (endTime == 0) ? 48.0f : (endTime - startTime) * pxPerMs;
-
-        std::unique_ptr<Note> note = std::make_unique<Note>(x, y, 128.0f, height);
+        std::unique_ptr<Note> note = std::make_unique<Note>(x, width, startTime, endTime);
 
         this->_lanes[lane]->addNote(std::move(note));
 
         this->_notes++;
     }
-
-    generateMesh();
+    this->_noteMesh.initialise(GL_TRIANGLES, GL_DYNAMIC_DRAW, this->_notes);
+    std::vector<float> quadVerts = {
+        -0.5f, 0.5f, 0.0f, -0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.5f, 0.5f, 0.0f,
+    };
+    std::vector<unsigned int> quadIdx = {
+        0, 1, 2, 2, 3, 0,
+    };
+    this->_noteMesh.setVertices(quadVerts);
+    this->_noteMesh.setIndices(quadIdx);
 }
 
 void Area::update(float deltaTime) {
@@ -67,35 +59,42 @@ void Area::update(float deltaTime) {
     this->_noteModel = glm::translate(this->_noteModel, glm::vec3(0.0f, -20.0f, 0.0f));
 }
 
-void Area::generateMesh() {
-    generateNoteMesh();
-}
-
-void Area::generateNoteMesh() {
-    this->_noteMesh.initialise(GL_TRIANGLES, GL_DYNAMIC_DRAW, this->_notes);
+void Area::generateNoteMesh(SoundSource &source) {
 
     std::vector<Instance> instances;
 
-    std::vector<float> quadVerts = {
-        -0.5f, 0.5f, 0.0f, -0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.5f, 0.5f, 0.0f,
-    };
-    std::vector<unsigned int> quadIdx = {
-        0, 1, 2, 2, 3, 0,
-    };
-    this->_noteMesh.setVertices(quadVerts);
-    this->_noteMesh.setIndices(quadIdx);
-
     instances.reserve(this->_notes);
 
-    size_t offset = 0;
-
     int laneIndex = 0;
+
+    float position = source.getPosition();
+
+    float scrollSpeed = 3000.0f;
+
+    float pxPerMs = scrollSpeed * 0.001f;
+
+    float offsetMs = 300.0f;
 
     for (std::unique_ptr<Lane> &lane : this->_lanes) {
         std::vector<std::unique_ptr<Note>> &notes = lane->getNotes();
 
         for (std::unique_ptr<Note> &note : notes) {
-            std::vector<std::unique_ptr<Shape>> &shapes = note->getShapes();
+            // Calculate the offset
+            float startTime = (float)note->getStartTime() - position + offsetMs;
+            float endTime = (note->getEndTime() == 0) ? 0.0f : (float)note->getEndTime() - position + offsetMs;
+
+            // Calculate the actual y value
+            float y = pxPerMs * startTime;
+            float height = (endTime == 0) ? 48.0f : (endTime - startTime) * pxPerMs;
+            float endY = y + height;
+
+            // Calculate bounds
+            if (y + height <= 0 || y > 1440) {
+                continue;
+            }
+
+            note->setY(y);
+            note->setHeight(height);
 
             glm::vec3 laneColour;
 

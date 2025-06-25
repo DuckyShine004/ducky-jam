@@ -6,17 +6,19 @@ namespace component::game::singleplayer::play::area {
 
 class Note final : public Component {
   public:
-    Note(float x, float y, float width, float height);
+    Note(float x, float width, int startTime, int endTime);
 
-    void create() override;
+    int getStartTime();
 
-    void update(float deltaTime) override;
+    int getEndTime();
 
     glm::vec2 getSize();
 
+    void setHeight(float height);
+
   private:
-    float _width;
-    float _height;
+    int _startTime;
+    int _endTime;
 
     glm::vec2 _size;
 };

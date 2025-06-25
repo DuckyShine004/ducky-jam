@@ -32,6 +32,10 @@ class Component {
 
     void addShape(std::unique_ptr<Shape> shape);
 
+    virtual void setX(float x);
+
+    virtual void setY(float y);
+
   protected:
     std::vector<std::unique_ptr<Shape>> _shapes;
 
