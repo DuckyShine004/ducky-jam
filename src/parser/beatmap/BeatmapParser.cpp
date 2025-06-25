@@ -9,6 +9,7 @@
 #include <logger/LoggerMacros.hpp>
 
 #include <limits>
+#include <sstream>
 #include <fstream>
 
 using namespace utility::string;
