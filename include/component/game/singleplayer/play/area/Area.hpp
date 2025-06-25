@@ -30,16 +30,12 @@ class Area final : public Component {
 
     std::vector<std::unique_ptr<Lane>> &getLanes();
 
-    glm::mat4 &getNoteModel();
-
   private:
     Mesh _noteMesh;
 
     BeatmapParser _beatmapParser;
 
     std::vector<std::unique_ptr<Lane>> _lanes;
-
-    glm::mat4 _noteModel;
 
     int _notes;
 

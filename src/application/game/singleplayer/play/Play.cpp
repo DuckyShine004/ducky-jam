@@ -66,7 +66,6 @@ void Play::renderNotes() {
 
     shader.use();
 
-    shader.setMatrix4fv("uModel", this->_area.getNoteModel());
     shader.setMatrix4fv("uProjection", this->_projectionMatrix);
 
     this->_area.generateNoteMesh(this->_source);

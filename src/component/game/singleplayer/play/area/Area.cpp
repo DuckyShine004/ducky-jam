@@ -55,8 +55,6 @@ void Area::update(float deltaTime) {
     for (std::unique_ptr<Lane> &lane : this->_lanes) {
         lane->update(deltaTime);
     }
-
-    this->_noteModel = glm::translate(this->_noteModel, glm::vec3(0.0f, -20.0f, 0.0f));
 }
 
 void Area::generateNoteMesh(SoundSource &source) {
