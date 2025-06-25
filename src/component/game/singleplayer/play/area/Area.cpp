@@ -1,12 +1,18 @@
 #include <component/game/singleplayer/play/area/Area.hpp>
 
-#include <glm/gtc/matrix_transform.hpp>
+#include "configuration/sound/SoundConfiguration.hpp"
+
+#include "configuration/display/DisplayConfiguration.hpp"
 
 #include <iostream>
 
+using namespace configuration::sound;
+
+using namespace configuration::display;
+
 namespace component::game::singleplayer::play::area {
 
-Area::Area() : _noteModel(glm::mat4(1.0f)), _notes(0) {
+Area::Area() : _notes(0) {
 }
 
 void Area::create() {
@@ -58,7 +64,6 @@ void Area::update(float deltaTime) {
 }
 
 void Area::generateNoteMesh(SoundSource &source) {
-
     std::vector<Instance> instances;
 
     instances.reserve(this->_notes);
@@ -67,27 +72,14 @@ void Area::generateNoteMesh(SoundSource &source) {
 
     float position = source.getPosition();
 
-    float scrollSpeed = 3000.0f;
-
-    float pxPerMs = scrollSpeed * 0.001f;
-
-    float offsetMs = 100.0f;
-
     for (std::unique_ptr<Lane> &lane : this->_lanes) {
         std::vector<std::unique_ptr<Note>> &notes = lane->getNotes();
 
         for (std::unique_ptr<Note> &note : notes) {
-            // Calculate the offset
-            float startTime = (float)note->getStartTime() - position + offsetMs;
-            float endTime = (note->getEndTime() == 0) ? 0.0f : (float)note->getEndTime() - position + offsetMs;
+            float y;
+            float height;
 
-            // Calculate the actual y value
-            float y = pxPerMs * startTime;
-            float height = (endTime == 0) ? 48.0f : (endTime - startTime) * pxPerMs;
-            float endY = y + height;
-
-            // Calculate bounds
-            if (y + height <= 0 || y > 1440) {
+            if (!this->isNoteInBound(note, position, y, height)) {
                 continue;
             }
 
@@ -114,6 +106,7 @@ void Area::generateNoteMesh(SoundSource &source) {
 
             instances.push_back({note->getPosition(), note->getSize(), laneColour});
         }
+
         ++laneIndex;
     }
 
@@ -128,13 +121,28 @@ std::vector<std::unique_ptr<Lane>> &Area::getLanes() {
     return this->_lanes;
 }
 
-glm::mat4 &Area::getNoteModel() {
-    return this->_noteModel;
-}
+bool Area::isNoteInBound(std::unique_ptr<Note> &note, float position, float &y, float &height) {
+    SoundConfiguration &soundConfiguration = SoundConfiguration::getInstance();
 
-bool Area::isNoteInBound(std::unique_ptr<Note> note) {
-    // float startTime = (float)note->getStartTime() - position
-    return false;
+    DisplayConfiguration &displayConfiguration = DisplayConfiguration::getInstance();
+
+    float offset = soundConfiguration.getOffset();
+    float scrollSpeed = soundConfiguration.getScrollSpeed();
+
+    float pixelsPerMs = scrollSpeed;
+
+    float startTime = (float)note->getStartTime() - position + offset;
+    float endTime = (note->getEndTime() == 0) ? 0.0f : (float)note->getEndTime() - position + offset;
+
+    y = pixelsPerMs * startTime;
+
+    height = (endTime == 0) ? 48.0f : (endTime - startTime) * pixelsPerMs;
+
+    if (y + height <= 0 || y > displayConfiguration.getHeight()) {
+        return false;
+    }
+
+    return true;
 }
 
 } // namespace component::game::singleplayer::play::area

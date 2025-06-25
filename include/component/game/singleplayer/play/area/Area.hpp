@@ -39,7 +39,7 @@ class Area final : public Component {
 
     int _notes;
 
-    bool isNoteInBound(std::unique_ptr<Note> note);
+    bool isNoteInBound(std::unique_ptr<Note> &note, float position, float &y, float &height);
 };
 
 } // namespace component::game::singleplayer::play::area

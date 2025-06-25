@@ -14,12 +14,18 @@ class SoundConfiguration final : public Configuration {
 
     float getScrollSpeed();
 
+    float getOffset();
+
     void setScrollSpeed(float scrollSpeed);
 
+    void setOffset(float offset);
+
   private:
-    static inline constexpr float _SCROLL_SPEED = 300.0f;
+    static inline constexpr float _SCROLL_SPEED = 3000.0f;
+    static inline constexpr float _OFFSET = 100.0f;
 
     float _scrollSpeed;
+    float _offset;
 
     SoundSource backgroundMusic;
 

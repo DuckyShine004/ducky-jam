@@ -13,6 +13,7 @@
 #include <configuration/Configuration.hpp>
 
 #include <configuration/display/DisplayConfiguration.hpp>
+#include <configuration/sound/SoundConfiguration.hpp>
 
 #include <logger/LoggerMacros.hpp>
 
@@ -23,6 +24,8 @@ using namespace manager;
 using namespace configuration;
 
 using namespace configuration::display;
+
+using namespace configuration::sound;
 
 using namespace application::game::singleplayer::play;
 
@@ -93,8 +96,10 @@ void Application::load() {
     SceneManager::getInstance().setScene(std::make_unique<Play>());
 
     DisplayConfiguration &displayConfiguration = DisplayConfiguration::getInstance();
+    SoundConfiguration &soundConfiguration = SoundConfiguration::getInstance();
 
     displayConfiguration.load(".config/display.conf");
+    soundConfiguration.load(".config/sound.conf");
 
     int width;
     int height;
