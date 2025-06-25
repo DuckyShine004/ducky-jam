@@ -73,7 +73,7 @@ void Area::generateNoteMesh(SoundSource &source) {
 
     float pxPerMs = scrollSpeed * 0.001f;
 
-    float offsetMs = 300.0f;
+    float offsetMs = 100.0f;
 
     for (std::unique_ptr<Lane> &lane : this->_lanes) {
         std::vector<std::unique_ptr<Note>> &notes = lane->getNotes();
