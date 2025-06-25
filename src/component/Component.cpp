@@ -30,4 +30,12 @@ glm::vec2 Component::getPosition() {
     return this->_position;
 }
 
+void Component::setX(float x) {
+    this->_position.x = x;
+}
+
+void Component::setY(float y) {
+    this->_position.y = y;
+}
+
 } // namespace component

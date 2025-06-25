@@ -4,7 +4,11 @@
 
 #include <component/game/singleplayer/play/area/Lane.hpp>
 
+#include "engine/sound/SoundSource.hpp"
+
 #include <parser/beatmap/BeatmapParser.hpp>
+
+using namespace engine::sound;
 
 using namespace parser::beatmap;
 
@@ -18,11 +22,9 @@ class Area final : public Component {
 
     void update(float deltaTime) override;
 
-    void generateMesh() override;
-
     void load(const std::string &beatmapPath);
 
-    void generateNoteMesh();
+    void generateNoteMesh(SoundSource &source);
 
     Mesh &getNoteMesh();
 

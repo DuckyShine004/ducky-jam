@@ -15,5 +15,5 @@ void main() {
 
     vec2 position = (iPosition + 0.5f).xy * iSize + iOffset;
 
-    gl_Position = uProjection * uModel * vec4(position, 0.0, 1.0);
+    gl_Position = uProjection * vec4(position, 0.0, 1.0);
 }

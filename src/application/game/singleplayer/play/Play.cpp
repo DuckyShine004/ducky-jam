@@ -19,9 +19,9 @@ void Play::initialise() {
     // ALuint soundId = SoundBuffer::getInstance().addSound("data/beatmaps/421541/948777/bgm.mp3");
     // ALuint soundId = SoundBuffer::getInstance().addSound("data/beatmaps/1831596/3759718/bgm.mp3");
     // ALuint soundId = SoundBuffer::getInstance().addSound("data/beatmaps/2325151/4983858/bgm.mp3");
-    // ALuint soundId = SoundBuffer::getInstance().addSound("data/beatmaps/2321277/4973089/bgm.mp3");
+    ALuint soundId = SoundBuffer::getInstance().addSound("data/beatmaps/2321277/4973089/bgm.mp3");
     // ALuint soundId = SoundBuffer::getInstance().addSound("data/beatmaps/974689/2220863/bgm.mp3");
-    ALuint soundId = SoundBuffer::getInstance().addSound("data/beatmaps/2099753/4404686/bgm.mp3");
+    // ALuint soundId = SoundBuffer::getInstance().addSound("data/beatmaps/2099753/4404686/bgm.mp3");
 
     this->_source.play(soundId);
 
@@ -38,9 +38,9 @@ void Play::initialise() {
     // this->load("data/beatmaps/421541/948777/beatmap.osu");
     // this->load("data/beatmaps/1831596/3759718/beatmap.osu");
     // this->load("data/beatmaps/2325151/4983858/beatmap.osu");
-    // this->load("data/beatmaps/2321277/4973089/beatmap.osu");
+    this->load("data/beatmaps/2321277/4973089/beatmap.osu");
     // this->load("data/beatmaps/974689/2220863/beatmap.osu");
-    this->load("data/beatmaps/2099753/4404686/beatmap.osu");
+    // this->load("data/beatmaps/2099753/4404686/beatmap.osu");
 }
 
 void Play::create() {
@@ -68,6 +68,8 @@ void Play::renderNotes() {
 
     shader.setMatrix4fv("uModel", this->_area.getNoteModel());
     shader.setMatrix4fv("uProjection", this->_projectionMatrix);
+
+    this->_area.generateNoteMesh(this->_source);
 
     Mesh &noteMesh = this->_area.getNoteMesh();
 
