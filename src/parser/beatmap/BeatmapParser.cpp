@@ -1,12 +1,10 @@
-// x, y, time, type, hitSound, endTime, hitSample
+#include "parser/beatmap/BeatmapParser.hpp"
 
-#include <parser/beatmap/BeatmapParser.hpp>
+#include "utility/string/StringUtility.hpp"
 
-#include <utility/string/StringUtility.hpp>
+#include "utility/bit/BitUtility.hpp"
 
-#include <utility/bit/BitUtility.hpp>
-
-#include <logger/LoggerMacros.hpp>
+#include "logger/LoggerMacros.hpp"
 
 #include <limits>
 #include <sstream>
@@ -31,6 +29,10 @@ void BeatmapParser::parse(const std::string &path) {
 
         this->parseLine(line, file);
     }
+}
+
+int BeatmapParser::getLanes() {
+    return this->_lanes;
 }
 
 std::vector<HitObject> BeatmapParser::getHitObjects() {

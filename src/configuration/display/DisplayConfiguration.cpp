@@ -1,6 +1,6 @@
-#include <configuration/display/DisplayConfiguration.hpp>
+#include "configuration/display/DisplayConfiguration.hpp"
 
-#include <utility/file/FileUtility.hpp>
+#include "utility/file/FileUtility.hpp"
 
 using namespace utility::file;
 

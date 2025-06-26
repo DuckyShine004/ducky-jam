@@ -13,6 +13,8 @@ class BeatmapParser final : public Parser {
 
     void parse(const std::string &path) override;
 
+    int getLanes();
+
     std::vector<HitObject> getHitObjects();
 
     std::vector<TimingPoint> getTimingPoints();
@@ -20,6 +22,8 @@ class BeatmapParser final : public Parser {
   private:
     static constexpr int _HIT_OBJECT_IGNORE_FLAGS = 0b1010000;
     static constexpr int _TIMING_POINT_IGNORE_FLAGS = 0b10111000;
+
+    int _lanes;
 
     std::vector<HitObject> _hitObjects;
 

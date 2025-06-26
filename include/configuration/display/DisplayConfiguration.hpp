@@ -1,6 +1,6 @@
 #pragma once
 
-#include <configuration/Configuration.hpp>
+#include "configuration/Configuration.hpp"
 
 namespace configuration::display {
 

@@ -5,6 +5,7 @@
 #include "configuration/display/DisplayConfiguration.hpp"
 
 #include <iostream>
+#include <vector>
 
 using namespace configuration::sound;
 
@@ -40,7 +41,9 @@ void Area::load(const std::string &beatmapPath) {
 
         float x = lane * width;
 
-        std::unique_ptr<Note> note = std::make_unique<Note>(x, width, startTime, endTime);
+        glm::vec3 colour = this->getNoteColour(lane);
+
+        std::unique_ptr<Note> note = std::make_unique<Note>(x, width, startTime, endTime, colour);
 
         this->_lanes[lane]->addNote(std::move(note));
 
@@ -88,9 +91,7 @@ void Area::generateNoteMesh(SoundSource &source) {
             note->setY(y);
             note->setHeight(height);
 
-            glm::vec3 noteColour = this->getNoteColour(laneIndex);
-
-            instances.push_back({note->getPosition(), note->getSize(), noteColour});
+            instances.push_back({note->getPosition(), note->getSize(), note->getColour()});
         }
 
         ++laneIndex;
