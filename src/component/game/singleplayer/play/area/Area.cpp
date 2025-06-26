@@ -79,32 +79,18 @@ void Area::generateNoteMesh(SoundSource &source) {
             float y;
             float height;
 
-            if (!this->isNoteInBound(note, position, y, height)) {
+            this->calculateNotePosition(note, position, y, height);
+
+            if (!this->isNoteInBound(y, height)) {
                 continue;
             }
 
             note->setY(y);
             note->setHeight(height);
 
-            glm::vec3 laneColour;
+            glm::vec3 noteColour = this->getNoteColour(laneIndex);
 
-            switch (laneIndex) {
-            case 0:
-            case 2:
-            case 4:
-            case 6:
-                laneColour = {1.0f, 1.0f, 1.0f}; // white
-                break;
-            case 1:
-            case 5:
-                laneColour = {0.208f, 0.784f, 1.0f}; // blue
-                break;
-            case 3:
-                laneColour = {0.996f, 0.827f, 0.212f}; // yellow
-                break;
-            }
-
-            instances.push_back({note->getPosition(), note->getSize(), laneColour});
+            instances.push_back({note->getPosition(), note->getSize(), noteColour});
         }
 
         ++laneIndex;
@@ -121,10 +107,8 @@ std::vector<std::unique_ptr<Lane>> &Area::getLanes() {
     return this->_lanes;
 }
 
-bool Area::isNoteInBound(std::unique_ptr<Note> &note, float position, float &y, float &height) {
+void Area::calculateNotePosition(std::unique_ptr<Note> &note, float position, float &y, float &height) {
     SoundConfiguration &soundConfiguration = SoundConfiguration::getInstance();
-
-    DisplayConfiguration &displayConfiguration = DisplayConfiguration::getInstance();
 
     float offset = soundConfiguration.getOffset();
     float scrollSpeed = soundConfiguration.getScrollSpeed();
@@ -137,12 +121,31 @@ bool Area::isNoteInBound(std::unique_ptr<Note> &note, float position, float &y, 
     y = pixelsPerMs * startTime;
 
     height = (endTime == 0) ? 48.0f : (endTime - startTime) * pixelsPerMs;
+}
+
+bool Area::isNoteInBound(float y, float height) {
+    DisplayConfiguration &displayConfiguration = DisplayConfiguration::getInstance();
 
     if (y + height <= 0 || y > displayConfiguration.getHeight()) {
         return false;
     }
 
     return true;
+}
+
+glm::vec3 Area::getNoteColour(int laneIndex) {
+    switch (laneIndex) {
+    case 0:
+    case 2:
+    case 4:
+    case 6:
+        return {1.0f, 1.0f, 1.0f};
+    case 1:
+    case 5:
+        return {0.208f, 0.784f, 1.0f};
+    }
+
+    return {0.996f, 0.827f, 0.212f};
 }
 
 } // namespace component::game::singleplayer::play::area

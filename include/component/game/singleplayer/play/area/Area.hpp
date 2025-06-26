@@ -39,7 +39,11 @@ class Area final : public Component {
 
     int _notes;
 
-    bool isNoteInBound(std::unique_ptr<Note> &note, float position, float &y, float &height);
+    void calculateNotePosition(std::unique_ptr<Note> &note, float position, float &y, float &height);
+
+    bool isNoteInBound(float y, float height);
+
+    glm::vec3 getNoteColour(int laneIndex);
 };
 
 } // namespace component::game::singleplayer::play::area
