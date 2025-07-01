@@ -1,12 +1,19 @@
 #include <component/game/singleplayer/play/area/Area.hpp>
 
-#include <glm/gtc/matrix_transform.hpp>
+#include "configuration/sound/SoundConfiguration.hpp"
+
+#include "configuration/display/DisplayConfiguration.hpp"
 
 #include <iostream>
+#include <vector>
+
+using namespace configuration::sound;
+
+using namespace configuration::display;
 
 namespace component::game::singleplayer::play::area {
 
-Area::Area() : _noteModel(glm::mat4(1.0f)), _notes(0) {
+Area::Area() : _notes(0) {
 }
 
 void Area::create() {
@@ -34,7 +41,9 @@ void Area::load(const std::string &beatmapPath) {
 
         float x = lane * width;
 
-        std::unique_ptr<Note> note = std::make_unique<Note>(x, width, startTime, endTime);
+        glm::vec3 colour = this->getNoteColour(lane);
+
+        std::unique_ptr<Note> note = std::make_unique<Note>(x, width, startTime, endTime, colour);
 
         this->_lanes[lane]->addNote(std::move(note));
 
@@ -55,12 +64,9 @@ void Area::update(float deltaTime) {
     for (std::unique_ptr<Lane> &lane : this->_lanes) {
         lane->update(deltaTime);
     }
-
-    this->_noteModel = glm::translate(this->_noteModel, glm::vec3(0.0f, -20.0f, 0.0f));
 }
 
 void Area::generateNoteMesh(SoundSource &source) {
-
     std::vector<Instance> instances;
 
     instances.reserve(this->_notes);
@@ -69,53 +75,25 @@ void Area::generateNoteMesh(SoundSource &source) {
 
     float position = source.getPosition();
 
-    float scrollSpeed = 3000.0f;
-
-    float pxPerMs = scrollSpeed * 0.001f;
-
-    float offsetMs = 300.0f;
-
     for (std::unique_ptr<Lane> &lane : this->_lanes) {
         std::vector<std::unique_ptr<Note>> &notes = lane->getNotes();
 
         for (std::unique_ptr<Note> &note : notes) {
-            // Calculate the offset
-            float startTime = (float)note->getStartTime() - position + offsetMs;
-            float endTime = (note->getEndTime() == 0) ? 0.0f : (float)note->getEndTime() - position + offsetMs;
+            float y;
+            float height;
 
-            // Calculate the actual y value
-            float y = pxPerMs * startTime;
-            float height = (endTime == 0) ? 48.0f : (endTime - startTime) * pxPerMs;
-            float endY = y + height;
+            this->calculateNotePosition(note, position, y, height);
 
-            // Calculate bounds
-            if (y + height <= 0 || y > 1440) {
+            if (!this->isNoteInBound(y, height)) {
                 continue;
             }
 
             note->setY(y);
             note->setHeight(height);
 
-            glm::vec3 laneColour;
-
-            switch (laneIndex) {
-            case 0:
-            case 2:
-            case 4:
-            case 6:
-                laneColour = {1.0f, 1.0f, 1.0f}; // white
-                break;
-            case 1:
-            case 5:
-                laneColour = {0.208f, 0.784f, 1.0f}; // blue
-                break;
-            case 3:
-                laneColour = {0.996f, 0.827f, 0.212f}; // yellow
-                break;
-            }
-
-            instances.push_back({note->getPosition(), note->getSize(), laneColour});
+            instances.push_back({note->getPosition(), note->getSize(), note->getColour()});
         }
+
         ++laneIndex;
     }
 
@@ -130,8 +108,45 @@ std::vector<std::unique_ptr<Lane>> &Area::getLanes() {
     return this->_lanes;
 }
 
-glm::mat4 &Area::getNoteModel() {
-    return this->_noteModel;
+void Area::calculateNotePosition(std::unique_ptr<Note> &note, float position, float &y, float &height) {
+    SoundConfiguration &soundConfiguration = SoundConfiguration::getInstance();
+
+    float offset = soundConfiguration.getOffset();
+    float scrollSpeed = soundConfiguration.getScrollSpeed();
+
+    float pixelsPerMs = scrollSpeed;
+
+    float startTime = (float)note->getStartTime() - position + offset;
+    float endTime = (note->getEndTime() == 0) ? 0.0f : (float)note->getEndTime() - position + offset;
+
+    y = pixelsPerMs * startTime;
+
+    height = (endTime == 0) ? 48.0f : (endTime - startTime) * pixelsPerMs;
+}
+
+bool Area::isNoteInBound(float y, float height) {
+    DisplayConfiguration &displayConfiguration = DisplayConfiguration::getInstance();
+
+    if (y + height <= 0 || y > displayConfiguration.getHeight()) {
+        return false;
+    }
+
+    return true;
+}
+
+glm::vec3 Area::getNoteColour(int laneIndex) {
+    switch (laneIndex) {
+    case 0:
+    case 2:
+    case 4:
+    case 6:
+        return {1.0f, 1.0f, 1.0f};
+    case 1:
+    case 5:
+        return {0.208f, 0.784f, 1.0f};
+    }
+
+    return {0.996f, 0.827f, 0.212f};
 }
 
 } // namespace component::game::singleplayer::play::area

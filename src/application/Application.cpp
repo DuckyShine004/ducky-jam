@@ -1,20 +1,22 @@
-#include <external/glad/glad.h>
+#include "external/glad/glad.h"
 
 #include "external/imgui/imgui.h"
 #include "external/imgui/imgui_impl_glfw.h"
 #include "external/imgui/imgui_impl_opengl3.h"
 
-#include <application/Application.hpp>
+#include "application/Application.hpp"
 
-#include <manager/SceneManager.hpp>
+#include "manager/SceneManager.hpp"
 
-#include <application/game/singleplayer/play/Play.hpp>
+#include "application/game/singleplayer/play/Play.hpp"
 
-#include <configuration/Configuration.hpp>
+#include "configuration/Configuration.hpp"
 
-#include <configuration/display/DisplayConfiguration.hpp>
+#include "configuration/display/DisplayConfiguration.hpp"
+#include "configuration/sound/SoundConfiguration.hpp"
+#include "configuration/skin/SkinConfiguration.hpp"
 
-#include <logger/LoggerMacros.hpp>
+#include "logger/LoggerMacros.hpp"
 
 #include <iostream>
 
@@ -23,6 +25,10 @@ using namespace manager;
 using namespace configuration;
 
 using namespace configuration::display;
+
+using namespace configuration::sound;
+
+using namespace configuration::skin;
 
 using namespace application::game::singleplayer::play;
 
@@ -38,7 +44,19 @@ void Application::initialise() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow *window = glfwCreateWindow(1920, 1080, "Ducky Jam", nullptr, nullptr);
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+#endif
+
+    GLFWmonitor *monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode *mode = glfwGetVideoMode(monitor);
+
+    glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+    glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+    glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+    glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+
+    GLFWwindow *window = glfwCreateWindow(mode->width, mode->height, "Ducky Jam", monitor, nullptr);
 
     if (window == nullptr) {
         std::cout << "Failed to create window" << std::endl;
@@ -82,7 +100,13 @@ void Application::load() {
 
     DisplayConfiguration &displayConfiguration = DisplayConfiguration::getInstance();
 
+    SoundConfiguration &soundConfiguration = SoundConfiguration::getInstance();
+
+    SkinConfiguration &skinConfiguration = SkinConfiguration::getInstance();
+
     displayConfiguration.load(".config/display.conf");
+    soundConfiguration.load(".config/sound.conf");
+    skinConfiguration.load(".config/skin.conf");
 
     int width;
     int height;

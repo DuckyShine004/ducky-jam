@@ -30,8 +30,6 @@ class Area final : public Component {
 
     std::vector<std::unique_ptr<Lane>> &getLanes();
 
-    glm::mat4 &getNoteModel();
-
   private:
     Mesh _noteMesh;
 
@@ -39,9 +37,13 @@ class Area final : public Component {
 
     std::vector<std::unique_ptr<Lane>> _lanes;
 
-    glm::mat4 _noteModel;
-
     int _notes;
+
+    void calculateNotePosition(std::unique_ptr<Note> &note, float position, float &y, float &height);
+
+    bool isNoteInBound(float y, float height);
+
+    glm::vec3 getNoteColour(int laneIndex);
 };
 
 } // namespace component::game::singleplayer::play::area
