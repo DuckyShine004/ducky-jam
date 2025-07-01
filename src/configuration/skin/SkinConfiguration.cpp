@@ -17,7 +17,7 @@ SkinConfiguration &SkinConfiguration::getInstance() {
 }
 
 void SkinConfiguration::initialise() {
-    FileUtility.createFile(this->_configurationPath);
+    FileUtility::createFile(this->_configurationPath);
 
     this->_width = this->_WIDTH;
 

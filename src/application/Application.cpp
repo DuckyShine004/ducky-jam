@@ -1,21 +1,22 @@
-#include <external/glad/glad.h>
+#include "external/glad/glad.h"
 
 #include "external/imgui/imgui.h"
 #include "external/imgui/imgui_impl_glfw.h"
 #include "external/imgui/imgui_impl_opengl3.h"
 
-#include <application/Application.hpp>
+#include "application/Application.hpp"
 
-#include <manager/SceneManager.hpp>
+#include "manager/SceneManager.hpp"
 
-#include <application/game/singleplayer/play/Play.hpp>
+#include "application/game/singleplayer/play/Play.hpp"
 
-#include <configuration/Configuration.hpp>
+#include "configuration/Configuration.hpp"
 
-#include <configuration/display/DisplayConfiguration.hpp>
-#include <configuration/sound/SoundConfiguration.hpp>
+#include "configuration/display/DisplayConfiguration.hpp"
+#include "configuration/sound/SoundConfiguration.hpp"
+#include "configuration/skin/SkinConfiguration.hpp"
 
-#include <logger/LoggerMacros.hpp>
+#include "logger/LoggerMacros.hpp"
 
 #include <iostream>
 
@@ -26,6 +27,8 @@ using namespace configuration;
 using namespace configuration::display;
 
 using namespace configuration::sound;
+
+using namespace configuration::skin;
 
 using namespace application::game::singleplayer::play;
 
@@ -96,10 +99,14 @@ void Application::load() {
     SceneManager::getInstance().setScene(std::make_unique<Play>());
 
     DisplayConfiguration &displayConfiguration = DisplayConfiguration::getInstance();
+
     SoundConfiguration &soundConfiguration = SoundConfiguration::getInstance();
+
+    SkinConfiguration &skinConfiguration = SkinConfiguration::getInstance();
 
     displayConfiguration.load(".config/display.conf");
     soundConfiguration.load(".config/sound.conf");
+    skinConfiguration.load(".config/skin.conf");
 
     int width;
     int height;
