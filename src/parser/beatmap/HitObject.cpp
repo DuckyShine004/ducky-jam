@@ -1,4 +1,4 @@
-#include <parser/beatmap/HitObject.hpp>
+#include "parser/beatmap/HitObject.hpp"
 
 namespace parser::beatmap {
 

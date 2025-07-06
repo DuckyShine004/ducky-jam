@@ -31,10 +31,6 @@ void BeatmapParser::parse(const std::string &path) {
     }
 }
 
-int BeatmapParser::getLanes() {
-    return this->_lanes;
-}
-
 std::vector<HitObject> BeatmapParser::getHitObjects() {
     return this->_hitObjects;
 }
@@ -55,7 +51,7 @@ std::vector<std::string> BeatmapParser::getHitObjectValues(const std::string &li
     hitObjectValues.reserve(5);
 
     while (std::getline(stream, token, ',')) {
-        if (!(BitUtility::isBitSet(index, this->_HIT_OBJECT_IGNORE_FLAGS))) {
+        if (!BitUtility::isBitSet(index, this->_HIT_OBJECT_IGNORE_FLAGS)) {
             hitObjectValues.push_back(token);
         }
 
@@ -77,7 +73,7 @@ std::vector<std::string> BeatmapParser::getTimingPointValues(const std::string &
     timingPointValues.reserve(4);
 
     while (std::getline(stream, token, ',')) {
-        if (!(BitUtility::isBitSet(index, this->_TIMING_POINT_IGNORE_FLAGS))) {
+        if (!BitUtility::isBitSet(index, this->_TIMING_POINT_IGNORE_FLAGS)) {
             timingPointValues.push_back(token);
         }
 
@@ -87,11 +83,21 @@ std::vector<std::string> BeatmapParser::getTimingPointValues(const std::string &
     return timingPointValues;
 }
 
+std::string BeatmapParser::getDifficultyValue(const std::string &line) {
+    std::stringstream stream(line);
+
+    std::string token;
+
+    return "8";
+}
+
 void BeatmapParser::parseLine(const std::string &line, std::ifstream &file) {
     if (line == "[TimingPoints]") {
         this->addTimingPoints(file);
     } else if (line == "[HitObjects]") {
         this->addHitObjects(file);
+    } else if (line == "[Difficulty]") {
+        this->addDifficulty(file);
     }
 }
 
@@ -115,13 +121,6 @@ void BeatmapParser::addHitObjects(std::ifstream &file) {
         int startTime = stoi(hitObjectValues[2]);
         int type = stoi(hitObjectValues[3]);
         int endTime = stoi(hitObjectValues[4]);
-
-        if (x < first) {
-            second = first;
-            first = x;
-        } else if (x > first && x < second) {
-            second = x;
-        }
 
         HitObject hitObject(x, y, type, startTime, endTime);
 
@@ -161,6 +160,38 @@ void BeatmapParser::addTimingPoints(std::ifstream &file) {
 
         this->_timingPoints.push_back(timingPoint);
     }
+}
+
+void BeatmapParser::addDifficulty(std::ifstream &file) {
+    std::string line;
+
+    std::vector<std::string> difficultyValues;
+
+    int index = 0;
+
+    difficultyValues.reserve(3);
+
+    while (std::getline(file, line)) {
+        line = StringUtility::trim(line);
+
+        if (line.empty()) {
+            break;
+        }
+
+        if (!BitUtility::isBitSet(index, this->_DIFFICULTY_IGNORE_FLAGS)) {
+            difficultyValues.push_back(this->getDifficultyValue(line));
+        }
+
+        ++index;
+    }
+
+    int healthDrain = std::stoi(difficultyValues[0]);
+    int lanes = std::stoi(difficultyValues[1]);
+    int leniency = std::stoi(difficultyValues[2]);
+
+    this->_difficulty = Difficulty(healthDrain, lanes, leniency);
+
+    LOG_DEBUG("DIFFICULTY ADDED");
 }
 
 } // namespace parser::beatmap

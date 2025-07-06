@@ -73,12 +73,11 @@ void Area::generateNoteMesh(SoundSource &source) {
 
     int laneIndex = 0;
 
-    float position = source.getPosition();
-
     for (std::unique_ptr<Lane> &lane : this->_lanes) {
         std::vector<std::unique_ptr<Note>> &notes = lane->getNotes();
 
         for (std::unique_ptr<Note> &note : notes) {
+            float position = source.getPosition();
             float y;
             float height;
 
