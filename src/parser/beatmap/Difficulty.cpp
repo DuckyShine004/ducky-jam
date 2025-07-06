@@ -2,7 +2,7 @@
 
 namespace parser::beatmap {
 
-Difficulty::Difficulty(int healthDrain, int lanes, int leniency) : _healthDrain(healthDrain), _lanes(lanes), _leniency(leniency) {
+Difficulty::Difficulty(float healthDrain, int lanes, float leniency) : _healthDrain(healthDrain), _lanes(lanes), _leniency(leniency) {
 }
 
 Difficulty::Difficulty() = default;
@@ -11,11 +11,11 @@ int Difficulty::getLanes() {
     return this->_lanes;
 }
 
-int Difficulty::getHealthDrain() {
+float Difficulty::getHealthDrain() {
     return this->_healthDrain;
 }
 
-int Difficulty::getLeniency() {
+float Difficulty::getLeniency() {
     return this->_leniency;
 }
 

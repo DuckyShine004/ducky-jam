@@ -88,7 +88,12 @@ std::string BeatmapParser::getDifficultyValue(const std::string &line) {
 
     std::string token;
 
-    return "8";
+    std::getline(stream, token, ':');
+    std::getline(stream, token, ':');
+
+    LOG_DEBUG("BRUH: {}", token);
+
+    return token;
 }
 
 void BeatmapParser::parseLine(const std::string &line, std::ifstream &file) {
@@ -121,6 +126,13 @@ void BeatmapParser::addHitObjects(std::ifstream &file) {
         int startTime = stoi(hitObjectValues[2]);
         int type = stoi(hitObjectValues[3]);
         int endTime = stoi(hitObjectValues[4]);
+
+        if (x < first) {
+            second = first;
+            first = x;
+        } else if (x > first && x < second) {
+            second = x;
+        }
 
         HitObject hitObject(x, y, type, startTime, endTime);
 

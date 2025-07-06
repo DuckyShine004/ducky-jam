@@ -4,20 +4,21 @@ namespace parser::beatmap {
 
 class Difficulty {
   public:
-    Difficulty(int healthDrain, int lanes, int leniency);
+    Difficulty(float healthDrain, int lanes, float leniency);
 
     Difficulty();
 
     int getLanes();
 
-    int getHealthDrain();
+    float getHealthDrain();
 
-    int getLeniency();
+    float getLeniency();
 
   private:
-    int _healthDrain;
     int _lanes;
-    int _leniency;
+
+    float _healthDrain;
+    float _leniency;
 };
 
 } // namespace parser::beatmap

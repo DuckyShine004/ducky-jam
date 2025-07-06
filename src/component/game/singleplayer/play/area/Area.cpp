@@ -4,6 +4,8 @@
 
 #include "configuration/display/DisplayConfiguration.hpp"
 
+#include "logger/LoggerMacros.hpp"
+
 #include <iostream>
 #include <vector>
 
@@ -26,6 +28,8 @@ void Area::create() {
 
 void Area::load(const std::string &beatmapPath) {
     this->_beatmapParser.parse(beatmapPath);
+
+    LOG_DEBUG("BEATMAP PARSED");
 
     std::vector<HitObject> hitObjects = this->_beatmapParser.getHitObjects();
 
