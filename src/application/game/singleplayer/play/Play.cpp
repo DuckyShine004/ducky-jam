@@ -33,12 +33,14 @@ void Play::initialise() {
         this->_shaders.push_back(shader);
     }
 
+    this->_area.initialise("data/beatmaps/2321277/4973089/beatmap.osu");
+
     this->create();
 
     // this->load("data/beatmaps/421541/948777/beatmap.osu");
     // this->load("data/beatmaps/1831596/3759718/beatmap.osu");
     // this->load("data/beatmaps/2325151/4983858/beatmap.osu");
-    this->load("data/beatmaps/2321277/4973089/beatmap.osu");
+    this->load();
     // this->load("data/beatmaps/974689/2220863/beatmap.osu");
     // this->load("data/beatmaps/2099753/4404686/beatmap.osu");
 }
@@ -47,8 +49,8 @@ void Play::create() {
     this->_area.create();
 }
 
-void Play::load(const std::string &beatmapPath) {
-    this->_area.load(beatmapPath);
+void Play::load() {
+    this->_area.load();
 }
 
 void Play::update(float deltaTime) {

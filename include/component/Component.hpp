@@ -30,11 +30,15 @@ class Component {
 
     virtual glm::vec2 getPosition();
 
-    void addShape(std::unique_ptr<Shape> shape);
-
     virtual void setX(float x);
 
     virtual void setY(float y);
+
+    virtual float getX();
+
+    virtual float getY();
+
+    void addShape(std::unique_ptr<Shape> shape);
 
   protected:
     std::vector<std::unique_ptr<Shape>> _shapes;

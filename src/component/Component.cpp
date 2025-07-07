@@ -38,4 +38,12 @@ void Component::setY(float y) {
     this->_position.y = y;
 }
 
+float Component::getX() {
+    return this->_position.x;
+}
+
+float Component::getY() {
+    return this->_position.y;
+}
+
 } // namespace component

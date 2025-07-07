@@ -26,7 +26,7 @@ class Play final : public Scene {
 
     void render() override;
 
-    void load(const std::string &beatmapPath);
+    void load();
 
   private:
     static inline const char *_SHADER_NAMES[] = {

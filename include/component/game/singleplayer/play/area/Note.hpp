@@ -18,6 +18,8 @@ class Note final : public Component {
 
     void setHeight(float height);
 
+    float getHeight();
+
   private:
     int _startTime;
     int _endTime;

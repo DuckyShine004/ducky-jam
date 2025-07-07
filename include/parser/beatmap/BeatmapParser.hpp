@@ -18,6 +18,8 @@ class BeatmapParser final : public Parser {
 
     std::vector<TimingPoint> getTimingPoints();
 
+    Difficulty getDifficulty();
+
   private:
     static constexpr int _HIT_OBJECT_IGNORE_FLAGS = 0b1010000;
     static constexpr int _TIMING_POINT_IGNORE_FLAGS = 0b10111000;

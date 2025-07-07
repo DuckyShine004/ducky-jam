@@ -39,6 +39,10 @@ std::vector<TimingPoint> BeatmapParser::getTimingPoints() {
     return this->_timingPoints;
 }
 
+Difficulty BeatmapParser::getDifficulty() {
+    return this->_difficulty;
+}
+
 std::vector<std::string> BeatmapParser::getHitObjectValues(const std::string &line) {
     std::stringstream stream(line);
 
@@ -90,8 +94,6 @@ std::string BeatmapParser::getDifficultyValue(const std::string &line) {
 
     std::getline(stream, token, ':');
     std::getline(stream, token, ':');
-
-    LOG_DEBUG("BRUH: {}", token);
 
     return token;
 }
@@ -202,8 +204,6 @@ void BeatmapParser::addDifficulty(std::ifstream &file) {
     int leniency = std::stoi(difficultyValues[2]);
 
     this->_difficulty = Difficulty(healthDrain, lanes, leniency);
-
-    LOG_DEBUG("DIFFICULTY ADDED");
 }
 
 } // namespace parser::beatmap

@@ -34,4 +34,8 @@ void Note::setHeight(float height) {
     this->_size.y = height;
 }
 
+float Note::getHeight() {
+    return this->_size.y;
+}
+
 } // namespace component::game::singleplayer::play::area

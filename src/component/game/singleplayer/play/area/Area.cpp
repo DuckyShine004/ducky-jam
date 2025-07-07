@@ -18,19 +18,23 @@ namespace component::game::singleplayer::play::area {
 Area::Area() : _notes(0) {
 }
 
+void Area::initialise(const std::string &beatmapPath) {
+    this->_beatmapParser.parse(beatmapPath);
+}
+
 void Area::create() {
-    for (int i = 0; i < 7; i++) {
+    Difficulty difficulty = this->_beatmapParser.getDifficulty();
+
+    int lanes = difficulty.getLanes();
+
+    for (int i = 0; i < lanes; i++) {
         std::unique_ptr<Lane> lane = std::make_unique<Lane>();
 
         this->_lanes.push_back(std::move(lane));
     }
 }
 
-void Area::load(const std::string &beatmapPath) {
-    this->_beatmapParser.parse(beatmapPath);
-
-    LOG_DEBUG("BEATMAP PARSED");
-
+void Area::load() {
     std::vector<HitObject> hitObjects = this->_beatmapParser.getHitObjects();
 
     std::vector<TimingPoint> timingPoints = this->_beatmapParser.getTimingPoints();
@@ -77,22 +81,17 @@ void Area::generateNoteMesh(SoundSource &source) {
 
     int laneIndex = 0;
 
+    float position = source.getPosition();
+
     for (std::unique_ptr<Lane> &lane : this->_lanes) {
         std::vector<std::unique_ptr<Note>> &notes = lane->getNotes();
 
         for (std::unique_ptr<Note> &note : notes) {
-            float position = source.getPosition();
-            float y;
-            float height;
+            this->calculateNotePosition(note, position);
 
-            this->calculateNotePosition(note, position, y, height);
-
-            if (!this->isNoteInBound(y, height)) {
+            if (!this->isNoteInBound(note)) {
                 continue;
             }
-
-            note->setY(y);
-            note->setHeight(height);
 
             instances.push_back({note->getPosition(), note->getSize(), note->getColour()});
         }
@@ -111,7 +110,7 @@ std::vector<std::unique_ptr<Lane>> &Area::getLanes() {
     return this->_lanes;
 }
 
-void Area::calculateNotePosition(std::unique_ptr<Note> &note, float position, float &y, float &height) {
+void Area::calculateNotePosition(std::unique_ptr<Note> &note, float position) {
     SoundConfiguration &soundConfiguration = SoundConfiguration::getInstance();
 
     float offset = soundConfiguration.getOffset();
@@ -122,13 +121,18 @@ void Area::calculateNotePosition(std::unique_ptr<Note> &note, float position, fl
     float startTime = (float)note->getStartTime() - position + offset;
     float endTime = (note->getEndTime() == 0) ? 0.0f : (float)note->getEndTime() - position + offset;
 
-    y = pixelsPerMs * startTime;
+    float y = pixelsPerMs * startTime;
+    float height = (endTime == 0) ? 48.0f : (endTime - startTime) * pixelsPerMs;
 
-    height = (endTime == 0) ? 48.0f : (endTime - startTime) * pixelsPerMs;
+    note->setY(y);
+    note->setHeight(height);
 }
 
-bool Area::isNoteInBound(float y, float height) {
+bool Area::isNoteInBound(std::unique_ptr<Note> &note) {
     DisplayConfiguration &displayConfiguration = DisplayConfiguration::getInstance();
+
+    float y = note->getY();
+    float height = note->getHeight();
 
     if (y + height <= 0 || y > displayConfiguration.getHeight()) {
         return false;

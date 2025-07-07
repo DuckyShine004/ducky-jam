@@ -18,11 +18,13 @@ class Area final : public Component {
   public:
     Area();
 
+    void initialise(const std::string &beatmapPath);
+
     void create() override;
 
     void update(float deltaTime) override;
 
-    void load(const std::string &beatmapPath);
+    void load();
 
     void generateNoteMesh(SoundSource &source);
 
@@ -39,9 +41,9 @@ class Area final : public Component {
 
     int _notes;
 
-    void calculateNotePosition(std::unique_ptr<Note> &note, float position, float &y, float &height);
+    void calculateNotePosition(std::unique_ptr<Note> &note, float position);
 
-    bool isNoteInBound(float y, float height);
+    bool isNoteInBound(std::unique_ptr<Note> &note);
 
     glm::vec3 getNoteColour(int laneIndex);
 };
