@@ -15,7 +15,7 @@ using namespace configuration::display;
 
 namespace component::game::singleplayer::play::area {
 
-Area::Area() : _notes(0) {
+Area::Area() : _notes(0), _numberOfRenderedNotes(0) {
 }
 
 void Area::initialise(const std::string &beatmapPath) {
@@ -81,6 +81,8 @@ void Area::generateNoteMesh(SoundSource &source) {
 
     int laneIndex = 0;
 
+    int numberOfRenderedNotes = 0;
+
     float position = source.getPosition();
 
     for (std::unique_ptr<Lane> &lane : this->_lanes) {
@@ -94,12 +96,20 @@ void Area::generateNoteMesh(SoundSource &source) {
             }
 
             instances.push_back({note->getPosition(), note->getSize(), note->getColour()});
+
+            ++numberOfRenderedNotes;
         }
 
         ++laneIndex;
     }
 
     this->_noteMesh.setInstances(instances);
+
+    this->_numberOfRenderedNotes = numberOfRenderedNotes;
+}
+
+int Area::getNumberOfRenderedNotes() {
+    return this->_numberOfRenderedNotes;
 }
 
 Mesh &Area::getNoteMesh() {

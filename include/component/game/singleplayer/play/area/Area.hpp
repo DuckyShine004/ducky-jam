@@ -28,6 +28,8 @@ class Area final : public Component {
 
     void generateNoteMesh(SoundSource &source);
 
+    int getNumberOfRenderedNotes();
+
     Mesh &getNoteMesh();
 
     std::vector<std::unique_ptr<Lane>> &getLanes();
@@ -40,6 +42,8 @@ class Area final : public Component {
     std::vector<std::unique_ptr<Lane>> _lanes;
 
     int _notes;
+
+    int _numberOfRenderedNotes;
 
     void calculateNotePosition(std::unique_ptr<Note> &note, float position);
 

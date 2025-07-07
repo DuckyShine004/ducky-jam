@@ -1,9 +1,13 @@
-#include <engine/scene/Scene.hpp>
+#include "external/imgui/imgui.h"
+#include "external/imgui/imgui_impl_glfw.h"
+#include "external/imgui/imgui_impl_opengl3.h"
 
-#include <application/game/singleplayer/play/Play.hpp>
+#include "engine/scene/Scene.hpp"
 
-#include <engine/sound/SoundPlayer.hpp>
-#include <engine/sound/SoundBuffer.hpp>
+#include "application/game/singleplayer/play/Play.hpp"
+
+#include "engine/sound/SoundPlayer.hpp"
+#include "engine/sound/SoundBuffer.hpp"
 
 #include <iostream>
 
@@ -59,6 +63,23 @@ void Play::update(float deltaTime) {
 
 void Play::render() {
     this->renderNotes();
+
+    int numberOfRenderedNotes = this->_area.getNumberOfRenderedNotes();
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 8.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, IM_COL32(50, 50, 50, 200));
+    ImGui::PushStyleColor(ImGuiCol_Border, IM_COL32(0, 0, 0, 0));
+
+    ImGui::SetNextWindowPos(ImVec2(10, 50), ImGuiCond_Always);
+    ImGui::Begin("##notes_overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav);
+    ImGui::TextColored(ImVec4(1, 1, 1, 1), "NOTES: %i", numberOfRenderedNotes);
+    ImGui::End();
+
+    ImGui::PopStyleColor();
+    ImGui::PopStyleColor();
+    ImGui::PopStyleVar();
+    ImGui::PopStyleVar();
 }
 
 void Play::renderNotes() {
