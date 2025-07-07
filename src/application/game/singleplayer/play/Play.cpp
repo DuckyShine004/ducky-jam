@@ -23,7 +23,8 @@ void Play::initialise() {
     // ALuint soundId = SoundBuffer::getInstance().addSound("data/beatmaps/421541/948777/bgm.mp3");
     // ALuint soundId = SoundBuffer::getInstance().addSound("data/beatmaps/1831596/3759718/bgm.mp3");
     // ALuint soundId = SoundBuffer::getInstance().addSound("data/beatmaps/2325151/4983858/bgm.mp3");
-    ALuint soundId = SoundBuffer::getInstance().addSound("data/beatmaps/2321277/4973089/bgm.mp3");
+    // ALuint soundId = SoundBuffer::getInstance().addSound("data/beatmaps/2321277/4973089/bgm.mp3");
+    ALuint soundId = SoundBuffer::getInstance().addSound("data/beatmaps/396959/863485/bgm.mp3");
     // ALuint soundId = SoundBuffer::getInstance().addSound("data/beatmaps/974689/2220863/bgm.mp3");
     // ALuint soundId = SoundBuffer::getInstance().addSound("data/beatmaps/2099753/4404686/bgm.mp3");
 
@@ -37,7 +38,8 @@ void Play::initialise() {
         this->_shaders.push_back(shader);
     }
 
-    this->_area.initialise("data/beatmaps/2321277/4973089/beatmap.osu");
+    // this->_area.initialise("data/beatmaps/2321277/4973089/beatmap.osu");
+    this->_area.initialise("data/beatmaps/396959/863485/beatmap.osu");
 
     this->create();
 
