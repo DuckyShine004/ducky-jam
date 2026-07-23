@@ -33,4 +33,4 @@ elif [[ $PRESET == "profile" ]]; then
     perf report --latency
 fi
 
-rm -rf .cache/logs/*
+# rm -rf .cache/logs/*
