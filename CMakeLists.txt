@@ -1,53 +1,60 @@
 cmake_minimum_required(VERSION 3.10)
-project(ducky_jam VERSION 0.0.1 LANGUAGES C CXX)
+project(
+  ducky-jam
+  VERSION 0.0.1
+  LANGUAGES C CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-if(APPLE)
-    list(APPEND CMAKE_PREFIX_PATH "/opt/homebrew/opt/fmt")
-endif()
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Find all source files
-file(GLOB_RECURSE DUCKY_JAM_SOURCES
-    "${CMAKE_SOURCE_DIR}/src/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/*.c"
-)
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE ON)
+
+file(GLOB_RECURSE DUCKY_JAM_SOURCES "${CMAKE_SOURCE_DIR}/src/*.cpp"
+     "${CMAKE_SOURCE_DIR}/src/*.c")
 
 find_package(PkgConfig REQUIRED)
-
 find_package(fmt REQUIRED)
-find_package(OpenAL REQUIRED)
 find_package(glfw3 3.3 REQUIRED)
 
+pkg_check_modules(OPENAL REQUIRED openal)
 pkg_check_modules(SNDFILE REQUIRED sndfile)
 
-add_executable(ducky_jam ${DUCKY_JAM_SOURCES})
+add_executable(ducky-jam ${DUCKY_JAM_SOURCES})
 
-target_include_directories(ducky_jam
-    PRIVATE
-    ${CMAKE_SOURCE_DIR}/include
-    ${OPENAL_INCLUDE_DIRS}
-    ${SNDFILE_INCLUDE_DIRS}
-)
+target_compile_definitions(ducky-jam PRIVATE GLFW_INCLUDE_NONE)
 
-target_compile_definitions(ducky_jam
-    PRIVATE
-    GLFW_INCLUDE_NONE
-)
+target_include_directories(
+  ducky-jam PRIVATE ${OPENAL_INCLUDE_DIRS} ${SNDFILE_INCLUDE_DIRS}
+                    ${CMAKE_SOURCE_DIR}/include)
 
-target_link_libraries(ducky_jam
-    PRIVATE
-    glfw
-    fmt
-    OpenAL::OpenAL
-    ${SNDFILE_LIBRARIES}
-)
+find_library(OPENAL_FRAMEWORK OpenAL)
 
-target_link_libraries(ducky_jam
-    PRIVATE
-    fmt::fmt
-    ${OPENAL_LDFLAGS}
-    ${SNDFILE_LDFLAGS}
-)
+target_link_libraries(ducky-jam PRIVATE ${OPENAL_LDFLAGS} ${SNDFILE_LDFLAGS}
+                                        glfw fmt::fmt)
+
+target_compile_options(ducky-jam PRIVATE $<$<CONFIG:Release>:-O3 -march=native
+                                         -ffunction-sections -fdata-sections>)
+
+target_link_options(ducky-jam PRIVATE $<$<CONFIG:Release>:-Wl,--as-needed
+                    -Wl,--gc-sections>)
+
+set_property(TARGET ducky-jam PROPERTY INTERPROCEDURAL_OPTIMIZATION_RELEASE
+                                       TRUE)
+target_compile_options(
+  ducky-jam PRIVATE $<$<CONFIG:Debug>:-O1 -g -fsanitize=address
+                    -fno-omit-frame-pointer -Wodr>)
+
+target_link_options(ducky-jam PRIVATE $<$<CONFIG:Debug>:-fsanitize=address>)
+
+set_property(TARGET ducky-jam PROPERTY INTERPROCEDURAL_OPTIMIZATION_DEBUG FALSE)
+
+target_compile_options(ducky-jam PRIVATE $<$<CONFIG:Profile>:-O2 -g
+                                         -fno-omit-frame-pointer -march=native>)
+
+target_link_options(ducky-jam PRIVATE $<$<CONFIG:Profile>:-Wl,--as-needed>)
+
+set_property(TARGET ducky-jam PROPERTY INTERPROCEDURAL_OPTIMIZATION_PROFILE
+                                       FALSE)
