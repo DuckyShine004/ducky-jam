@@ -8,7 +8,7 @@
 #include "game/parser/beatmap.hpp"
 #include "game/skinning/config/skin_config.hpp"
 
-#include "engine/graphic/model/mesh.hpp"
+#include "engine/graphic/render/renderer.hpp"
 #include "engine/sound/sound_clock.hpp"
 
 namespace engine {
@@ -27,7 +27,7 @@ class Engine {
 
     std::optional<engine::sound::SoundClock> m_sound_clock;
 
-    engine::graphic::model::Mesh m_mesh;
+    engine::graphic::render::Renderer m_renderer;
 
     game::parser::Beatmap m_beatmap;
     game::skinning::config::SkinConfig m_skin_config;

@@ -13,7 +13,12 @@ Mesh::Mesh() : m_vao(0), m_vbo(0), m_ibo(0), m_indices_length(0) {
 }
 
 void Mesh::upload() {
-    m_indices_length = m_indices.size();
+    upload(m_vertices, m_indices);
+}
+
+// WARN: m_vertices != vertices, if members are used anywhere else in code, must move or create copy
+void Mesh::upload(const std::vector<Vertex> &vertices, const std::vector<GLuint> &indices) {
+    m_indices_length = indices.size();
 
     if (m_vao == 0) {
         glGenVertexArrays(1, &m_vao);
@@ -35,13 +40,17 @@ void Mesh::upload() {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
+    GLsizeiptr vertices_size = static_cast<GLsizeiptr>(vertices.size() * sizeof(Vertex));
+    GLsizeiptr indices_size = static_cast<GLsizeiptr>(indices.size() * sizeof(GLuint));
+
     glBindVertexArray(m_vao);
 
+    /* NOTE: could be dynamic or stream, idk dynamic i guess? */
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-    glBufferData(GL_ARRAY_BUFFER, this->get_vertices_size(), m_vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices_size, vertices.data(), GL_DYNAMIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->get_indices_size(), m_indices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_size, indices.data(), GL_DYNAMIC_DRAW);
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -100,14 +109,6 @@ std::vector<Vertex> &Mesh::get_vertices() {
 
 std::vector<GLuint> &Mesh::get_indices() {
     return m_indices;
-}
-
-unsigned long Mesh::get_vertices_size() {
-    return m_vertices.size() * sizeof(Vertex);
-}
-
-unsigned long Mesh::get_indices_size() {
-    return m_indices.size() * sizeof(GLuint);
 }
 
 void Mesh::clear_vertices() {

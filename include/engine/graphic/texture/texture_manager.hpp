@@ -1,10 +1,10 @@
 #pragma once
 
-#include <array>
+#include <vector>
 #include <string>
+#include <memory>
 
-#include "engine/graphic/texture/texture_store.hpp"
-#include "engine/graphic/texture/enums/texture_type.hpp"
+#include "engine/graphic/texture/texture.hpp"
 
 namespace engine::graphic::texture {
 
@@ -16,18 +16,23 @@ class TextureManager {
     static TextureManager &get_instance();
 
     void initialise();
-    void upload(const engine::graphic::texture::enums::TextureType &texture_type);
+    void upload();
+    void load_texture(const std::string &path);
 
-    void load_texture(const std::string &path, const engine::graphic::texture::enums::TextureType &texture_type);
+    const engine::graphic::texture::Texture &get_texture(int id) const;
+    const engine::graphic::texture::Texture &get_texture(const std::string &path) const;
 
-    const engine::graphic::texture::Texture &get_texture(const std::string &path, const engine::graphic::texture::enums::TextureType &texture_type);
+    int get_texture_id(const std::string &path);
 
   private:
     TextureManager();
     ~TextureManager();
 
-    engine::graphic::texture::TextureStore &resolve_texture_store(const engine::graphic::texture::enums::TextureType &texture_type);
-    std::array<engine::graphic::texture::TextureStore, static_cast<std::size_t>(engine::graphic::texture::enums::TextureType::Count)> m_texture_stores;
+    int m_id;
+
+    std::vector<std::unique_ptr<engine::graphic::texture::Texture>> m_textures;
+
+    std::unordered_map<std::string, int> m_texture_references;
 };
 
 } // namespace engine::graphic::texture

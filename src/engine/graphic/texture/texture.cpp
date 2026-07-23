@@ -1,5 +1,4 @@
 #include <glm/glm.hpp>
-#include <stdexcept>
 
 #include "external/stb/stb_image.h"
 #include "external/stb/stb_image_write.h"
@@ -7,8 +6,6 @@
 #include "engine/graphic/texture/texture.hpp"
 
 #include "core/logger/logger_macros.hpp"
-
-using namespace engine::graphic::texture::enums;
 
 using namespace core::logger;
 

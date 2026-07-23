@@ -19,6 +19,7 @@ struct Vertex {
 
     Vertex(float x, float y, const glm::vec2 &uv) : Vertex(x, y, uv.x, uv.y) {
     }
+
     Vertex(float x, float y, float u, float v) : position(x, y), uv(u, v) {
     }
 };

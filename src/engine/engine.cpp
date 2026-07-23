@@ -1,4 +1,3 @@
-#include <glm/ext/matrix_clip_space.hpp>
 
 #include "game/parser/converter.hpp"
 #include "game/parser/components/hit_object.hpp"
@@ -7,12 +6,10 @@
 
 #include "engine/engine.hpp"
 
-#include "engine/graphic/model/quad.hpp"
-#include "engine/graphic/model/enums/topology_type.hpp"
+#include "engine/graphic/model/sprite.hpp"
 #include "engine/graphic/shader/shader.hpp"
 #include "engine/graphic/shader/shader_manager.hpp"
 #include "engine/graphic/texture/texture_manager.hpp"
-#include "engine/graphic/texture/enums/texture_type.hpp"
 
 #include "engine/sound/sound_clock.hpp"
 #include "engine/sound/sound_manager.hpp"
@@ -31,7 +28,6 @@ using namespace engine::graphic::shader;
 using namespace engine::graphic::model;
 using namespace engine::graphic::model::enums;
 using namespace engine::graphic::texture;
-using namespace engine::graphic::texture::enums;
 
 namespace engine {
 
@@ -73,7 +69,7 @@ void Engine::initialise() {
     if (!m_skin_config.notes.empty()) {
         TextureManager &texture_manager = TextureManager::get_instance();
         const std::string &head_path = m_skin_config.notes.front().head;
-        m_note_head_texture_id = texture_manager.get_texture(head_path, TextureType::Skin).texture_id();
+        m_note_head_texture_id = texture_manager.get_texture(head_path).texture_id();
     }
 
     if (m_sound_clock.has_value()) {
@@ -95,8 +91,6 @@ void Engine::update(GLFWwindow *window, double delta_time) {
     double current_time = m_sound_clock->get_current_time();
 
     // just do a brute force for now
-    m_mesh.clear();
-
     int index_offset = 0;
     double scroll_speed = 4.0;
     double rate = 0.75f;
@@ -125,30 +119,8 @@ void Engine::update(GLFWwindow *window, double delta_time) {
 
         const std::string &head_path = m_skin_config.notes[lane].head;
 
-        const Texture &head = texture_manager.get_texture(head_path, TextureType::Skin);
-
-        const UV &uv = head.get_uv(head_path);
-
-        // Quad quad(x0, y0, width, y1 - y0, uv);
-
-        // m_note_head_texture_id = head.texture_id();
-
-        // m_mesh.add_vertex(x0, y0, head.get_uv(head_path, UVType::BottomLeft));
-        // m_mesh.add_vertex(x1, y0, head.get_uv(head_path, UVType::BottomRight));
-        // m_mesh.add_vertex(x1, y1, head.get_uv(head_path, UVType::TopRight));
-        // m_mesh.add_vertex(x0, y1, head.get_uv(head_path, UVType::TopLeft));
-        //
-        // m_mesh.add_index(0 + index_offset);
-        // m_mesh.add_index(1 + index_offset);
-        // m_mesh.add_index(2 + index_offset);
-        // m_mesh.add_index(2 + index_offset);
-        // m_mesh.add_index(3 + index_offset);
-        // m_mesh.add_index(0 + index_offset);
-        //
-        // index_offset += 4;
+        m_renderer.queue(Sprite(x0, y0, x1 - x0, y1 - y0, m_skin_config.notes[lane].head));
     }
-
-    // m_mesh.upload();
 
     // LOG_INFO("Current track time: {}", m_sound_clock->get_current_time());
 }
@@ -158,6 +130,8 @@ void Engine::render() {
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    m_renderer.render();
 
     // ShaderManager &shader_manager = ShaderManager::get_instance();
     // Shader &shader = shader_manager.get_shader("hit_object");

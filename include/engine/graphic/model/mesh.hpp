@@ -13,6 +13,7 @@ class Mesh {
     Mesh();
 
     void upload();
+    void upload(const std::vector<engine::graphic::model::Vertex> &vertices, const std::vector<GLuint> &indices);
     void render(const engine::graphic::model::enums::TopologyType &topology);
 
     void add_vertex(engine::graphic::model::Vertex &vertex);
@@ -38,8 +39,6 @@ class Mesh {
 
     std::vector<engine::graphic::model::Vertex> &get_vertices();
     std::vector<GLuint> &get_indices();
-    unsigned long get_vertices_size();
-    unsigned long get_indices_size();
     void clear_vertices();
     void clear();
 

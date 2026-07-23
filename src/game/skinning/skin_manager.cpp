@@ -7,7 +7,6 @@
 #include "game/skinning/skin_manager.hpp"
 
 #include "engine/graphic/texture/texture_manager.hpp"
-#include "engine/graphic/texture/enums/texture_type.hpp"
 
 #include "core/logger/logger_macros.hpp"
 #include "core/utility/file_utility.hpp"
@@ -16,7 +15,6 @@ using namespace game::parser;
 using namespace game::skinning::config;
 
 using namespace engine::graphic::texture;
-using namespace engine::graphic::texture::enums;
 
 using namespace core::logger;
 using namespace core::utility;
@@ -78,10 +76,10 @@ void SkinManager::load_textures(const std::string &path) {
     TextureManager &texture_manager = TextureManager::get_instance();
 
     for (auto &texture_path : texture_paths) {
-        texture_manager.load_texture(texture_path, TextureType::Skin);
+        texture_manager.load_texture(texture_path);
     }
 
-    texture_manager.upload(TextureType::Skin);
+    texture_manager.upload();
 }
 
 SkinConfig SkinManager::load_skin_config(Beatmap &beatmap) {

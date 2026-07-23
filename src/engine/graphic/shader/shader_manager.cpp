@@ -22,13 +22,20 @@ ShaderManager &ShaderManager::get_instance() {
 }
 
 void ShaderManager::initialise() {
-    m_shader_id = 0;
+    m_id = 0;
 
     std::vector<std::string> paths = FileUtility::get_files_in_directory("resources/shaders/");
 
     for (const std::string &path : paths) {
         this->add_shader(path);
     }
+}
+
+const Shader &ShaderManager::use_shader(int shader_id) {
+    m_shader = m_shaders[shader_id].get();
+    m_shader->use();
+
+    return *m_shader;
 }
 
 void ShaderManager::use_shader(const std::string &name) {
@@ -43,6 +50,10 @@ void ShaderManager::use_shader(const std::string &name) {
 
     m_shader = m_shaders[shader_id].get();
     m_shader->use();
+}
+
+int ShaderManager::get_shader_id(const std::string &name) const {
+    return m_shader_references.at(name);
 }
 
 Shader &ShaderManager::get_shader(const std::string &name) {
@@ -66,7 +77,7 @@ Shader &ShaderManager::get_shader(int shader_id) {
     return *m_shaders[shader_id];
 }
 
-Shader &ShaderManager::get_active_shader() {
+Shader &ShaderManager::get_active_shader() const {
     if (!m_shader) {
         LOG_ERROR("No active shader is set. use_shader() must be called first");
         std::terminate();
@@ -95,10 +106,10 @@ void ShaderManager::add_shader(const std::string &path) {
     std::string vertex_shader_path = shader_path + m_VERTEX_SHADER_EXTENSION;
     std::string fragment_shader_path = shader_path + m_FRAGMENT_SHADER_EXTENSION;
 
-    m_shader_references.emplace(basename, m_shader_id);
+    m_shader_references.emplace(basename, m_id);
     m_shaders.emplace_back(std::make_unique<Shader>(vertex_shader_path, fragment_shader_path));
 
-    ++m_shader_id;
+    ++m_id;
 }
 
 }; // namespace engine::graphic::shader

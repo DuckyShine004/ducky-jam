@@ -11,7 +11,6 @@
 
 #include "engine/graphic/texture/uv.hpp"
 #include "engine/graphic/texture/image.hpp"
-#include "engine/graphic/texture/enums/uv_type.hpp"
 
 namespace engine::graphic::texture {
 
@@ -33,8 +32,9 @@ class Texture {
     int m_width;
     int m_height;
 
-    GLuint m_texture_id;
     int m_id;
+
+    GLuint m_texture_id;
 
     std::vector<std::uint8_t> m_data;
 

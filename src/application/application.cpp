@@ -1,4 +1,3 @@
-
 #include <GLFW/glfw3.h>
 
 #include "external/glad/glad.h"
@@ -8,6 +7,7 @@
 #include "engine/engine.hpp"
 #include "engine/sound/sound_manager.hpp"
 #include "engine/graphic/shader/shader_manager.hpp"
+#include "engine/graphic/effect/effect_manager.hpp"
 #include "engine/graphic/texture/texture_manager.hpp"
 
 #include "game/skinning/skin_manager.hpp"
@@ -17,6 +17,7 @@
 using namespace engine;
 using namespace engine::sound;
 using namespace engine::graphic::shader;
+using namespace engine::graphic::effect;
 using namespace engine::graphic::texture;
 
 using namespace game::skinning;
@@ -93,6 +94,9 @@ void Application::load() {
     ShaderManager::get_instance().initialise();
     TextureManager::get_instance().initialise();
     SkinManager::get_instance().initialise();
+
+    /* NOTE: MUST BE LOADED AFTER SHADERS ARE LOADED */
+    EffectManager::get_instance().initialise();
 
     m_engine.initialise();
 }
