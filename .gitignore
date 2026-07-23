@@ -11,10 +11,17 @@
 *.gch
 *.pch
 
+# Linker files
+*.ilk
+
+# Debugger Files
+*.pdb
+
 # Compiled Dynamic libraries
 *.so
 *.dylib
 *.dll
+*.so.*
 
 # Fortran module files
 *.mod
@@ -31,17 +38,45 @@
 *.out
 *.app
 
-# Build Files
+# Build directories
 build/
+Build/
+build-*/
 
-# IDE
-.vscode/
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+install_manifest.txt
+compile_commands.json
 
-# Cache
-.cache/logs/
+# Temporary files
+*.tmp
+*.log
+*.bak
+*.swp
 
-# Unnecessary Data
-data/beatmaps/
+# vcpkg
+vcpkg_installed/
 
-# ImGUI
-imgui.ini
+# debug information files
+*.dwo
+
+# test output & cache
+Testing/
+
+# Mac
+.DS_Store
+
+#### CUSTOM
+
+# resources
+resources/beatmaps/
+
+# tmp generated from debugging
+tmp/
+
+# cache
+.cache/logs/*
+!.cache/logs/.gitkeep

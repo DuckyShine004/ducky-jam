@@ -1,23 +1,20 @@
-#include <application/Application.hpp>
+#include "application/application.hpp"
 
-#include <engine/sound/SoundPlayer.hpp>
-
-#include <logger/LoggerMacros.hpp>
+#include "core/logger/logger_macros.hpp"
 
 using namespace application;
 
-using namespace engine::sound;
-
 int main() {
-    SoundPlayer &soundPlayer = SoundPlayer::getInstance();
-
     Application application;
 
-    application.initialise();
+    if (!application.initialise()) {
+        LOG_ERROR("Failed to initialise application");
+        return EXIT_FAILURE;
+    }
 
     application.load();
 
     application.run();
 
-    return 0;
+    return EXIT_SUCCESS;
 }
