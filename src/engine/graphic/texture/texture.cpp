@@ -39,12 +39,12 @@ const UV &Texture::get_uv(const std::string &path) const {
 }
 
 void Texture::upload() {
-    std::string temp_path = "tmp/texture-" + std::to_string(m_id) + ".png";
+    std::string tmp_path = ".tmp/texture-" + std::to_string(m_id) + ".png";
 
-    int success = stbi_write_png(temp_path.c_str(), m_width, m_height, m_CHANNELS, m_data.data(), m_width * m_CHANNELS);
+    int success = stbi_write_png(tmp_path.c_str(), m_width, m_height, m_CHANNELS, m_data.data(), m_width * m_CHANNELS);
 
     if (!success) {
-        LOG_ERROR("Failed to write image");
+        LOG_ERROR("Failed to write image to: {}", tmp_path);
     }
 
     glGenTextures(1, &m_texture_id);
