@@ -28,29 +28,22 @@ if(APPLE)
       OUTPUT_STRIP_TRAILING_WHITESPACE
       RESULT_VARIABLE OPENAL_SOFT_RESULT)
 
-    if(OPENAL_SOFT_RESULT
-       EQUAL
-       0)
-      list(
-        PREPEND
-        CMAKE_PREFIX_PATH
-        "${OPENAL_SOFT_PREFIX}")
+    if(OPENAL_SOFT_RESULT EQUAL 0)
+      list(PREPEND CMAKE_PREFIX_PATH "${OPENAL_SOFT_PREFIX}")
     endif()
   endif()
 endif()
 
 find_package(PkgConfig REQUIRED)
 find_package(fmt REQUIRED)
-find_package(
-  glfw3
-  3.3
-  REQUIRED)
+find_package(glfw3 3.3 REQUIRED)
 
 pkg_check_modules(
   OPENAL
   REQUIRED
   IMPORTED_TARGET
   openal)
+
 pkg_check_modules(
   SNDFILE
   REQUIRED
@@ -61,11 +54,8 @@ add_executable(ducky-jam ${DUCKY_JAM_SOURCES})
 
 target_compile_definitions(ducky-jam PRIVATE GLFW_INCLUDE_NONE)
 
-target_include_directories(
-  ducky-jam
-  PRIVATE ${OPENAL_INCLUDE_DIRS}
-          ${SNDFILE_INCLUDE_DIRS}
-          ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(ducky-jam PRIVATE ${OPENAL_INCLUDE_DIRS} ${SNDFILE_INCLUDE_DIRS}
+                                             ${CMAKE_SOURCE_DIR}/include)
 
 target_link_libraries(
   ducky-jam
@@ -89,10 +79,7 @@ else()
     $<$<CONFIG:Profile>:-Wl,--as-needed>)
 endif()
 
-target_link_options(
-  ducky-jam
-  PRIVATE
-  $<$<CONFIG:Debug>:-fsanitize=address>)
+target_link_options(ducky-jam PRIVATE $<$<CONFIG:Debug>:-fsanitize=address>)
 
 target_compile_options(
   ducky-jam
