@@ -23,7 +23,6 @@ class Engine {
 
   private:
     double m_time;
-    unsigned int m_note_head_texture_id = 0;
 
     std::optional<engine::sound::SoundClock> m_sound_clock;
 

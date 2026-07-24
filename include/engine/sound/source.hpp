@@ -15,7 +15,7 @@ class Source {
 
   private:
     static inline constexpr float m_GAIN = 1.0f;
-    static inline constexpr float m_PITCH = 0.75f;
+    static inline constexpr float m_PITCH = 0.9f;
 
     static inline constexpr float m_POSITION[3] = {0, 0, 0};
     static inline constexpr float m_VELOCITY[3] = {0, 0, 0};

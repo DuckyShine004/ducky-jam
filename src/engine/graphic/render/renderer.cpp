@@ -42,7 +42,7 @@ void Renderer::queue(const Sprite &sprite) {
 // WARN: Should render based on batch geometry instead of manual type
 void Renderer::render() {
     glm::mat4 model = glm::mat4(1.0f);
-    glm::mat4 projection = glm::ortho(0.0f, 1280.0f, 0.0f, 720.0f, -1.0f, 1.0f);
+    glm::mat4 projection = glm::ortho(0.0f, 2560.0f, 0.0f, 1440.0f, -1.0f, 1.0f);
 
     // NOTE: Apply effect, then set transforms, then bind texture, then render mesh
     for (const Batch &batch : m_batches) {

@@ -46,14 +46,14 @@ void Engine::initialise() {
     }
 
     // ALuint id = sound_manager.add_sound(SoundType::Music, "resources/beatmaps/2099753/4404686/bgm.mp3");
-    // ALuint id = sound_manager.add_sound(SoundType::Music, "resources/beatmaps/2321277/4973089/bgm.mp3");
-    ALuint id = sound_manager.add_sound(SoundType::Music, "resources/beatmaps/2325151/4983858/bgm.mp3");
+    ALuint id = sound_manager.add_sound(SoundType::Music, "resources/beatmaps/2321277/4973089/bgm.mp3");
+    // ALuint id = sound_manager.add_sound(SoundType::Music, "resources/beatmaps/2325151/4983858/bgm.mp3");
 
     m_sound_clock.emplace(*source, id);
 
     // m_beatmap = Converter::convert("resources/beatmaps/2099753/4404686/beatmap.osu");
-    // m_beatmap = Converter::convert("resources/beatmaps/2321277/4973089/beatmap.osu");
-    m_beatmap = Converter::convert("resources/beatmaps/2325151/4983858/beatmap.osu");
+    m_beatmap = Converter::convert("resources/beatmaps/2321277/4973089/beatmap.osu");
+    // m_beatmap = Converter::convert("resources/beatmaps/2325151/4983858/beatmap.osu");
 
     std::sort(m_beatmap.hit_objects.begin(), m_beatmap.hit_objects.end(), [](const auto &a, const auto &b) {
         return a.start_time < b.start_time;
@@ -63,13 +63,8 @@ void Engine::initialise() {
 
     // NOTE: Load skin textures and skin config for the current beatmap
     skin_manager.load_textures();
-    m_skin_config = skin_manager.load_skin_config(m_beatmap);
 
-    if (!m_skin_config.notes.empty()) {
-        TextureManager &texture_manager = TextureManager::get_instance();
-        const std::string &head_path = m_skin_config.notes.front().head;
-        m_note_head_texture_id = texture_manager.get_texture(head_path).texture_id();
-    }
+    m_skin_config = skin_manager.load_skin_config(m_beatmap);
 
     if (m_sound_clock.has_value()) {
         m_sound_clock->start();
@@ -91,10 +86,13 @@ void Engine::update(GLFWwindow *window, double delta_time) {
 
     // just do a brute force for now
     int index_offset = 0;
-    double scroll_speed = 6.0;
+    double scroll_speed = 6.0f;
     double rate = 0.75f;
-    double width = 100.0f;
-    double height = 40.0f;
+    double width = 150.0f;
+    double height = 80.0f;
+    double approach_time = 400.0f;
+    // double approach_rate = 0.5*scroll_speed*rate;
+    double approach_rate = 1440.0f / approach_time;
 
     TextureManager &texture_manager = TextureManager::get_instance();
     for (HitObject hit_object : m_beatmap.hit_objects) {
@@ -105,11 +103,11 @@ void Engine::update(GLFWwindow *window, double delta_time) {
         double x0 = hit_object.lane * width;
         double x1 = x0 + width;
 
-        double y0 = 0.5 * (start_time - current_time) * scroll_speed * rate;
+        double y0 = approach_rate * (start_time - current_time);
         double y1 = y0 + height;
 
         if (hit_object.hold_time > 0) {
-            y1 = 0.5 * (end_time - current_time) * scroll_speed * rate;
+            y1 = approach_rate * (end_time - current_time);
         }
 
         if (y1 < 0.0 || y0 > 1440.0) {
@@ -137,11 +135,6 @@ void Engine::update(GLFWwindow *window, double delta_time) {
             };
 
             double tail_y = y1 - visible_height;
-            // double tail_height = width * (static_cast<double>(tail_region.source_height) / static_cast<double>(tail_region.source_width));
-            // double tail_y = std::max(y0 + height, y1 - tail_height);
-            // tail_height = y1 - tail_y;
-            //
-            // double body_y = y0 + height;
             double body_height = tail_y - body_y;
 
             m_renderer.queue(Sprite(x0, body_y, width, body_height, m_skin_config.notes[lane].body));
