@@ -1,4 +1,3 @@
-
 #include "game/parser/converter.hpp"
 #include "game/parser/components/hit_object.hpp"
 
@@ -92,7 +91,7 @@ void Engine::update(GLFWwindow *window, double delta_time) {
 
     // just do a brute force for now
     int index_offset = 0;
-    double scroll_speed = 4.0;
+    double scroll_speed = 6.0;
     double rate = 0.75f;
     double width = 100.0f;
     double height = 40.0f;
@@ -117,9 +116,37 @@ void Engine::update(GLFWwindow *window, double delta_time) {
             continue;
         }
 
-        const std::string &head_path = m_skin_config.notes[lane].head;
+        m_renderer.queue(Sprite(x0, y0, width, height, m_skin_config.notes[lane].head));
 
-        m_renderer.queue(Sprite(x0, y0, x1 - x0, y1 - y0, m_skin_config.notes[lane].head));
+        if (hit_object.hold_time > 0 && y0 + height < y1) {
+            const Region &tail_region = TextureManager::get_instance().get_texture(m_skin_config.notes[lane].tail).get_region(m_skin_config.notes[lane].tail);
+
+            double body_y = y0 + height;
+
+            double natural_height = width * static_cast<double>(tail_region.source_height) / static_cast<double>(tail_region.source_width);
+            double available_height = y1 - body_y;
+            double visible_height = std::min(available_height, natural_height);
+
+            double visible_fraction = visible_height / natural_height;
+
+            UV local_uv{
+                .u0 = 0.0f,
+                .u1 = 1.0f,
+                .v0 = 1.0f - static_cast<float>(visible_fraction),
+                .v1 = 1.0f,
+            };
+
+            double tail_y = y1 - visible_height;
+            // double tail_height = width * (static_cast<double>(tail_region.source_height) / static_cast<double>(tail_region.source_width));
+            // double tail_y = std::max(y0 + height, y1 - tail_height);
+            // tail_height = y1 - tail_y;
+            //
+            // double body_y = y0 + height;
+            double body_height = tail_y - body_y;
+
+            m_renderer.queue(Sprite(x0, body_y, width, body_height, m_skin_config.notes[lane].body));
+            m_renderer.queue(Sprite(x0, tail_y, width, visible_height, local_uv, m_skin_config.notes[lane].tail));
+        }
     }
 
     // LOG_INFO("Current track time: {}", m_sound_clock->get_current_time());
@@ -132,21 +159,6 @@ void Engine::render() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     m_renderer.render();
-
-    // ShaderManager &shader_manager = ShaderManager::get_instance();
-    // Shader &shader = shader_manager.get_shader("hit_object");
-    //
-    // glm::mat4 model = glm::mat4(1.0f);
-    // glm::mat4 projection = glm::ortho(0.0f, 1280.0f, 0.0f, 720.0f, -1.0f, 1.0f);
-    // shader.use();
-    // shader.set_matrix4fv("u_model", model);
-    // shader.set_matrix4fv("u_projection", projection);
-    // shader.set_integer("u_texture", 0);
-    //
-    // glActiveTexture(GL_TEXTURE0);
-    // glBindTexture(GL_TEXTURE_2D, m_note_head_texture_id);
-    //
-    // m_mesh.render(TopologyType::Triangle);
 }
 
 } // namespace engine

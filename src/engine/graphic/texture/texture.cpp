@@ -21,18 +21,19 @@ Texture::Texture(int id, Image &image) : m_id(id) {
 
     m_data = image.data();
 
-    UV uv{
-        .u0 = 0.0f,
-        .u1 = 1.0f,
-        .v0 = 0.0f,
-        .v1 = 1.0f,
+    Region region{
+        .width = image.width(),
+        .height = image.height(),
+        .source_width = image.source_width(),
+        .source_height = image.source_height(),
+        .uv = UV{},
     };
 
-    m_uvs.emplace(image.path(), uv);
+    m_regions.emplace(image.path(), region);
 }
 
-const UV &Texture::get_uv(const std::string &path) const {
-    return m_uvs.at(path);
+const Region &Texture::get_region(const std::string &path) const {
+    return m_regions.at(path);
 }
 
 void Texture::upload() {
@@ -47,8 +48,8 @@ void Texture::upload() {
     glGenTextures(1, &m_texture_id);
     glBindTexture(GL_TEXTURE_2D, m_texture_id);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 

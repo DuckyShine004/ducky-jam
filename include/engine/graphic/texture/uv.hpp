@@ -4,10 +4,10 @@
 namespace engine::graphic::texture {
 
 struct UV {
-    float u0;
-    float u1;
-    float v0;
-    float v1;
+    float u0 = 0.0f;
+    float u1 = 1.0f;
+    float v0 = 0.0f;
+    float v1 = 1.0f;
 };
 
 } // namespace engine::graphic::texture

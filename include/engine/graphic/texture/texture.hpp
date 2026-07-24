@@ -9,7 +9,7 @@
 
 #include "external/glad/glad.h"
 
-#include "engine/graphic/texture/uv.hpp"
+#include "engine/graphic/texture/region.hpp"
 #include "engine/graphic/texture/image.hpp"
 
 namespace engine::graphic::texture {
@@ -21,7 +21,7 @@ class Texture {
     virtual ~Texture() = default;
 
     void upload();
-    const engine::graphic::texture::UV &get_uv(const std::string &path) const;
+    const engine::graphic::texture::Region &get_region(const std::string &path) const;
 
     int id() const;
     GLuint texture_id() const;
@@ -38,7 +38,7 @@ class Texture {
 
     std::vector<std::uint8_t> m_data;
 
-    std::unordered_map<std::string, engine::graphic::texture::UV> m_uvs;
+    std::unordered_map<std::string, engine::graphic::texture::Region> m_regions;
 };
 
 } // namespace engine::graphic::texture

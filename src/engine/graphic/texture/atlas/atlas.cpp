@@ -72,7 +72,7 @@ bool Atlas::add_texture(const Image &image) {
 
     m_rectangles = std::move(rectangles);
 
-    create_uv(image.path(), placed);
+    create_region(image, placed);
 
     return true;
 }
@@ -194,7 +194,7 @@ void Atlas::split_bottom(const Rectangle &free, const Rectangle &placed, std::ve
     rectangles.emplace_back(x, y, width, height);
 }
 
-void Atlas::create_uv(const std::string &path, const Rectangle &rectangle) {
+void Atlas::create_region(const Image &image, const Rectangle &rectangle) {
     UV uv{
         .u0 = static_cast<float>(rectangle.x) / m_width,
         .u1 = static_cast<float>(rectangle.x + rectangle.width) / m_width,
@@ -202,7 +202,15 @@ void Atlas::create_uv(const std::string &path, const Rectangle &rectangle) {
         .v1 = static_cast<float>(rectangle.y + rectangle.height) / m_height,
     };
 
-    m_uvs.emplace(path, uv);
+    Region region{
+        .width = image.width(),
+        .height = image.height(),
+        .source_width = image.source_width(),
+        .source_height = image.source_height(),
+        .uv = uv,
+    };
+
+    m_regions.emplace(image.path(), region);
 }
 
 } // namespace engine::graphic::texture::atlas

@@ -12,6 +12,8 @@ class Image {
 
     int width() const;
     int height() const;
+    int source_width() const;
+    int source_height() const;
 
     const std::string &path() const;
 
@@ -25,6 +27,8 @@ class Image {
 
     int m_width;
     int m_height;
+    int m_source_width;
+    int m_source_height;
 
     std::string m_path;
 

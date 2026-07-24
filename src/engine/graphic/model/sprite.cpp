@@ -9,7 +9,10 @@ using namespace engine::graphic::texture;
 
 namespace engine::graphic::model {
 
-Sprite::Sprite(double x, double y, double width, double height, const std::string &texture_path, const std::string &effect_name) : m_position(x, y), m_width(width), m_height(height), m_texture_path(texture_path) {
+Sprite::Sprite(double x, double y, double width, double height, const std::string &texture_path, const std::string &effect_name) : Sprite(x, y, width, height, UV{}, texture_path, effect_name) {
+}
+
+Sprite::Sprite(double x, double y, double width, double height, const UV &uv, const std::string &texture_path, const std::string &effect_name) : m_position(x, y), m_width(width), m_height(height), m_uv(uv), m_texture_path(texture_path) {
     m_texture_id = TextureManager::get_instance().get_texture_id(texture_path);
     m_effect_id = EffectManager::get_instance().get_effect_id(effect_name);
 }
@@ -32,6 +35,10 @@ int Sprite::texture_id() const {
 
 int Sprite::effect_id() const {
     return m_effect_id;
+}
+
+const UV &Sprite::uv() const {
+    return m_uv;
 }
 
 const std::string &Sprite::texture_path() const {

@@ -1,4 +1,5 @@
 #include "external/stb/stb_image.h"
+#include "external/stb/stb_image_write.h"
 
 #include "engine/graphic/texture/texture_manager.hpp"
 #include "engine/graphic/texture/atlas/atlas.hpp"
@@ -23,6 +24,7 @@ TextureManager &TextureManager::get_instance() {
 
 void TextureManager::initialise() {
     stbi_set_flip_vertically_on_load(true);
+    stbi_flip_vertically_on_write(true);
 
     m_id = 0;
 }

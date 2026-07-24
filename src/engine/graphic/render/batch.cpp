@@ -12,7 +12,15 @@ Batch::Batch(BatchKey &key) : m_key(key) {
 void Batch::add(const Sprite &sprite) {
     const glm::vec2 &position = sprite.position();
 
-    const UV &uv = TextureManager::get_instance().get_texture(sprite.texture_id()).get_uv(sprite.texture_path());
+    const UV &texture_uv = TextureManager::get_instance().get_texture(sprite.texture_id()).get_region(sprite.texture_path()).uv;
+    const UV &sprite_uv = sprite.uv();
+
+    UV uv{
+        .u0 = std::lerp(texture_uv.u0, texture_uv.u1, sprite_uv.u0),
+        .u1 = std::lerp(texture_uv.u0, texture_uv.u1, sprite_uv.u1),
+        .v0 = std::lerp(texture_uv.v0, texture_uv.v1, sprite_uv.v0),
+        .v1 = std::lerp(texture_uv.v0, texture_uv.v1, sprite_uv.v1),
+    };
 
     double x0 = position.x;
     double x1 = x0 + sprite.width();

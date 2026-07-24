@@ -19,6 +19,9 @@ Image::Image(const std::string &path) : m_path(path) {
         throw std::runtime_error("ERROR: Could not load image: " + path);
     }
 
+    m_source_width = width;
+    m_source_height = height;
+
     // preserve aspect ratio
     double scale = 1.0f;
 
@@ -50,6 +53,14 @@ int Image::width() const {
 
 int Image::height() const {
     return m_height;
+}
+
+int Image::source_width() const {
+    return m_source_width;
+}
+
+int Image::source_height() const {
+    return m_source_height;
 }
 
 const std::string &Image::path() const {
