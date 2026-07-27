@@ -10,7 +10,6 @@ struct Note {
     std::string tail;
 
     float width;
-    float height;
 };
 
 } // namespace game::skinning::config

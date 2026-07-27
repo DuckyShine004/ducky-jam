@@ -11,15 +11,15 @@ class SoundClock {
     void start();
     void update(double delta_time);
 
-    double get_current_time();
+    double track_time() const;
 
   private:
     engine::sound::Source &m_source;
 
     ALuint m_id;
 
-    double m_speed; // rate of music e.g., 0.9x, 1.05x etc.,
-    double m_current_time;
+    double m_track_speed;
+    double m_track_time;
     double m_elapsed_time;
 
     bool m_is_running;

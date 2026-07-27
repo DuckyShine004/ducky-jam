@@ -1,8 +1,11 @@
 #include "engine/graphic/render/batch.hpp"
+
 #include "engine/graphic/texture/texture_manager.hpp"
 
 using namespace engine::graphic::model;
 using namespace engine::graphic::texture;
+
+using namespace engine::graphic::drawable;
 
 namespace engine::graphic::render {
 
@@ -10,8 +13,6 @@ Batch::Batch(BatchKey &key) : m_key(key) {
 }
 
 void Batch::add(const Sprite &sprite) {
-    const glm::vec2 &position = sprite.position();
-
     const UV &texture_uv = TextureManager::get_instance().get_texture(sprite.texture_id()).get_region(sprite.texture_path()).uv;
     const UV &sprite_uv = sprite.uv();
 
@@ -22,9 +23,9 @@ void Batch::add(const Sprite &sprite) {
         .v1 = std::lerp(texture_uv.v0, texture_uv.v1, sprite_uv.v1),
     };
 
-    double x0 = position.x;
+    double x0 = sprite.x() + sprite.offset_x();
     double x1 = x0 + sprite.width();
-    double y0 = position.y;
+    double y0 = sprite.y() + sprite.offset_y();
     double y1 = y0 + sprite.height();
 
     int offset = m_vertices.size();

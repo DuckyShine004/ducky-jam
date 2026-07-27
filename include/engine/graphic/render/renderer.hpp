@@ -11,15 +11,12 @@ class Renderer {
   public:
     Renderer();
 
-    // sprite, batch key
-    void queue(const engine::graphic::model::Sprite &sprite);
+    void queue(const engine::graphic::drawable::Sprite &sprite);
     void render();
 
   private:
-    // single mesh to avoid uploading gpu data in each batch
     engine::graphic::model::Mesh m_mesh;
 
-    // could maybe upload batches concurrently? But then downside is that draw ordering is messed up
     std::vector<engine::graphic::render::Batch> m_batches;
 };
 

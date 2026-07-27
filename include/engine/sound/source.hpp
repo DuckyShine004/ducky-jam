@@ -11,11 +11,12 @@ class Source {
 
     void play(const ALuint buffer_id);
     float get_position();
+    float get_pitch() const;
     bool is_playing();
 
   private:
     static inline constexpr float m_GAIN = 1.0f;
-    static inline constexpr float m_PITCH = 0.9f;
+    static inline constexpr float m_PITCH = 0.75f;
 
     static inline constexpr float m_POSITION[3] = {0, 0, 0};
     static inline constexpr float m_VELOCITY[3] = {0, 0, 0};

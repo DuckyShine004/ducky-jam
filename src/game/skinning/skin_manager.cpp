@@ -101,12 +101,13 @@ SkinConfig SkinManager::load_skin_config(Beatmap &beatmap) {
         }
     }
 
-    std::vector<std::string> heads = data["heads"].get<std::vector<std::string>>();
-    std::vector<std::string> tails = data["tails"].get<std::vector<std::string>>();
-    std::vector<std::string> bodies = data["bodies"].get<std::vector<std::string>>();
+    std::vector<std::string> heads = data["heads"];
+    std::vector<std::string> tails = data["tails"];
+    std::vector<std::string> bodies = data["bodies"];
 
-    std::vector<float> widths = data["widths"].get<std::vector<float>>();
-    float height = data["height"];
+    std::vector<float> widths = data["widths"];
+
+    skin_config.height = data["height"];
 
     // parse head texture paths
     for (int i = 0; i < heads.size(); ++i) {
@@ -117,8 +118,26 @@ SkinConfig SkinManager::load_skin_config(Beatmap &beatmap) {
         note.tail = root / tails[i];
 
         note.width = widths[i];
-        note.height = height;
     }
+
+    std::vector<std::string> lighting_hold = data["lighting_hold"];
+
+    for (const std::string &lighting : lighting_hold) {
+        skin_config.lighting_hold.emplace_back(root / lighting);
+    }
+
+    std::vector<std::string> lighting_normal = data["lighting_normal"];
+
+    for (const std::string &lighting : lighting_normal) {
+        skin_config.lighting_normal.emplace_back(root / lighting);
+    }
+
+    skin_config.hit_position = data["hit_position"];
+    skin_config.lighting_position = data["lighting_position"];
+
+    skin_config.lighting_frame_rate = data["lighting_frame_rate"];
+
+    skin_config.judge = root / data["judge"];
 
     LOG_INFO("{}", data.dump());
 

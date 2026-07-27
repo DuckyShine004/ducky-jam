@@ -8,6 +8,8 @@
 
 #include "engine/graphic/texture/texture_manager.hpp"
 
+#include "engine/graphic/drawable/sprite.hpp"
+
 #include "engine/graphic/model/enums/topology_type.hpp"
 
 #include "engine/graphic/render/renderer.hpp"
@@ -16,6 +18,8 @@ using namespace engine::graphic::shader;
 using namespace engine::graphic::effect;
 
 using namespace engine::graphic::texture;
+
+using namespace engine::graphic::drawable;
 
 using namespace engine::graphic::model;
 using namespace engine::graphic::model::enums;

@@ -51,6 +51,8 @@ class Atlas final : public engine::graphic::texture::Texture {
     void split_top(const engine::graphic::texture::atlas::Rectangle &rectangle, const engine::graphic::texture::atlas::Rectangle &placed, std::vector<engine::graphic::texture::atlas::Rectangle> &rectangles);
     void split_bottom(const engine::graphic::texture::atlas::Rectangle &rectangle, const engine::graphic::texture::atlas::Rectangle &placed, std::vector<engine::graphic::texture::atlas::Rectangle> &rectangles);
 
+    void prune(const std::vector<engine::graphic::texture::atlas::Rectangle> &rectangles);
+
     void create_region(const engine::graphic::texture::Image &image, const engine::graphic::texture::atlas::Rectangle &rectangle);
 
     static inline constexpr int m_MAX_WIDTH = 2048;

@@ -2,6 +2,10 @@
 
 #include "external/glad/glad.h"
 
+#include "external/imgui/imgui.h"
+#include "external/imgui/imgui_impl_glfw.h"
+#include "external/imgui/imgui_impl_opengl3.h"
+
 #include "application/application.hpp"
 
 #include "engine/engine.hpp"
@@ -77,6 +81,19 @@ bool Application::initialise() {
     glfwSetCursorPosCallback(window, Application::on_cursor);
     glfwSetScrollCallback(window, Application::on_scroll);
 
+    IMGUI_CHECKVERSION();
+
+    ImGui::CreateContext();
+
+    ImGuiIO &io = ImGui::GetIO();
+
+    io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
+
+    ImGui::StyleColorsDark();
+
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 330 core");
+
     m_window = window;
 
     return true;
@@ -104,12 +121,25 @@ void Application::load() {
 void Application::run() {
     glfwSwapInterval(0);
 
+    // int frames = 0;
+    // double seconds = 0.0;
+    // double previous_time = glfwGetTime();
+
     while (!glfwWindowShouldClose(m_window)) {
         this->update(m_engine);
         this->render(m_engine);
 
         glfwSwapBuffers(m_window);
         glfwPollEvents();
+        // double current_time = glfwGetTime();
+        // ++frames;
+        // if (current_time - previous_time >= 1.0) {
+        //     double f = static_cast<double>(frames) / (current_time - previous_time);
+        //     // double fps = 1000.0 / f;
+        //     LOG_INFO("FPS: {}", f);
+        //     frames = 0;
+        //     previous_time = current_time;
+        // }
     }
 }
 
@@ -129,7 +159,16 @@ void Application::render(Engine &engine) {
 
     glClearColor(R, G, B, 0.0f);
 
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+
+    ImGui::NewFrame();
+
     engine.render();
+
+    ImGui::Render();
+
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 void Application::on_key_press(GLFWwindow *window, int key, int scanmode, int action, int mods) {
@@ -179,8 +218,14 @@ void Application::handle_scroll(GLFWwindow *window, double x, double y) {
 }
 
 void Application::on_cleanup() {
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+
+    ImGui::DestroyContext();
+
     if (m_window != nullptr) {
         glfwDestroyWindow(m_window);
+
         m_window = nullptr;
     }
 

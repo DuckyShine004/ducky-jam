@@ -42,16 +42,8 @@ bool Atlas::add_texture(const Image &image) {
         }
     }
 
-    // place image inside rectangle
     place_image(image.data(), best_rectangle.x, best_rectangle.y, width, height);
 
-    // Use this if it doesn't work
-    // Rectangle placed{
-    //     .x = best_rectangle.x-m_PADDING,
-    //     .y = best_rectangle.y-m_PADDING,
-    //     .width = width+(m_PADDING<<1),
-    //     .height = height+(m_PADDING<<1),
-    // };
     Rectangle placed{
         .x = best_rectangle.x,
         .y = best_rectangle.y,
@@ -59,7 +51,6 @@ bool Atlas::add_texture(const Image &image) {
         .height = height,
     };
 
-    // split rectangles
     std::vector<Rectangle> rectangles;
 
     for (const Rectangle &rectangle : m_rectangles) {
@@ -70,7 +61,7 @@ bool Atlas::add_texture(const Image &image) {
         }
     }
 
-    m_rectangles = std::move(rectangles);
+    prune(rectangles);
 
     create_region(image, placed);
 
@@ -192,6 +183,35 @@ void Atlas::split_bottom(const Rectangle &free, const Rectangle &placed, std::ve
     int height = (free.y + free.height) - (placed.y + placed.height + m_PADDING);
 
     rectangles.emplace_back(x, y, width, height);
+}
+
+void Atlas::prune(const std::vector<Rectangle> &rectangles) {
+    m_rectangles.clear();
+
+    int size = rectangles.size();
+
+    for (int i = 0; i < size; ++i) {
+        const Rectangle &a = rectangles[i];
+
+        bool should_prune = false;
+
+        for (int j = 0; j < size; ++j) {
+            if (i == j) {
+                continue;
+            }
+
+            const Rectangle &b = rectangles[j];
+
+            if (b.y <= a.y && b.x <= a.x && b.x + b.width >= a.x + a.width && b.y + b.height >= a.y + a.height) {
+                should_prune = true;
+                break;
+            }
+        }
+
+        if (!should_prune) {
+            m_rectangles.emplace_back(a);
+        }
+    }
 }
 
 void Atlas::create_region(const Image &image, const Rectangle &rectangle) {
