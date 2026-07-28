@@ -16,6 +16,7 @@
 
 #include "game/parser/converter.hpp"
 
+#include "game/scenes/menu.hpp"
 #include "game/skinning/skin_manager.hpp"
 
 #include "core/logger/logger_macros.hpp"
@@ -35,6 +36,8 @@ using namespace game::parser;
 using namespace game::parser::components;
 
 using namespace game::skinning;
+
+using namespace game::scenes;
 
 namespace engine {
 
@@ -85,6 +88,8 @@ void Engine::initialise() {
     if (m_sound_clock.has_value()) {
         m_sound_clock->start();
     }
+
+    m_scene = std::make_unique<Menu>();
 }
 
 void Engine::update(GLFWwindow *window, double delta_time) {

@@ -6,6 +6,8 @@
 #include "engine/ui/components/padding.hpp"
 #include "engine/ui/components/border.hpp"
 
+#include "engine/ui/enums/align.hpp"
+
 namespace engine::ui::components {
 
 struct Layout {
@@ -17,6 +19,8 @@ struct Layout {
 
     Margin margin;
     Padding padding;
+
+    enums::Align align = enums::Align::TopLeft;
 
     Border border;
 

@@ -4,12 +4,13 @@
 
 #include <optional>
 
+#include "engine/graphic/render/renderer.hpp"
+#include "engine/scene/scene.hpp"
+#include "engine/sound/sound_clock.hpp"
+
 #include "game/parser/beatmap.hpp"
 #include "game/gameplay/stage/stage.hpp"
 #include "game/skinning/config/skin_config.hpp"
-
-#include "engine/graphic/render/renderer.hpp"
-#include "engine/sound/sound_clock.hpp"
 
 namespace engine {
 
@@ -31,6 +32,8 @@ class Engine {
     game::parser::Beatmap m_beatmap;
     game::skinning::config::SkinConfig m_skin_config;
     std::optional<game::gameplay::stage::Stage> m_stage;
+
+    std::unique_ptr<engine::scene::Scene> m_scene;
 };
 
 } // namespace engine
