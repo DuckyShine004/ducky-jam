@@ -6,7 +6,7 @@
 #include "engine/sound/sound_manager.hpp"
 
 #include "engine/graphic/shader/shader_manager.hpp"
-
+#include "engine/graphic/texture/texture_manager.hpp"
 #include "engine/graphic/effect/effect_manager.hpp"
 
 #include "game/gameplay/effects/lighting_effect.hpp"
@@ -89,33 +89,37 @@ void Engine::initialise() {
         m_sound_clock->start();
     }
 
+    TextureManager::get_instance().load_texture("resources/core/textures/colours/white.png");
+
+    TextureManager::get_instance().upload();
     m_scene = std::make_unique<Menu>();
 }
 
 void Engine::update(GLFWwindow *window, double delta_time) {
-    SoundManager &sound_manager = SoundManager::get_instance();
-
-    m_time += delta_time;
-
-    if (m_sound_clock.has_value()) {
-        m_sound_clock->update(delta_time);
-    }
-
-    double track_time = m_sound_clock->track_time();
-
-    m_stage->update(track_time, delta_time);
-
-    for (Lane &lane : m_stage->lanes()) {
-        for (const DrawableNote *note : lane.active_notes()) {
-            note->submit(m_renderer);
-        }
-    }
-
-    m_stage->judge().submit(m_renderer);
-
-    for (Lane &lane : m_stage->lanes()) {
-        lane.lighting_hold().submit(m_renderer);
-    }
+    m_scene->submit(m_renderer);
+    // SoundManager &sound_manager = SoundManager::get_instance();
+    //
+    // m_time += delta_time;
+    //
+    // if (m_sound_clock.has_value()) {
+    //     m_sound_clock->update(delta_time);
+    // }
+    //
+    // double track_time = m_sound_clock->track_time();
+    //
+    // m_stage->update(track_time, delta_time);
+    //
+    // for (Lane &lane : m_stage->lanes()) {
+    //     for (const DrawableNote *note : lane.active_notes()) {
+    //         note->submit(m_renderer);
+    //     }
+    // }
+    //
+    // m_stage->judge().submit(m_renderer);
+    //
+    // for (Lane &lane : m_stage->lanes()) {
+    //     lane.lighting_hold().submit(m_renderer);
+    // }
 }
 
 /* TODO: Allow for custom GL flags */

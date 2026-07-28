@@ -78,8 +78,6 @@ void SkinManager::load_textures(const std::string &path) {
     for (auto &texture_path : texture_paths) {
         texture_manager.load_texture(texture_path);
     }
-
-    texture_manager.upload();
 }
 
 SkinConfig SkinManager::load_skin_config(Beatmap &beatmap) {

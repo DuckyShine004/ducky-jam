@@ -2,8 +2,9 @@
 
 #include "external/glad/glad.h"
 
+#include "engine/graphic/model/quad.hpp"
 #include "engine/graphic/model/vertex.hpp"
-#include "engine/graphic/drawable/sprite.hpp"
+
 #include "engine/graphic/render/batch_key.hpp"
 
 namespace engine::graphic::render {
@@ -12,7 +13,7 @@ class Batch {
   public:
     Batch(engine::graphic::render::BatchKey &key);
 
-    void add(const engine::graphic::drawable::Sprite &sprite);
+    void add(const engine::graphic::model::Quad &quad);
 
     const engine::graphic::render::BatchKey &key() const;
 

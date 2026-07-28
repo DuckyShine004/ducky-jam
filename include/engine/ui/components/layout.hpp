@@ -1,6 +1,8 @@
 #pragma once
 
-#include "core/structs/Vector4.hpp"
+#include <cstdint>
+
+#include "core/structs/vector4.hpp"
 
 #include "engine/ui/components/margin.hpp"
 #include "engine/ui/components/padding.hpp"
@@ -11,11 +13,11 @@
 namespace engine::ui::components {
 
 struct Layout {
-    float x = 0.0f;
-    float y = 0.0f;
+    static inline constexpr int MAX_WIDTH = 1 << 16;
+    static inline constexpr int MAX_HEIGHT = 1 << 16;
 
-    float width = 0.0f;
-    float height = 0.0f;
+    float width = MAX_WIDTH;
+    float height = MAX_HEIGHT;
 
     Margin margin;
     Padding padding;
@@ -24,7 +26,7 @@ struct Layout {
 
     Border border;
 
-    core::structs::Vector4<float> colour;
+    core::structs::Vector4<std::uint8_t> colour;
 };
 
 } // namespace engine::ui::components

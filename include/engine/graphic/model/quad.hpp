@@ -1,27 +1,25 @@
 #pragma once
 
+#include <cstdint>
+
+#include "core/structs/vector4.hpp"
+
 #include "engine/graphic/texture/uv.hpp"
 
 namespace engine::graphic::model {
 
-// TODO: x0 and y0 should denote the BOTTOM LEFT corner of something, instead of anchoring by centre
-// everything in duck jam is anchored bottom left
-// This makes it so that resizing is consistent
-class Quad {
-  public:
-    Quad(double x, double y, double width, double height, const engine::graphic::texture::UV &uv);
+struct Quad {
+    float x;
+    float y;
+    float width;
+    float height;
 
-    void upload();
-    void render();
+    int texture_id;
+    int effect_id;
 
-  private:
-    double m_x;
-    double m_y;
+    core::structs::Vector4<std::uint8_t> colour{255, 255, 255, 255};
 
-    double m_width;
-    double m_height;
-
-    engine::graphic::texture::UV m_uv;
+    engine::graphic::texture::UV uv;
 };
 
 } // namespace engine::graphic::model

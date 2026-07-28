@@ -18,16 +18,12 @@ Menu::Menu() : Scene(create_root()) {
 std::unique_ptr<UiNode> Menu::create_root() {
     return std::make_unique<Container>(
         Layout{
-            .x = 0,
-            .y = 0,
             .width = 2560,
             .height = 1440,
             .align = Align::TopLeft,
             .colour = {0, 0, 0, 0},
         },
         Container{Layout{
-            .x = 0,
-            .y = 0,
             .width = 2560,
             .height = 40,
             .align = Align::TopLeft,

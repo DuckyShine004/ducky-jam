@@ -16,7 +16,7 @@ Image::Image(const std::string &path) : m_path(path) {
     unsigned char *image_data = stbi_load(path.c_str(), &width, &height, &channels, m_CHANNELS);
 
     if (!image_data) {
-        throw std::runtime_error("ERROR: Could not load image: " + path);
+        throw std::runtime_error("ERROR: Could not load image: " + path + "\n\n" + stbi_failure_reason());
     }
 
     m_source_width = width;

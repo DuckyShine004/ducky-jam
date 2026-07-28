@@ -28,19 +28,41 @@ namespace engine::graphic::render {
 
 Renderer::Renderer() = default;
 
-// NOTE: Should maybe pass drawable instead of sprite, because sprite in this case refers to quad
-// But then if I want to debug e.g., AABB then I need to pass draw lines
-void Renderer::queue(const Sprite &sprite) {
+void Renderer::queue(const Quad &quad) {
     BatchKey batch_key{
-        .effect_id = sprite.effect_id(),
-        .texture_id = sprite.texture_id(),
+        .effect_id = quad.effect_id,
+        .texture_id = quad.texture_id,
     };
 
     if (m_batches.empty() || m_batches.back().key() != batch_key) {
         Batch &batch = m_batches.emplace_back(batch_key);
     }
 
-    m_batches.back().add(sprite);
+    m_batches.back().add(quad);
+}
+
+// NOTE: Should maybe pass drawable instead of sprite, because sprite in this case refers to quad
+// But then if I want to debug e.g., AABB then I need to pass draw lines
+void Renderer::queue(const Sprite &sprite) {
+    const UV &texture_uv = TextureManager::get_instance().get_texture(sprite.texture_id()).get_region(sprite.texture_path()).uv;
+    const UV &sprite_uv = sprite.uv();
+
+    UV uv{
+        .u0 = std::lerp(texture_uv.u0, texture_uv.u1, sprite_uv.u0),
+        .u1 = std::lerp(texture_uv.u0, texture_uv.u1, sprite_uv.u1),
+        .v0 = std::lerp(texture_uv.v0, texture_uv.v1, sprite_uv.v0),
+        .v1 = std::lerp(texture_uv.v0, texture_uv.v1, sprite_uv.v1),
+    };
+
+    queue(Quad{
+        .x = static_cast<float>(sprite.x() + sprite.offset_x()),
+        .y = static_cast<float>(sprite.y() + sprite.offset_y()),
+        .width = static_cast<float>(sprite.width()),
+        .height = static_cast<float>(sprite.height()),
+        .texture_id = sprite.texture_id(),
+        .effect_id = sprite.effect_id(),
+        .uv = uv,
+    });
 }
 
 // WARN: Should render based on batch geometry instead of manual type

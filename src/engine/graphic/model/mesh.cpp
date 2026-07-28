@@ -5,6 +5,8 @@
 
 #include "core/logger/logger_macros.hpp"
 
+using namespace core::structs;
+
 namespace engine::graphic::model {
 
 using engine::graphic::model::enums::TopologyType;
@@ -32,9 +34,11 @@ void Mesh::upload(const std::vector<Vertex> &vertices, const std::vector<GLuint>
 
         glEnableVertexAttribArray(m_POSITION_ATTRIBUTE);
         glEnableVertexAttribArray(m_UV_ATTRIBUTE);
+        glEnableVertexAttribArray(m_COLOUR_ATTRIBUTE);
 
         glVertexAttribPointer(m_POSITION_ATTRIBUTE, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, position));
         glVertexAttribPointer(m_UV_ATTRIBUTE, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, uv));
+        glVertexAttribPointer(m_COLOUR_ATTRIBUTE, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), (void *)offsetof(Vertex, colour));
 
         glBindVertexArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -82,20 +86,8 @@ void Mesh::add_vertex(Vertex &vertex) {
     m_vertices.push_back(vertex);
 }
 
-void Mesh::add_vertex(glm::vec2 &position) {
-    m_vertices.emplace_back(position);
-}
-
-void Mesh::add_vertex(float x, float y) {
-    m_vertices.emplace_back(x, y);
-}
-
-void Mesh::add_vertex(float x, float y, const glm::vec2 &uv) {
-    m_vertices.emplace_back(x, y, uv.x, uv.y);
-}
-
-void Mesh::add_vertex(float x, float y, float u, float v) {
-    m_vertices.emplace_back(x, y, u, v);
+void Mesh::add_vertex(float x, float y, float u, float v, const Vector4<std::uint8_t> &colour) {
+    m_vertices.emplace_back(x, y, u, v, colour);
 }
 
 void Mesh::add_index(GLuint index) {

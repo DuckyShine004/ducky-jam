@@ -2,25 +2,20 @@
 
 #include <glm/glm.hpp>
 
+#include "core/structs/vector4.hpp"
+
 namespace engine::graphic::model {
 
 struct Vertex {
     glm::vec2 position;
     glm::vec2 uv;
+    std::uint32_t colour = 0xFFFFFFFF;
 
-    Vertex() : Vertex(0.0f, 0.0f, 0.0f, 0.0f) {
+    Vertex(float x, float y, float u, float v, const core::structs::Vector4<std::uint8_t> &colour = {255, 255, 255, 255}) : position{x, y}, uv{u, v}, colour{pack_colour(colour)} {
     }
 
-    Vertex(glm::vec2 &position) : Vertex(position.x, position.y, 0.0f, 0.0f) {
-    }
-
-    Vertex(float x, float y) : Vertex(x, y, 0.0f, 0.0f) {
-    }
-
-    Vertex(float x, float y, const glm::vec2 &uv) : Vertex(x, y, uv.x, uv.y) {
-    }
-
-    Vertex(float x, float y, float u, float v) : position(x, y), uv(u, v) {
+    static inline constexpr std::uint32_t pack_colour(const core::structs::Vector4<std::uint8_t> &colour) {
+        return colour.r | (colour.g << 8) | (colour.b << 16) | (colour.a << 24);
     }
 };
 
