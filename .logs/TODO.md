@@ -21,10 +21,16 @@
 - [ ] Implement score element
 - [ ] Implement combo element
 
+#### TODO (29-07-2026)
+- [x] Implement UI system
+- [ ] Optimise UI system
+  - [ ] If any UI node changes properties, this should force a redraw of a scene
+  - [ ] Effects that are unchanged should be cached
+- [ ] Implement menu
+
 #### FUTURE
 - [ ] Implement font rendering
 - [ ] Implement UI
-- [ ] Steam integration
 - [ ] Unix integration
 - [ ] Windows integration
 

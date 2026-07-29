@@ -7,7 +7,7 @@
 namespace engine::ui::components {
 
 struct Stroke {
-    float width = 0.0f;
+    float thickness = 0.0f;
 
     core::structs::Vector4<std::uint8_t> colour;
 };

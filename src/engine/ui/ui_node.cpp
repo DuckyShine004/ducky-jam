@@ -3,8 +3,10 @@
 #include "engine/ui/ui_node.hpp"
 
 #include "engine/graphic/model/quad.hpp"
-#include "engine/graphic/effect/effect_manager.hpp"
+#include "engine/graphic/effect/base_effect.hpp"
+#include "engine/graphic/effect/shadow_effect.hpp"
 #include "engine/graphic/texture/texture_manager.hpp"
+#include "engine/graphic/shader/shader_manager.hpp"
 
 using namespace core::structs;
 
@@ -12,6 +14,7 @@ using namespace engine::ui::enums;
 using namespace engine::ui::components;
 
 using namespace engine::graphic::model;
+using namespace engine::graphic::shader;
 using namespace engine::graphic::render;
 using namespace engine::graphic::effect;
 using namespace engine::graphic::texture;
@@ -117,7 +120,46 @@ void UiNode::arrange(const Bound &bound) {
 void UiNode::submit(Renderer &renderer) const {
     float y = 1440.0f - m_bound.y - m_bound.height;
 
+    // NOTE: render shadow first
+    Bound shadow_shape{
+        .x = m_bound.x + m_layout.shadow.offset_x - m_layout.shadow.spread_radius,
+        .y = m_bound.y + m_layout.shadow.offset_y - m_layout.shadow.spread_radius,
+        .width = m_bound.width + m_layout.shadow.spread_radius * 2.0f,
+        .height = m_bound.height + m_layout.shadow.spread_radius * 2.0f,
+    };
+
+    EffectPtr shadow_effect = std::make_shared<ShadowEffect>(ShaderManager::get_instance().get_shader_id("shadow"),
+                                                             Vector2<float>{
+                                                                 shadow_shape.width,
+                                                                 shadow_shape.height,
+                                                             },
+                                                             m_layout.shadow.blur_radius,
+                                                             m_layout.border.radius + m_layout.shadow.spread_radius);
+
+    EffectPtr base_effect = std::make_shared<BaseEffect>(ShaderManager::get_instance().get_shader_id("base"));
+
+    float padding = m_layout.shadow.blur_radius * 3.0f;
+
+    Bound shadow_quad{
+        .x = shadow_shape.x - padding,
+        .y = shadow_shape.y - padding,
+        .width = shadow_shape.width + padding * 2.0f,
+        .height = shadow_shape.height + padding * 2.0f,
+    };
+
     TextureManager &texture_manager = TextureManager::get_instance();
+
+    float shadow_y = 1440.0f - shadow_quad.y - shadow_quad.height;
+
+    renderer.queue(Quad{
+        .x = shadow_quad.x,
+        .y = shadow_y,
+        .width = shadow_quad.width,
+        .height = shadow_quad.height,
+        .texture_id = texture_manager.get_texture_id("resources/core/textures/colours/white.png"),
+        .effect = shadow_effect,
+        .colour = m_layout.shadow.colour,
+    });
 
     const Texture &texture = texture_manager.get_texture("resources/core/textures/colours/white.png");
     const Region &region = texture.get_region("resources/core/textures/colours/white.png");
@@ -131,7 +173,7 @@ void UiNode::submit(Renderer &renderer) const {
         .width = m_bound.width,
         .height = m_bound.height,
         .texture_id = TextureManager::get_instance().get_texture_id("resources/core/textures/colours/white.png"),
-        .effect_id = EffectManager::get_instance().get_effect_id("base"),
+        .effect = base_effect,
         .colour = m_layout.colour,
         .uv =
             {

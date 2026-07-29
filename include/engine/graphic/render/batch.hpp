@@ -11,7 +11,7 @@ namespace engine::graphic::render {
 
 class Batch {
   public:
-    Batch(engine::graphic::render::BatchKey &key);
+    Batch(const engine::graphic::render::BatchKey &key);
 
     void add(const engine::graphic::model::Quad &quad);
 

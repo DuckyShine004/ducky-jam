@@ -8,7 +8,8 @@ class BaseEffect final : public Effect {
   public:
     BaseEffect(int shader_id);
 
-    void apply() const override;
+  private:
+    void apply_shader_parameters(engine::graphic::shader::Shader &shader) const override;
 };
 
 } // namespace engine::graphic::effect

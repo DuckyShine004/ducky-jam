@@ -12,7 +12,7 @@ struct Shadow {
     float blur_radius = 0.0f;
     float spread_radius = 0.0f;
 
-    core::structs::Vector4<std::uint8_t> colour;
+    core::structs::Vector4<std::uint8_t> colour{0, 0, 0, 0};
 };
 
 } // namespace engine::ui::components

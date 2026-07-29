@@ -2,14 +2,16 @@
 
 #include "engine/scene/scene.hpp"
 
+#include "game/ui/theme/theme_config.hpp"
+
 namespace game::scenes {
 
 class Menu final : public engine::scene::Scene {
   public:
-    Menu();
+    Menu(const game::ui::theme::ThemeConfig &theme_config);
 
   private:
-    static std::unique_ptr<engine::ui::UiNode> create_root();
+    static std::unique_ptr<engine::ui::UiNode> create_root(const game::ui::theme::ThemeConfig &theme_config);
 };
 
 } // namespace game::scenes

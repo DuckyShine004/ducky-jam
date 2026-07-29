@@ -1,20 +1,19 @@
-#include "engine/graphic/shader/shader_manager.hpp"
-
 #include "game/gameplay/effects/lighting_effect.hpp"
 
-using namespace engine::graphic::shader;
+using namespace engine::graphic::blending;
+using namespace engine::graphic::blending::enums;
 
 namespace game::gameplay::effects {
 
-LightingEffect::LightingEffect(int shader_id) : Effect(shader_id) {
+LightingEffect::LightingEffect(int shader_id)
+    : Effect(shader_id, BlendParameters{
+                            .equation = BlendEquation::Add,
+                            .source = BlendMode::SourceAlpha,
+                            .destination = BlendMode::One,
+                        }) {
 }
 
-void LightingEffect::apply() const {
-    ShaderManager::get_instance().use_shader(m_shader_id);
-
-    glEnable(GL_BLEND);
-    glBlendEquation(GL_FUNC_ADD);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+void LightingEffect::apply_shader_parameters(engine::graphic::shader::Shader &) const {
 }
 
 } // namespace game::gameplay::effects

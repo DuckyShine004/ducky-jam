@@ -7,6 +7,7 @@
 #include "engine/ui/components/margin.hpp"
 #include "engine/ui/components/padding.hpp"
 #include "engine/ui/components/border.hpp"
+#include "engine/ui/components/shadow.hpp"
 
 #include "engine/ui/enums/align.hpp"
 
@@ -25,6 +26,8 @@ struct Layout {
     enums::Align align = enums::Align::TopLeft;
 
     Border border;
+
+    Shadow shadow;
 
     core::structs::Vector4<std::uint8_t> colour;
 };

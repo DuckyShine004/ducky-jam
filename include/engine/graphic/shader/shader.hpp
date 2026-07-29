@@ -4,6 +4,7 @@
 
 #include <string>
 
+#include "core/structs/vector2.hpp"
 #include "external/glad/glad.h"
 
 namespace engine::graphic::shader {
@@ -20,11 +21,13 @@ class Shader {
     void set_integer(const GLchar *name, int value);
 
     void set_vector2f(const GLchar *name, float x, float y);
-    void set_vector2f(const GLchar *name, glm::vec2 vector);
+    void set_vector2f(const GLchar *name, const core::structs::Vector2<float> &vector);
 
     void set_vector3f(const GLchar *name, float x, float y, float z);
     void set_vector3f(const GLchar *name, glm::vec3 vector);
     void set_vector3f(const GLchar *name, const float (&array)[3]);
+
+    void set_vector4f(const GLchar *name, glm::vec4 vector);
 
     void set_matrix4fv(const GLchar *name, glm::mat4 matrix);
 

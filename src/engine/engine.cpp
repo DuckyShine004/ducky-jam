@@ -19,6 +19,8 @@
 #include "game/scenes/menu.hpp"
 #include "game/skinning/skin_manager.hpp"
 
+#include "game/ui/theme/theme_config.hpp"
+
 #include "core/logger/logger_macros.hpp"
 
 using namespace engine::sound;
@@ -39,6 +41,8 @@ using namespace game::skinning;
 
 using namespace game::scenes;
 
+using namespace game::ui::theme;
+
 namespace engine {
 
 Engine::Engine() : m_time(0.0) {
@@ -48,8 +52,8 @@ Engine::Engine() : m_time(0.0) {
 // sound clock should be the one playing the music, music sync is probably the most important part
 void Engine::initialise() {
     // TODO: Effects should be loaded if custom defined
-    EffectManager::get_instance().add_effect("gameplay.lighting", std::make_unique<LightingEffect>(ShaderManager::get_instance().get_shader_id("base")));
-    EffectManager::get_instance().add_effect("gameplay.note", std::make_unique<NoteEffect>(ShaderManager::get_instance().get_shader_id("base")));
+    EffectManager::get_instance().add_effect("gameplay.lighting", std::make_shared<LightingEffect>(ShaderManager::get_instance().get_shader_id("base")));
+    EffectManager::get_instance().add_effect("gameplay.note", std::make_shared<NoteEffect>(ShaderManager::get_instance().get_shader_id("base")));
 
     SoundManager &sound_manager = SoundManager::get_instance();
 
@@ -92,7 +96,8 @@ void Engine::initialise() {
     TextureManager::get_instance().load_texture("resources/core/textures/colours/white.png");
 
     TextureManager::get_instance().upload();
-    m_scene = std::make_unique<Menu>();
+    ThemeConfig theme_config = ThemeConfig::load();
+    m_scene = std::make_unique<Menu>(theme_config);
 }
 
 void Engine::update(GLFWwindow *window, double delta_time) {

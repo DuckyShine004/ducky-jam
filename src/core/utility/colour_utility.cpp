@@ -1,5 +1,7 @@
 #include "core/utility/colour_utility.hpp"
 
+using namespace core::structs;
+
 namespace core::utility {
 
 std::string ColourUtility::get_ansi_foreground_from_hex(const std::string &hex) {
@@ -40,6 +42,19 @@ std::array<int, 3> ColourUtility::get_RGB_from_hex(const std::string &hex) {
     rgb[2] = std::stoi(digits.substr(4, 2), nullptr, 16);
 
     return rgb;
+}
+
+Vector4<std::uint8_t> ColourUtility::hex_to_rgba(const std::string &hex) {
+    Vector4<std::uint8_t> colour;
+
+    const std::string digits = hex.substr(1);
+
+    colour.r = std::stoi(digits.substr(0, 2), nullptr, 16);
+    colour.g = std::stoi(digits.substr(2, 2), nullptr, 16);
+    colour.b = std::stoi(digits.substr(4, 2), nullptr, 16);
+    colour.a = 255;
+
+    return colour;
 }
 
 } // namespace core::utility

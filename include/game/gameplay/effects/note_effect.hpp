@@ -8,7 +8,8 @@ class NoteEffect final : public engine::graphic::effect::Effect {
   public:
     NoteEffect(int shader_id);
 
-    void apply() const override;
+  private:
+    void apply_shader_parameters(engine::graphic::shader::Shader &shader) const override;
 };
 
 } // namespace game::gameplay::effects

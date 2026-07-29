@@ -1,7 +1,8 @@
+#include <stdexcept>
+
 #include <glm/ext/matrix_clip_space.hpp>
 
 #include "engine/graphic/effect/effect.hpp"
-#include "engine/graphic/effect/effect_manager.hpp"
 
 #include "engine/graphic/shader/shader.hpp"
 #include "engine/graphic/shader/shader_manager.hpp"
@@ -15,7 +16,6 @@
 #include "engine/graphic/render/renderer.hpp"
 
 using namespace engine::graphic::shader;
-using namespace engine::graphic::effect;
 
 using namespace engine::graphic::texture;
 
@@ -29,14 +29,16 @@ namespace engine::graphic::render {
 Renderer::Renderer() = default;
 
 void Renderer::queue(const Quad &quad) {
+    if (!quad.effect)
+        throw std::invalid_argument("Cannot queue a quad without an effect");
+
     BatchKey batch_key{
-        .effect_id = quad.effect_id,
+        .effect = quad.effect,
         .texture_id = quad.texture_id,
     };
 
-    if (m_batches.empty() || m_batches.back().key() != batch_key) {
-        Batch &batch = m_batches.emplace_back(batch_key);
-    }
+    if (m_batches.empty() || m_batches.back().key() != batch_key)
+        m_batches.emplace_back(batch_key);
 
     m_batches.back().add(quad);
 }
@@ -60,7 +62,7 @@ void Renderer::queue(const Sprite &sprite) {
         .width = static_cast<float>(sprite.width()),
         .height = static_cast<float>(sprite.height()),
         .texture_id = sprite.texture_id(),
-        .effect_id = sprite.effect_id(),
+        .effect = sprite.effect(),
         .uv = uv,
     });
 }
@@ -74,8 +76,7 @@ void Renderer::render() {
     for (const Batch &batch : m_batches) {
         m_mesh.upload(batch.vertices(), batch.indices());
 
-        // FIX: Effect could be empty
-        EffectManager::get_instance().get_effect(batch.key().effect_id).apply();
+        batch.key().effect->apply();
 
         Shader &shader = ShaderManager::get_instance().get_active_shader();
 

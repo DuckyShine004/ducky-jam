@@ -5,7 +5,7 @@ using namespace engine::graphic::texture;
 
 namespace engine::graphic::render {
 
-Batch::Batch(BatchKey &key) : m_key(key) {
+Batch::Batch(const BatchKey &key) : m_key(key) {
 }
 
 void Batch::add(const Quad &quad) {

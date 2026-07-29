@@ -8,6 +8,7 @@
 #include "core/utility/file_utility.hpp"
 
 using namespace core::logger;
+using namespace core::structs;
 using namespace core::utility;
 
 namespace engine::graphic::shader {
@@ -112,7 +113,7 @@ void Shader::set_vector2f(const GLchar *name, float x, float y) {
     glUniform2f(location, x, y);
 }
 
-void Shader::set_vector2f(const GLchar *name, glm::vec2 vector) {
+void Shader::set_vector2f(const GLchar *name, const Vector2<float> &vector) {
     GLint location = glGetUniformLocation(m_program, name);
     glUniform2f(location, vector.x, vector.y);
 }
@@ -130,6 +131,11 @@ void Shader::set_vector3f(const GLchar *name, glm::vec3 vector) {
 void Shader::set_vector3f(const GLchar *name, const float (&array)[3]) {
     GLint location = glGetUniformLocation(m_program, name);
     glUniform3f(location, array[0], array[1], array[2]);
+}
+
+void Shader::set_vector4f(const GLchar *name, glm::vec4 vector) {
+    GLint location = glGetUniformLocation(m_program, name);
+    glUniform4f(location, vector.x, vector.y, vector.z, vector.w);
 }
 
 void Shader::set_matrix4fv(const GLchar *name, glm::mat4 matrix) {
