@@ -2,8 +2,7 @@
 
 #include "engine/engine.hpp"
 
-#include "engine/sound/sound_clock.hpp"
-#include "engine/sound/sound_manager.hpp"
+#include "engine/audio/audio_manager.hpp"
 
 #include "engine/graphic/shader/shader_manager.hpp"
 #include "engine/graphic/texture/texture_manager.hpp"
@@ -23,8 +22,8 @@
 
 #include "core/logger/logger_macros.hpp"
 
-using namespace engine::sound;
-using namespace engine::sound::enums;
+using namespace engine::audio;
+using namespace engine::audio::enums;
 
 using namespace engine::graphic::effect;
 using namespace engine::graphic::shader;
@@ -55,21 +54,16 @@ void Engine::initialise() {
     EffectManager::get_instance().add_effect("gameplay.lighting", std::make_shared<LightingEffect>(ShaderManager::get_instance().get_shader_id("base")));
     EffectManager::get_instance().add_effect("gameplay.note", std::make_shared<NoteEffect>(ShaderManager::get_instance().get_shader_id("base")));
 
-    SoundManager &sound_manager = SoundManager::get_instance();
+    AudioManager &audio_manager = AudioManager::get_instance();
 
-    Source *source = sound_manager.get_empty_source();
-
-    if (source == nullptr) {
-        LOG_ERROR("No sound sources found");
-        return;
-    }
-
-    ALuint id = sound_manager.add_sound(SoundType::Music, "resources/beatmaps/2099753/4404686/bgm.mp3");
+    AudioSource *audio_source = audio_manager.get_empty_audio_source();
+    ALuint id = audio_manager.add_audio(AudioType::Music, "resources/beatmaps/2099753/4404686/bgm.mp3");
+    AudioBuffer *audio_buffer = audio_manager.get_audio_buffer(AudioType::Music, "resources/beatmaps/2099753/4404686/bgm.mp3");
     // ALuint id = sound_manager.add_sound(SoundType::Music, "resources/beatmaps/2321277/4973089/bgm.mp3");
     // ALuint id = sound_manager.add_sound(SoundType::Music, "resources/beatmaps/2383964/5154675/bgm.mp3");
     // ALuint id = sound_manager.add_sound(SoundType::Music, "resources/beatmaps/2325151/4983858/bgm.mp3");
 
-    m_sound_clock.emplace(*source, id);
+    m_audio_clock.emplace(*audio_source, *audio_buffer, id);
 
     m_beatmap = Converter::convert("resources/beatmaps/2099753/4404686/beatmap.osu");
     // m_beatmap = Converter::convert("resources/beatmaps/2321277/4973089/beatmap.osu");
@@ -89,8 +83,8 @@ void Engine::initialise() {
 
     m_stage.emplace(m_skin_config, m_beatmap);
 
-    if (m_sound_clock.has_value()) {
-        m_sound_clock->start();
+    if (m_audio_clock.has_value()) {
+        m_audio_clock->start();
     }
 
     TextureManager::get_instance().load_texture("resources/core/textures/colours/white.png");
@@ -101,16 +95,20 @@ void Engine::initialise() {
 }
 
 void Engine::update(GLFWwindow *window, double delta_time) {
-    m_scene->submit(m_renderer);
     // SoundManager &sound_manager = SoundManager::get_instance();
     //
     // m_time += delta_time;
+
+    if (m_audio_clock.has_value()) {
+        m_audio_clock->update(delta_time);
+    }
+    const double track_time = m_audio_clock->track_time();
+
+    m_scene->update_by_audio(m_audio_clock->audio_buffer(), track_time);
+    m_scene->update(delta_time);
+
+    m_scene->submit(m_renderer);
     //
-    // if (m_sound_clock.has_value()) {
-    //     m_sound_clock->update(delta_time);
-    // }
-    //
-    // double track_time = m_sound_clock->track_time();
     //
     // m_stage->update(track_time, delta_time);
     //

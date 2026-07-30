@@ -29,6 +29,7 @@
   },
   "scheme": {
     "background": "mantle",
-    "topbar": "crust"
+    "topbar": "crust",
+    "spectrum": "mauve"
   }
 }

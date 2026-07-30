@@ -2,16 +2,18 @@
 
 #include "AL/al.h"
 
-namespace engine::sound {
+namespace engine::audio {
 
-class Source {
+class AudioSource {
   public:
-    Source();
-    ~Source();
+    AudioSource();
+    ~AudioSource();
 
     void play(const ALuint buffer_id);
+
     float get_position();
     float get_pitch() const;
+
     bool is_playing();
 
   private:
@@ -27,4 +29,4 @@ class Source {
     ALuint m_buffer_id;
 };
 
-} // namespace engine::sound
+} // namespace engine::audio

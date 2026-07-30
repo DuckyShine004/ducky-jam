@@ -13,6 +13,8 @@ using namespace core::structs;
 using namespace engine::ui::enums;
 using namespace engine::ui::components;
 
+using namespace engine::audio;
+
 using namespace engine::graphic::model;
 using namespace engine::graphic::shader;
 using namespace engine::graphic::render;
@@ -114,6 +116,18 @@ void UiNode::arrange(const Bound &bound) {
             .width = child_size.w,
             .height = child_size.h,
         });
+    }
+}
+
+void UiNode::update(double delta_time) {
+    for (std::unique_ptr<UiNode> &child : m_children) {
+        child->update(delta_time);
+    }
+}
+
+void UiNode::update_by_audio(AudioBuffer &audio_buffer, double track_time) {
+    for (std::unique_ptr<UiNode> &child : m_children) {
+        child->update_by_audio(audio_buffer, track_time);
     }
 }
 

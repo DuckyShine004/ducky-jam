@@ -6,7 +6,7 @@
 
 #include "engine/graphic/render/renderer.hpp"
 #include "engine/scene/scene.hpp"
-#include "engine/sound/sound_clock.hpp"
+#include "engine/audio/audio_clock.hpp"
 
 #include "game/parser/beatmap.hpp"
 #include "game/gameplay/stage/stage.hpp"
@@ -25,7 +25,7 @@ class Engine {
   private:
     double m_time;
 
-    std::optional<engine::sound::SoundClock> m_sound_clock;
+    std::optional<engine::audio::AudioClock> m_audio_clock;
 
     engine::graphic::render::Renderer m_renderer;
 

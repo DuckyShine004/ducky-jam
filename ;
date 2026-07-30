@@ -7,7 +7,7 @@
 
 #include "engine/graphic/render/renderer.hpp"
 
-#include "engine/audio/audio_buffer.hpp"
+#include "engine/sound/audio_info.hpp"
 
 #include "engine/ui/bound.hpp"
 #include "engine/ui/constraint.hpp"
@@ -36,8 +36,8 @@ class UiNode : public engine::graphic::drawable::Drawable {
     core::structs::Vector2<float> measure(Constraint &constraint);
     virtual void arrange(const Bound &bound);
 
-    virtual void update(double delta_time);
-    virtual void update_by_audio(engine::audio::AudioBuffer &audio_buffer, double track_time);
+    void update(double delta_time);
+    virtual void update_by_audio(engine::sound::AudioInfo &audio_info, double track_time) = 0;
 
     void submit(graphic::render::Renderer &renderer) const override;
 

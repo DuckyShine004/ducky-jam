@@ -1,8 +1,8 @@
-#include "engine/sound/source.hpp"
+#include "engine/audio/audio_source.hpp"
 
-namespace engine::sound {
+namespace engine::audio {
 
-Source::Source() : m_source_id(0), m_buffer_id(0) {
+AudioSource::AudioSource() : m_source_id(0), m_buffer_id(0) {
     alGenSources(1, &m_source_id);
 
     alSourcef(m_source_id, AL_GAIN, m_GAIN);
@@ -15,11 +15,11 @@ Source::Source() : m_source_id(0), m_buffer_id(0) {
     alSourcei(m_source_id, AL_BUFFER, m_buffer_id);
 }
 
-Source::~Source() {
+AudioSource::~AudioSource() {
     alDeleteSources(1, &m_source_id);
 }
 
-void Source::play(const ALuint buffer_id) {
+void AudioSource::play(const ALuint buffer_id) {
     if (buffer_id != m_buffer_id) {
         m_buffer_id = buffer_id;
 
@@ -29,7 +29,7 @@ void Source::play(const ALuint buffer_id) {
     alSourcePlay(m_source_id);
 }
 
-float Source::get_position() {
+float AudioSource::get_position() {
     ALfloat position = 0.0f;
 
     alGetSourcef(m_source_id, AL_SEC_OFFSET, &position);
@@ -37,7 +37,7 @@ float Source::get_position() {
     return position * 1000.0f;
 }
 
-bool Source::is_playing() {
+bool AudioSource::is_playing() {
     ALint state;
 
     alGetSourcei(m_source_id, AL_SOURCE_STATE, &state);
@@ -45,4 +45,4 @@ bool Source::is_playing() {
     return state == AL_PLAYING;
 }
 
-} // namespace engine::sound
+} // namespace engine::audio

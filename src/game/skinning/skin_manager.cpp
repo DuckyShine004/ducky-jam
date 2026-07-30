@@ -107,7 +107,6 @@ SkinConfig SkinManager::load_skin_config(Beatmap &beatmap) {
 
     skin_config.height = data["height"];
 
-    // parse head texture paths
     for (int i = 0; i < heads.size(); ++i) {
         Note &note = skin_config.notes[i];
 
@@ -136,8 +135,6 @@ SkinConfig SkinManager::load_skin_config(Beatmap &beatmap) {
     skin_config.lighting_frame_rate = data["lighting_frame_rate"];
 
     skin_config.judge = root / data["judge"];
-
-    LOG_INFO("{}", data.dump());
 
     return skin_config;
 }

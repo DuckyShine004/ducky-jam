@@ -9,6 +9,7 @@ namespace game::ui::theme {
 struct Theme {
     core::structs::Vector4<std::uint8_t> background;
     core::structs::Vector4<std::uint8_t> topbar;
+    core::structs::Vector4<std::uint8_t> spectrum;
 };
 
 } // namespace game::ui::theme

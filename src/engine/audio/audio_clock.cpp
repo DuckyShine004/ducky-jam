@@ -1,32 +1,33 @@
 #include <cmath>
 
-#include "engine/sound/sound_clock.hpp"
+#include "engine/audio/audio_clock.hpp"
 
-namespace engine::sound {
+namespace engine::audio {
 
-SoundClock::SoundClock(Source &source, ALuint id) : m_source(source), m_id(id), m_track_speed(0.75f), m_track_time(0.0f), m_elapsed_time(0.0f), m_is_running(false) {
+AudioClock::AudioClock(AudioSource &audio_source, AudioBuffer &audio_buffer, ALuint id) : m_audio_source(audio_source), m_audio_buffer(audio_buffer), m_id(id), m_track_speed(0.75f), m_track_time(0.0f), m_elapsed_time(0.0f), m_is_running(false) {
 }
 
-void SoundClock::start() {
+void AudioClock::start() {
     if (m_is_running) {
         return;
     }
 
-    m_source.play(m_id);
+    m_audio_source.play(m_id);
     m_is_running = true;
 }
 
 // Smooth note update: https://github.com/ppy/osu
 // https://github.com/InventiveRhythm/fluXis
-void SoundClock::update(double delta_time) {
-    if (!m_is_running)
+void AudioClock::update(double delta_time) {
+    if (!m_is_running) {
         return;
+    }
 
     const double delta_ms = delta_time * 1000.0f;
 
     m_track_time += delta_ms * m_track_speed;
 
-    const double audioTime = m_source.get_position();
+    const double audioTime = m_audio_source.get_position();
     const double error = audioTime - m_track_time;
 
     constexpr double snap_threshold_ms = 33.0f;
@@ -41,8 +42,12 @@ void SoundClock::update(double delta_time) {
     }
 }
 
-double SoundClock::track_time() const {
+double AudioClock::track_time() const {
     return m_track_time;
 }
 
-} // namespace engine::sound
+AudioBuffer &AudioClock::audio_buffer() {
+    return m_audio_buffer;
+}
+
+} // namespace engine::audio

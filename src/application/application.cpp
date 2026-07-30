@@ -9,7 +9,7 @@
 #include "application/application.hpp"
 
 #include "engine/engine.hpp"
-#include "engine/sound/sound_manager.hpp"
+#include "engine/audio/audio_manager.hpp"
 #include "engine/graphic/shader/shader_manager.hpp"
 #include "engine/graphic/effect/effect_manager.hpp"
 #include "engine/graphic/texture/texture_manager.hpp"
@@ -19,7 +19,7 @@
 #include "core/logger/logger_macros.hpp"
 
 using namespace engine;
-using namespace engine::sound;
+using namespace engine::audio;
 using namespace engine::graphic::shader;
 using namespace engine::graphic::effect;
 using namespace engine::graphic::texture;
@@ -58,7 +58,13 @@ bool Application::initialise() {
     glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
     glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 
-    GLFWwindow *window = glfwCreateWindow(2560, 1440, "Duck Jam", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(2560, 1440, "Duck Jam", monitor, nullptr);
+
+    int w, h, fw, fh;
+    glfwGetWindowSize(window, &w, &h);
+    glfwGetFramebufferSize(window, &fw, &fh);
+
+    LOG_INFO("Window size: {}x{}, Framebuffer size: {}x{}", w, h, fw, fh);
 
     if (window == nullptr) {
         LOG_ERROR("Failed to create window");
@@ -107,7 +113,7 @@ void Application::load() {
 
     glViewport(0, 0, width, height);
 
-    SoundManager::get_instance().initialise();
+    AudioManager::get_instance().initialise();
     ShaderManager::get_instance().initialise();
     TextureManager::get_instance().initialise();
     SkinManager::get_instance().initialise();
