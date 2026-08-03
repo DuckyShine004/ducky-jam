@@ -4,7 +4,7 @@
 
 #include <optional>
 
-#include "engine/graphic/render/renderer.hpp"
+#include "engine/graphics/renderer/renderer.hpp"
 #include "engine/scene/scene.hpp"
 #include "engine/audio/audio_clock.hpp"
 
@@ -18,7 +18,9 @@ class Engine {
   public:
     Engine();
 
-    void initialise();
+    void initialise(int framebuffer_width, int framebuffer_height);
+    void resize(int framebuffer_width, int framebuffer_height);
+    void shutdown();
     void update(GLFWwindow *window, double delta_time);
     void render();
 
@@ -27,7 +29,7 @@ class Engine {
 
     std::optional<engine::audio::AudioClock> m_audio_clock;
 
-    engine::graphic::render::Renderer m_renderer;
+    engine::graphics::renderer::Renderer m_renderer;
 
     game::parser::Beatmap m_beatmap;
     game::skinning::config::SkinConfig m_skin_config;

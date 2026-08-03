@@ -1,6 +1,6 @@
 #include "game/gameplay/stage/lane.hpp"
 
-using namespace engine::graphic::animation;
+using namespace engine::graphics::animation;
 
 using namespace game::gameplay::stage::drawable;
 

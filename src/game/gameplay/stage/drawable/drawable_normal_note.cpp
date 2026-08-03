@@ -1,7 +1,7 @@
 #include "game/gameplay/stage/drawable/drawable_normal_note.hpp"
 
-using namespace engine::graphic::render;
-using namespace engine::graphic::drawable;
+using namespace engine::graphics::renderer;
+using namespace engine::graphics::drawable;
 
 namespace game::gameplay::stage::drawable {
 

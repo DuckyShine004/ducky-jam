@@ -1,6 +1,6 @@
 #pragma once
 
-#include "engine/graphic/drawable/drawable.hpp"
+#include "engine/graphics/drawable/drawable.hpp"
 
 namespace game::gameplay::stage {
 

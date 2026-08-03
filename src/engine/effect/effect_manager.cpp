@@ -1,15 +1,16 @@
 #include <stdexcept>
 #include <utility>
 
-#include "engine/graphic/shader/shader_manager.hpp"
+#include "engine/graphics/shader/shader_manager.hpp"
 
-#include "engine/graphic/effect/base_effect.hpp"
-#include "engine/graphic/effect/effect_manager.hpp"
+#include "engine/graphics/effect/base_effect.hpp"
+#include "engine/graphics/effect/bloom_effect.hpp"
+#include "engine/graphics/effect/effect_manager.hpp"
 
 /* FIX: Fix this to cache custom effects */
-using namespace engine::graphic::shader;
+using namespace engine::graphics::shader;
 
-namespace engine::graphic::effect {
+namespace engine::graphics::effect {
 
 EffectManager::EffectManager() = default;
 
@@ -38,4 +39,23 @@ EffectPtr EffectManager::get_effect(const std::string &name) const {
     return m_effects.at(name);
 }
 
-} // namespace engine::graphic::effect
+EffectPtr EffectManager::get_bloom_effect(float intensity) {
+    if (intensity <= 0.0f) {
+        return get_effect("base");
+    }
+
+    auto iterator = m_bloom_effects.find(intensity);
+
+    if (iterator != m_bloom_effects.end()) {
+        return iterator->second;
+    }
+
+    const int shader_id = ShaderManager::get_instance().get_shader_id("base");
+    EffectPtr effect = std::make_shared<BloomEffect>(shader_id, intensity);
+
+    m_bloom_effects.emplace(intensity, effect);
+
+    return effect;
+}
+
+} // namespace engine::graphics::effect

@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "engine/graphic/animation/animation_player.hpp"
+#include "engine/graphics/animation/animation_player.hpp"
 
 #include "game/gameplay/stage/drawable/drawable_note.hpp"
 
@@ -17,15 +17,15 @@ class Lane {
 
     const std::vector<drawable::DrawableNote *> &active_notes() const;
 
-    engine::graphic::animation::AnimationPlayer &lighting_hold();
-    engine::graphic::animation::AnimationPlayer &lighting_normal();
+    engine::graphics::animation::AnimationPlayer &lighting_hold();
+    engine::graphics::animation::AnimationPlayer &lighting_normal();
 
   private:
     std::vector<std::unique_ptr<drawable::DrawableNote>> m_notes;
     std::vector<drawable::DrawableNote *> m_active_notes;
 
-    engine::graphic::animation::AnimationPlayer m_lighting_hold;
-    engine::graphic::animation::AnimationPlayer m_lighting_normal;
+    engine::graphics::animation::AnimationPlayer m_lighting_hold;
+    engine::graphics::animation::AnimationPlayer m_lighting_normal;
 
     int m_note_offset;
 };

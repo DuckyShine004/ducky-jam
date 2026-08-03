@@ -1,7 +1,7 @@
-#include "engine/graphic/drawable/sprite.hpp"
+#include "engine/graphics/drawable/sprite.hpp"
 
-#include "engine/graphic/texture/region.hpp"
-#include "engine/graphic/texture/texture_manager.hpp"
+#include "engine/graphics/texture/region.hpp"
+#include "engine/graphics/texture/texture_manager.hpp"
 
 #include "game/gameplay/stage/stage.hpp"
 #include "game/gameplay/stage/note.hpp"
@@ -12,8 +12,8 @@
 
 #include "core/logger/logger_macros.hpp"
 
-using namespace engine::graphic::texture;
-using namespace engine::graphic::drawable;
+using namespace engine::graphics::texture;
+using namespace engine::graphics::drawable;
 
 using namespace game::skinning::config;
 

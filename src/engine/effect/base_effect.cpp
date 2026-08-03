@@ -1,11 +1,11 @@
-#include "engine/graphic/effect/base_effect.hpp"
+#include "engine/graphics/effect/base_effect.hpp"
 
-using namespace engine::graphic::shader;
+using namespace engine::graphics::shader;
 
-using namespace engine::graphic::blending;
-using namespace engine::graphic::blending::enums;
+using namespace engine::graphics::blending;
+using namespace engine::graphics::blending::enums;
 
-namespace engine::graphic::effect {
+namespace engine::graphics::effect {
 
 BaseEffect::BaseEffect(int shader_id)
     : Effect(shader_id, BlendParameters{
@@ -16,6 +16,7 @@ BaseEffect::BaseEffect(int shader_id)
 }
 
 void BaseEffect::apply_shader_parameters(Shader &shader) const {
+    shader.set_float("u_bloom_intensity", 0.0f);
 }
 
-} // namespace engine::graphic::effect
+} // namespace engine::graphics::effect

@@ -5,7 +5,7 @@
 
 #include "core/structs/vector2.hpp"
 
-#include "engine/graphic/render/renderer.hpp"
+#include "engine/graphics/renderer/renderer.hpp"
 
 #include "engine/audio/audio_buffer.hpp"
 
@@ -15,7 +15,7 @@
 
 namespace engine::ui {
 
-class UiNode : public engine::graphic::drawable::Drawable {
+class UiNode : public engine::graphics::drawable::Drawable {
   public:
     virtual ~UiNode() = default;
 
@@ -39,7 +39,7 @@ class UiNode : public engine::graphic::drawable::Drawable {
     virtual void update(double delta_time);
     virtual void update_by_audio(engine::audio::AudioBuffer &audio_buffer, double track_time);
 
-    void submit(graphic::render::Renderer &renderer) const override;
+    void submit(engine::graphics::renderer::Renderer &renderer) const override;
 
     components::Layout &layout();
 

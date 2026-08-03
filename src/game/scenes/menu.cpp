@@ -1,9 +1,10 @@
 #include "engine/ui/enums/align.hpp"
 #include "engine/ui/components/layout.hpp"
-#include "engine/ui/spectrum.hpp"
 #include "engine/ui/container.hpp"
 
 #include "game/scenes/menu.hpp"
+
+#include "game/ui/spectrum.hpp"
 
 using namespace engine::audio;
 
@@ -11,6 +12,7 @@ using namespace engine::ui;
 using namespace engine::ui::enums;
 using namespace engine::ui::components;
 
+using namespace game::ui;
 using namespace game::ui::theme;
 
 namespace game::scenes {
@@ -44,6 +46,10 @@ std::unique_ptr<UiNode> Menu::create_root(const ThemeConfig &theme_config) {
                 .width = 2560,
                 .height = 360,
                 .align = Align::Bottom,
+                .bloom =
+                    {
+                        .intensity = 0.25f,
+                    },
                 .colour = theme_config.theme.spectrum,
             },
             128,

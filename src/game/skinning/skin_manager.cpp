@@ -6,7 +6,7 @@
 
 #include "game/skinning/skin_manager.hpp"
 
-#include "engine/graphic/texture/texture_manager.hpp"
+#include "engine/graphics/texture/texture_manager.hpp"
 
 #include "core/logger/logger_macros.hpp"
 #include "core/utility/file_utility.hpp"
@@ -14,7 +14,7 @@
 using namespace game::parser;
 using namespace game::skinning::config;
 
-using namespace engine::graphic::texture;
+using namespace engine::graphics::texture;
 
 using namespace core::logger;
 using namespace core::utility;

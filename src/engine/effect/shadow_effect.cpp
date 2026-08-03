@@ -1,11 +1,11 @@
-#include "engine/graphic/effect/shadow_effect.hpp"
+#include "engine/graphics/effect/shadow_effect.hpp"
 
 using namespace core::structs;
 
-using namespace engine::graphic::shader;
-using namespace engine::graphic::blending;
+using namespace engine::graphics::shader;
+using namespace engine::graphics::blending;
 
-namespace engine::graphic::effect {
+namespace engine::graphics::effect {
 
 ShadowEffect::ShadowEffect(int shader_id, Vector2<float> shadow_size, float blur_radius, float corner_radius) : Effect(shader_id, BlendParameters{}), m_shadow_size(shadow_size), m_blur_radius(blur_radius), m_corner_radius(corner_radius) {
 }
@@ -16,4 +16,4 @@ void ShadowEffect::apply_shader_parameters(Shader &shader) const {
     shader.set_float("u_corner_radius", m_corner_radius);
 }
 
-} // namespace engine::graphic::effect
+} // namespace engine::graphics::effect

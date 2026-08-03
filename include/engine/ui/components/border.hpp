@@ -5,7 +5,7 @@
 namespace engine::ui::components {
 
 struct Border {
-    float radius = 0.0f;
+    core::structs::Vector4<float> radius{};
 
     Stroke left;
     Stroke right;

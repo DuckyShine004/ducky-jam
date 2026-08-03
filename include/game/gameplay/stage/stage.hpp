@@ -15,14 +15,14 @@ class Stage {
     void update(double track_time, double delta_time);
 
     std::vector<Lane> &lanes();
-    const engine::graphic::drawable::Sprite &judge() const;
+    const engine::graphics::drawable::Sprite &judge() const;
 
   private:
-    static engine::graphic::drawable::Sprite create_judge(const game::skinning::config::SkinConfig &skin_config, const game::parser::Beatmap &beatmap);
+    static engine::graphics::drawable::Sprite create_judge(const game::skinning::config::SkinConfig &skin_config, const game::parser::Beatmap &beatmap);
 
     std::vector<Lane> m_lanes;
 
-    engine::graphic::drawable::Sprite m_judge;
+    engine::graphics::drawable::Sprite m_judge;
 };
 
 } // namespace game::gameplay::stage

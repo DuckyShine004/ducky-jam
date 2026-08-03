@@ -10,9 +10,9 @@
 
 #include "engine/engine.hpp"
 #include "engine/audio/audio_manager.hpp"
-#include "engine/graphic/shader/shader_manager.hpp"
-#include "engine/graphic/effect/effect_manager.hpp"
-#include "engine/graphic/texture/texture_manager.hpp"
+#include "engine/graphics/shader/shader_manager.hpp"
+#include "engine/graphics/effect/effect_manager.hpp"
+#include "engine/graphics/texture/texture_manager.hpp"
 
 #include "game/skinning/skin_manager.hpp"
 
@@ -20,22 +20,27 @@
 
 using namespace engine;
 using namespace engine::audio;
-using namespace engine::graphic::shader;
-using namespace engine::graphic::effect;
-using namespace engine::graphic::texture;
+using namespace engine::graphics::shader;
+using namespace engine::graphics::effect;
+using namespace engine::graphics::texture;
 
 using namespace game::skinning;
 
 namespace application {
 
-Application::Application() : m_last_time(0.0) {
+Application::Application() : m_window(nullptr), m_last_time(0.0), m_is_mouse_captured(false) {
 }
 
 Application::~Application() {
+    m_engine.shutdown();
     this->on_cleanup();
 }
 
 bool Application::initialise() {
+#if defined(__linux__)
+    glfwWindowHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
+#endif
+
     if (!glfwInit()) {
         LOG_ERROR("Failed to initialise GLFW");
         return false;
@@ -45,7 +50,7 @@ bool Application::initialise() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-#ifdef __APPLE__
+#if defined(__APPLE__)
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 #endif
 
@@ -60,17 +65,17 @@ bool Application::initialise() {
 
     GLFWwindow *window = glfwCreateWindow(2560, 1440, "Duck Jam", monitor, nullptr);
 
-    int w, h, fw, fh;
-    glfwGetWindowSize(window, &w, &h);
-    glfwGetFramebufferSize(window, &fw, &fh);
-
-    LOG_INFO("Window size: {}x{}, Framebuffer size: {}x{}", w, h, fw, fh);
-
     if (window == nullptr) {
         LOG_ERROR("Failed to create window");
         this->on_cleanup();
         return false;
     }
+
+    int w, h, fw, fh;
+    glfwGetWindowSize(window, &w, &h);
+    glfwGetFramebufferSize(window, &fw, &fh);
+
+    LOG_INFO("Window size: {}x{}, Framebuffer size: {}x{}", w, h, fw, fh);
 
     glfwMakeContextCurrent(window);
 
@@ -121,15 +126,11 @@ void Application::load() {
     /* NOTE: MUST BE LOADED AFTER SHADERS ARE LOADED */
     EffectManager::get_instance().initialise();
 
-    m_engine.initialise();
+    m_engine.initialise(width, height);
 }
 
 void Application::run() {
     glfwSwapInterval(0);
-
-    // int frames = 0;
-    // double seconds = 0.0;
-    // double previous_time = glfwGetTime();
 
     while (!glfwWindowShouldClose(m_window)) {
         this->update(m_engine);
@@ -137,15 +138,6 @@ void Application::run() {
 
         glfwSwapBuffers(m_window);
         glfwPollEvents();
-        // double current_time = glfwGetTime();
-        // ++frames;
-        // if (current_time - previous_time >= 1.0) {
-        //     double f = static_cast<double>(frames) / (current_time - previous_time);
-        //     // double fps = 1000.0 / f;
-        //     LOG_INFO("FPS: {}", f);
-        //     frames = 0;
-        //     previous_time = current_time;
-        // }
     }
 }
 
@@ -205,6 +197,7 @@ void Application::on_window_resize(GLFWwindow *window, int width, int height) {
 
 void Application::handle_window_resize(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
+    m_engine.resize(width, height);
 }
 
 void Application::on_cursor(GLFWwindow *window, double x, double y) {

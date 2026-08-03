@@ -1,7 +1,7 @@
 #include "game/gameplay/effects/lighting_effect.hpp"
 
-using namespace engine::graphic::blending;
-using namespace engine::graphic::blending::enums;
+using namespace engine::graphics::blending;
+using namespace engine::graphics::blending::enums;
 
 namespace game::gameplay::effects {
 
@@ -13,7 +13,8 @@ LightingEffect::LightingEffect(int shader_id)
                         }) {
 }
 
-void LightingEffect::apply_shader_parameters(engine::graphic::shader::Shader &) const {
+void LightingEffect::apply_shader_parameters(engine::graphics::shader::Shader &shader) const {
+    shader.set_float("u_bloom_intensity", 0.0f);
 }
 
 } // namespace game::gameplay::effects

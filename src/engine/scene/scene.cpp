@@ -2,7 +2,7 @@
 
 #include "engine/ui/constraint.hpp"
 
-using namespace engine::graphic::render;
+using namespace engine::graphics::renderer;
 
 using namespace engine::ui;
 

@@ -28,9 +28,11 @@
   - [ ] Effects that are unchanged should be cached
 - [ ] Implement menu
 
-#### FUTURE
+#### TODO (01-08-2026)
+- [ ] Implement mip chain bloom algorithm (replace the current Gaussian blur)
 - [ ] Implement font rendering
-- [ ] Implement UI
+
+#### FUTURE
 - [ ] Unix integration
 - [ ] Windows integration
 

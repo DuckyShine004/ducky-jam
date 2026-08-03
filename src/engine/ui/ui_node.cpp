@@ -1,12 +1,12 @@
 #include <algorithm>
+#include <cmath>
 
 #include "engine/ui/ui_node.hpp"
 
-#include "engine/graphic/model/quad.hpp"
-#include "engine/graphic/effect/base_effect.hpp"
-#include "engine/graphic/effect/shadow_effect.hpp"
-#include "engine/graphic/texture/texture_manager.hpp"
-#include "engine/graphic/shader/shader_manager.hpp"
+#include "engine/graphics/model/quad.hpp"
+#include "engine/graphics/effect/quad_effect.hpp"
+#include "engine/graphics/texture/texture_manager.hpp"
+#include "engine/graphics/shader/shader_manager.hpp"
 
 using namespace core::structs;
 
@@ -15,11 +15,11 @@ using namespace engine::ui::components;
 
 using namespace engine::audio;
 
-using namespace engine::graphic::model;
-using namespace engine::graphic::shader;
-using namespace engine::graphic::render;
-using namespace engine::graphic::effect;
-using namespace engine::graphic::texture;
+using namespace engine::graphics::model;
+using namespace engine::graphics::shader;
+using namespace engine::graphics::renderer;
+using namespace engine::graphics::effect;
+using namespace engine::graphics::texture;
 
 namespace engine::ui {
 
@@ -29,7 +29,6 @@ void UiNode::add_child(std::unique_ptr<UiNode> child) {
 
 Vector2<float> UiNode::measure(Constraint &constraint) {
     const float horizontal_padding = m_layout.padding.left + m_layout.padding.right;
-
     const float vertical_padding = m_layout.padding.top + m_layout.padding.bottom;
 
     Constraint content_constraint{
@@ -40,6 +39,7 @@ Vector2<float> UiNode::measure(Constraint &constraint) {
                 std::max(0.0f, constraint.maximum.h - vertical_padding),
             },
     };
+
     Vector2<float> content_size{0.0f, 0.0f};
 
     // WARN: This aggregation specifically describes a vertical container
@@ -58,7 +58,6 @@ Vector2<float> UiNode::measure(Constraint &constraint) {
         Vector2<float> child_size = child->measure(child_constraint);
 
         content_size.w = std::max(content_size.w, child_size.w + margin.left + margin.right);
-
         content_size.h += child_size.h + margin.top + margin.bottom;
     }
 
@@ -68,7 +67,6 @@ Vector2<float> UiNode::measure(Constraint &constraint) {
     };
 
     const bool automatic_width = m_layout.width == Layout::MAX_WIDTH;
-
     const bool automatic_height = m_layout.height == Layout::MAX_HEIGHT;
 
     if (!automatic_width) {
@@ -80,10 +78,10 @@ Vector2<float> UiNode::measure(Constraint &constraint) {
     }
 
     desired_size.w = std::clamp(desired_size.w, constraint.minimum.w, constraint.maximum.w);
-
     desired_size.h = std::clamp(desired_size.h, constraint.minimum.h, constraint.maximum.h);
 
     m_size = desired_size;
+
     return m_size;
 }
 
@@ -99,6 +97,7 @@ void UiNode::arrange(const Bound &bound) {
 
     for (auto &child : m_children) {
         const Margin &margin = child->layout().margin;
+
         Vector2<float> child_size = child->m_size;
 
         Bound available{
@@ -132,70 +131,33 @@ void UiNode::update_by_audio(AudioBuffer &audio_buffer, double track_time) {
 }
 
 void UiNode::submit(Renderer &renderer) const {
-    float y = 1440.0f - m_bound.y - m_bound.height;
+    const bool has_shadow = m_layout.shadow.colour.a > 0;
+    const float blur = has_shadow ? std::max(0.0f, m_layout.shadow.blur_radius) : 0.0f;
+    const float shadow_extent = has_shadow ? std::max(std::abs(m_layout.shadow.offset_x), std::abs(m_layout.shadow.offset_y)) : 0.0f;
+    const float padding = blur * 3.0f + shadow_extent;
 
-    // NOTE: render shadow first
-    Bound shadow_shape{
-        .x = m_bound.x + m_layout.shadow.offset_x - m_layout.shadow.spread_radius,
-        .y = m_bound.y + m_layout.shadow.offset_y - m_layout.shadow.spread_radius,
-        .width = m_bound.width + m_layout.shadow.spread_radius * 2.0f,
-        .height = m_bound.height + m_layout.shadow.spread_radius * 2.0f,
+    const Vector2<float> draw_size{
+        m_bound.width + padding * 2.0f,
+        m_bound.height + padding * 2.0f,
     };
 
-    EffectPtr shadow_effect = std::make_shared<ShadowEffect>(ShaderManager::get_instance().get_shader_id("shadow"),
-                                                             Vector2<float>{
-                                                                 shadow_shape.width,
-                                                                 shadow_shape.height,
-                                                             },
-                                                             m_layout.shadow.blur_radius,
-                                                             m_layout.border.radius + m_layout.shadow.spread_radius);
+    const EffectPtr quad_effect = std::make_shared<QuadEffect>(
+        ShaderManager::get_instance().get_shader_id("quad"), draw_size, Vector2<float>{m_bound.width, m_bound.height}, m_layout.border.radius, Vector2<float>{m_layout.shadow.offset_x, -m_layout.shadow.offset_y}, blur, m_layout.shadow.colour, std::max(0.0f, m_layout.bloom.intensity));
 
-    EffectPtr base_effect = std::make_shared<BaseEffect>(ShaderManager::get_instance().get_shader_id("base"));
-
-    float padding = m_layout.shadow.blur_radius * 3.0f;
-
-    Bound shadow_quad{
-        .x = shadow_shape.x - padding,
-        .y = shadow_shape.y - padding,
-        .width = shadow_shape.width + padding * 2.0f,
-        .height = shadow_shape.height + padding * 2.0f,
-    };
+    const float draw_x = m_bound.x - padding;
+    const float draw_top = m_bound.y - padding;
+    const float draw_y = 1440.0f - draw_top - draw_size.h;
 
     TextureManager &texture_manager = TextureManager::get_instance();
 
-    float shadow_y = 1440.0f - shadow_quad.y - shadow_quad.height;
-
     renderer.queue(Quad{
-        .x = shadow_quad.x,
-        .y = shadow_y,
-        .width = shadow_quad.width,
-        .height = shadow_quad.height,
+        .x = draw_x,
+        .y = draw_y,
+        .width = draw_size.w,
+        .height = draw_size.h,
         .texture_id = texture_manager.get_texture_id("resources/core/textures/colours/white.png"),
-        .effect = shadow_effect,
-        .colour = m_layout.shadow.colour,
-    });
-
-    const Texture &texture = texture_manager.get_texture("resources/core/textures/colours/white.png");
-    const Region &region = texture.get_region("resources/core/textures/colours/white.png");
-
-    float u = (region.uv.u0 + region.uv.u1) * 0.5f;
-    float v = (region.uv.v0 + region.uv.v1) * 0.5f;
-
-    renderer.queue(Quad{
-        .x = m_bound.x,
-        .y = y,
-        .width = m_bound.width,
-        .height = m_bound.height,
-        .texture_id = TextureManager::get_instance().get_texture_id("resources/core/textures/colours/white.png"),
-        .effect = base_effect,
+        .effect = quad_effect,
         .colour = m_layout.colour,
-        .uv =
-            {
-                .u0 = u,
-                .u1 = u,
-                .v0 = v,
-                .v1 = v,
-            },
     });
 
     for (const std::unique_ptr<UiNode> &child : m_children)

@@ -4,9 +4,9 @@
 
 #include "engine/audio/audio_manager.hpp"
 
-#include "engine/graphic/shader/shader_manager.hpp"
-#include "engine/graphic/texture/texture_manager.hpp"
-#include "engine/graphic/effect/effect_manager.hpp"
+#include "engine/graphics/shader/shader_manager.hpp"
+#include "engine/graphics/texture/texture_manager.hpp"
+#include "engine/graphics/effect/effect_manager.hpp"
 
 #include "game/gameplay/effects/lighting_effect.hpp"
 #include "game/gameplay/effects/note_effect.hpp"
@@ -25,9 +25,9 @@
 using namespace engine::audio;
 using namespace engine::audio::enums;
 
-using namespace engine::graphic::effect;
-using namespace engine::graphic::shader;
-using namespace engine::graphic::texture;
+using namespace engine::graphics::effect;
+using namespace engine::graphics::shader;
+using namespace engine::graphics::texture;
 
 using namespace game::gameplay::effects;
 using namespace game::gameplay::stage;
@@ -49,7 +49,9 @@ Engine::Engine() : m_time(0.0) {
 
 // NOTE: Suppose beatmap initialisation is done here for now, since we don't have ui yet lol, also
 // sound clock should be the one playing the music, music sync is probably the most important part
-void Engine::initialise() {
+void Engine::initialise(int framebuffer_width, int framebuffer_height) {
+    m_renderer.initialise(framebuffer_width, framebuffer_height);
+
     // TODO: Effects should be loaded if custom defined
     EffectManager::get_instance().add_effect("gameplay.lighting", std::make_shared<LightingEffect>(ShaderManager::get_instance().get_shader_id("base")));
     EffectManager::get_instance().add_effect("gameplay.note", std::make_shared<NoteEffect>(ShaderManager::get_instance().get_shader_id("base")));
@@ -94,6 +96,14 @@ void Engine::initialise() {
     m_scene = std::make_unique<Menu>(theme_config);
 }
 
+void Engine::resize(int framebuffer_width, int framebuffer_height) {
+    m_renderer.resize(framebuffer_width, framebuffer_height);
+}
+
+void Engine::shutdown() {
+    m_renderer.shutdown();
+}
+
 void Engine::update(GLFWwindow *window, double delta_time) {
     // SoundManager &sound_manager = SoundManager::get_instance();
     //
@@ -127,8 +137,6 @@ void Engine::update(GLFWwindow *window, double delta_time) {
 
 /* TODO: Allow for custom GL flags */
 void Engine::render() {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     m_renderer.render();
 
     ImGui::SetNextWindowSize(ImVec2(400.0f, 0.0f), ImGuiCond_FirstUseEver);
