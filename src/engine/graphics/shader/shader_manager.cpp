@@ -10,25 +10,7 @@ using namespace core::utility;
 
 namespace engine::graphics::shader {
 
-ShaderManager::ShaderManager() : m_shader(nullptr) {
-}
-
-ShaderManager::~ShaderManager() = default;
-
-ShaderManager &ShaderManager::get_instance() {
-    static ShaderManager instance;
-
-    return instance;
-}
-
-void ShaderManager::initialise() {
-    m_id = 0;
-
-    std::vector<std::string> paths = FileUtility::get_files_in_directory("resources/shaders/");
-
-    for (const std::string &path : paths) {
-        this->add_shader(path);
-    }
+ShaderManager::ShaderManager() : m_id(0), m_shader(nullptr) {
 }
 
 Shader &ShaderManager::use_shader(int shader_id) {
@@ -89,7 +71,7 @@ Shader &ShaderManager::get_active_shader() const {
 }
 
 void ShaderManager::add_shader(const std::string &path) {
-    std::string extension = FileUtility::get_extension_from_path(path);
+    std::string extension = FileUtility::get_extension(path);
     std::string basename = FileUtility::get_basename_from_path(path);
 
     if (extension == this->m_INCLUDE_EXTENSION) {

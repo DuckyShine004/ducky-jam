@@ -4,7 +4,7 @@
 
 namespace engine::graphics::renderer {
 
-RenderTarget::RenderTarget() : m_id(0), m_width(0), m_height(0), m_format(GL_RGBA16F) {
+RenderTarget::RenderTarget() : m_id(0), m_width(0), m_height(0), m_format(GL_R11F_G11F_B10F) {
 }
 
 RenderTarget::RenderTarget(int width, int height, GLenum format) : RenderTarget() {
@@ -15,11 +15,7 @@ RenderTarget::~RenderTarget() {
     destroy();
 }
 
-RenderTarget::RenderTarget(RenderTarget &&other) noexcept
-    : m_id(std::exchange(other.m_id, 0)),
-      m_width(std::exchange(other.m_width, 0)),
-      m_height(std::exchange(other.m_height, 0)),
-      m_format(other.m_format) {
+RenderTarget::RenderTarget(RenderTarget &&other) noexcept : m_id(std::exchange(other.m_id, 0)), m_width(std::exchange(other.m_width, 0)), m_height(std::exchange(other.m_height, 0)), m_format(other.m_format) {
 }
 
 RenderTarget &RenderTarget::operator=(RenderTarget &&other) noexcept {
@@ -30,8 +26,10 @@ RenderTarget &RenderTarget::operator=(RenderTarget &&other) noexcept {
     destroy();
 
     m_id = std::exchange(other.m_id, 0);
+
     m_width = std::exchange(other.m_width, 0);
     m_height = std::exchange(other.m_height, 0);
+
     m_format = other.m_format;
 
     return *this;
@@ -40,6 +38,7 @@ RenderTarget &RenderTarget::operator=(RenderTarget &&other) noexcept {
 void RenderTarget::initialise(int width, int height, GLenum format) {
     m_width = width;
     m_height = height;
+
     m_format = format;
 
     if (m_id == 0) {
@@ -68,9 +67,10 @@ void RenderTarget::allocate() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    const GLenum type = m_format == GL_RGBA16F ? GL_FLOAT : GL_UNSIGNED_BYTE;
+    const GLenum type = m_format == GL_RGBA8 ? GL_UNSIGNED_BYTE : GL_FLOAT;
+    const GLenum channels = m_format == GL_R11F_G11F_B10F ? GL_RGB : GL_RGBA;
 
-    glTexImage2D(GL_TEXTURE_2D, 0, m_format, m_width, m_height, 0, GL_RGBA, type, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 0, m_format, m_width, m_height, 0, channels, type, nullptr);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 }

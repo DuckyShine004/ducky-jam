@@ -19,8 +19,17 @@ Parser::Parser() {
 
 void Parser::parse_line(const std::string &line, Section &section) {
     switch (section) {
+        case Section::General:
+            m_general.emplace_back(line);
+            break;
+        case Section::Metadata:
+            m_metadata.emplace_back(line);
+            break;
         case Section::Difficulty:
             m_difficulty.emplace_back(line);
+            break;
+        case Section::Events:
+            m_events.emplace_back(line);
             break;
         case Section::TimingPoints:
             m_timing_points.emplace_back(line);
@@ -36,11 +45,54 @@ void Parser::parse_line(const std::string &line, Section &section) {
 Beatmap Parser::parse() {
     Beatmap beatmap;
 
+    parse_general(beatmap);
+    parse_metadata(beatmap);
     parse_difficulty(beatmap);
+    parse_events(beatmap);
     parse_timing_points(beatmap);
     parse_hit_objects(beatmap);
 
     return beatmap;
+}
+
+void Parser::parse_general(Beatmap &beatmap) {
+    for (const std::string &line : m_general) {
+        std::vector<std::string> split = StringUtility::split_string(line, ':');
+
+        const std::string &key = split[0];
+        const std::string &value = StringUtility::trim(split[1]);
+
+        if (key == "AudioFilename") {
+            beatmap.audio_filename = value;
+        }
+    }
+}
+
+void Parser::parse_metadata(Beatmap &beatmap) {
+    for (const std::string &line : m_metadata) {
+        std::vector<std::string> split = StringUtility::split_string(line, ':');
+
+        const std::string &key = split[0];
+        const std::string &value = StringUtility::trim(split[1]);
+
+        if (key == "Title") {
+            beatmap.title = value;
+        } else if (key == "TitleUnicode") {
+            beatmap.title_unicode = value;
+        } else if (key == "Artist") {
+            beatmap.artist = value;
+        } else if (key == "ArtistUnicode") {
+            beatmap.artist_unicode = value;
+        } else if (key == "Creator") {
+            beatmap.creator = value;
+        } else if (key == "Version") {
+            beatmap.version = value;
+        } else if (key == "Source") {
+            beatmap.source = value;
+        } else if (key == "Tags") {
+            beatmap.tags = value;
+        }
+    }
 }
 
 void Parser::parse_difficulty(Beatmap &beatmap) {
@@ -57,6 +109,22 @@ void Parser::parse_difficulty(Beatmap &beatmap) {
         } else if (key == "OverallDifficulty") {
             beatmap.overall_difficulty = value;
         }
+    }
+}
+
+void Parser::parse_events(Beatmap &beatmap) {
+    for (const std::string &line : m_events) {
+        std::vector<std::string> split = StringUtility::split_string(line, ',');
+
+        const std::string &event_type = split[0];
+
+        if (event_type != "0") {
+            continue;
+        }
+
+        int start_time = std::stoi(split[1]);
+
+        beatmap.background_filename = StringUtility::slice_string(split[2], 1, split[2].length() - 2);
     }
 }
 

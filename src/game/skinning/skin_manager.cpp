@@ -50,7 +50,7 @@ void SkinManager::load_textures(const std::string &path) {
             std::string &parent = dq.front();
 
             if (FileUtility::is_file(parent)) {
-                std::string extension = FileUtility::get_extension_from_path(parent);
+                std::string extension = FileUtility::get_extension(parent);
 
                 if (m_image_extensions.contains(extension)) {
                     texture_paths.emplace_back(parent);

@@ -1,41 +1,53 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
-
-#include <optional>
-
+#include "engine/audio/audio_manager.hpp"
+#include "engine/graphics/effect/effect_manager.hpp"
 #include "engine/graphics/renderer/renderer.hpp"
+#include "engine/graphics/shader/shader_manager.hpp"
+#include "engine/graphics/texture/texture_manager.hpp"
 #include "engine/scene/scene.hpp"
-#include "engine/audio/audio_clock.hpp"
+#include "game/parser/importer.hpp"
 
-#include "game/parser/beatmap.hpp"
-#include "game/gameplay/stage/stage.hpp"
-#include "game/skinning/config/skin_config.hpp"
+#include <GLFW/glfw3.h>
 
 namespace engine {
 
 class Engine {
   public:
-    Engine();
+    Engine(int width, int height);
+    ~Engine();
 
-    void initialise(int framebuffer_width, int framebuffer_height);
+    Engine(const Engine &other) = delete;
+    Engine &operator=(const Engine &other) = delete;
+    Engine(Engine &&other) = delete;
+    Engine &operator=(Engine &&other) = delete;
+
     void resize(int framebuffer_width, int framebuffer_height);
-    void shutdown();
-    void update(GLFWwindow *window, double delta_time);
+    void drop(const std::vector<std::string> &paths);
+    void update(double delta_time);
     void render();
 
   private:
     double m_time;
 
-    std::optional<engine::audio::AudioClock> m_audio_clock;
+    // std::optional<engine::audio::AudioClock> m_audio_clock;
+
+    // managers
+    engine::audio::AudioManager m_audio_manager;
+
+    engine::graphics::shader::ShaderManager m_shader_manager;
+    engine::graphics::texture::TextureManager m_texture_manager;
+    engine::graphics::effect::EffectManager m_effect_manager;
 
     engine::graphics::renderer::Renderer m_renderer;
 
-    game::parser::Beatmap m_beatmap;
-    game::skinning::config::SkinConfig m_skin_config;
-    std::optional<game::gameplay::stage::Stage> m_stage;
+    // game::parser::Beatmap m_beatmap;
+    // game::skinning::config::SkinConfig m_skin_config;
+    // std::optional<game::gameplay::stage::Stage> m_stage;
 
     std::unique_ptr<engine::scene::Scene> m_scene;
+
+    game::parser::Importer m_importer;
 };
 
 } // namespace engine

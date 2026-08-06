@@ -70,8 +70,20 @@ std::vector<std::string> Converter::get_content(const std::string &raw_content) 
 Section Converter::get_section(const std::string &line) {
     std::string section = StringUtility::slice_string(line, 1, line.length() - 2);
 
+    if (section == "General") {
+        return Section::General;
+    }
+
+    if (section == "Metadata") {
+        return Section::Metadata;
+    }
+
     if (section == "Difficulty") {
         return Section::Difficulty;
+    }
+
+    if (section == "Events") {
+        return Section::Events;
     }
 
     if (section == "TimingPoints") {

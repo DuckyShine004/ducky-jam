@@ -1,8 +1,9 @@
 #pragma once
 
-#include <cstddef>
 #include <vector>
+#include <cstddef>
 
+#include "engine/graphics/renderer/mip.hpp"
 #include "engine/graphics/renderer/render_target.hpp"
 
 namespace engine::graphics::renderer {
@@ -21,14 +22,20 @@ class Framebuffer {
     void initialise();
     void destroy();
 
-    void add_render_target(int width, int height, GLenum format = GL_RGBA16F);
+    void add_mip(int width, int height, GLenum format = GL_R11F_G11F_B10F);
+    void add_render_target(int width, int height, GLenum format = GL_R11F_G11F_B10F);
     void resize(int width, int height);
     void validate() const;
+    void validate_render_target(std::size_t index) const;
+
+    std::vector<Mip> &mips();
+    const std::vector<Mip> &mips() const;
 
     RenderTarget &render_target(std::size_t index);
     const RenderTarget &render_target(std::size_t index) const;
 
     void bind() const;
+    void bind_render_target(std::size_t index) const;
     static void clear();
 
     GLuint id() const;
@@ -36,6 +43,7 @@ class Framebuffer {
   private:
     GLuint m_id;
 
+    std::vector<Mip> m_mips;
     std::vector<RenderTarget> m_render_targets;
 };
 

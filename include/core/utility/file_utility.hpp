@@ -12,7 +12,7 @@ class FileUtility {
     static std::string get_file_to_string(const std::string &filename);
     static std::string get_filename_from_path(const std::string &path);
     static std::string get_basename_from_path(const std::string &path);
-    static std::string get_extension_from_path(const std::string &path);
+    static std::string get_extension(const std::string &path);
     static std::string get_parent_directory(const std::string &path);
     static std::string get_shader_file(const std::string &path);
 
@@ -28,6 +28,10 @@ class FileUtility {
     static bool is_file(const std::string &path);
     static bool is_directory(const std::string &path);
     static int get_number_of_files_in_directory(const std::string &directory, const std::regex &pattern);
+
+    static void move_file(const std::string &source, const std::string &target);
+    static void clear_directory(const std::string &path);
+    static std::string hash_file(const std::string &path);
 };
 
 } // namespace core::utility

@@ -1,9 +1,9 @@
-#include <AL/alext.h>
-
 #include "engine/audio/audio_manager.hpp"
 
 #include "core/logger/logger_macros.hpp"
 #include "core/utility/file_utility.hpp"
+
+#include <AL/alext.h>
 
 using namespace core::logger;
 using namespace core::utility;
@@ -12,37 +12,25 @@ namespace engine::audio {
 
 using engine::audio::enums::AudioType;
 
-AudioManager &AudioManager::get_instance() {
-    static AudioManager instance;
-
-    return instance;
-}
-
-AudioManager::AudioManager() {
+AudioManager::AudioManager() : m_audio_cache(initialise_audio_cache()) {
     const ALCchar *device_name = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
 
     m_device = alcOpenDevice(device_name);
 
     if (!m_device) {
-        throw("Failed to get audio device");
+        throw std::runtime_error("Failed to get audio device");
     }
 
     m_context = alcCreateContext(m_device, nullptr);
 
     if (!m_context) {
-        throw("Failed to set audio context");
+        throw std::runtime_error("Failed to set audio context");
     }
 
     ALCboolean is_context_current = alcMakeContextCurrent(m_context);
 
     if (!is_context_current) {
-        throw("Failed to make audio context current");
-    }
-
-    m_audio_sources.reserve(m_MAX_SOURCES);
-
-    for (int i = 0; i < m_MAX_SOURCES; ++i) {
-        m_audio_sources.emplace_back();
+        throw std::runtime_error("Failed to make audio context current");
     }
 }
 
@@ -52,8 +40,30 @@ AudioManager::~AudioManager() {
     alcCloseDevice(m_device);
 }
 
-void AudioManager::initialise() {
-    // this->initialise_music();
+std::unordered_map<std::string, std::string> AudioManager::initialise_audio_cache() {
+    FileUtility::create_file(m_AUDIO_CACHE_FILE);
+
+    nlohmann::json cache;
+    FileUtility::load_json(cache, m_AUDIO_CACHE_FILE);
+
+    return std::move(cache.get<std::unordered_map<std::string, std::string>>());
+}
+
+void AudioManager::cache_audio(const std::string &path, const std::string &hash) {
+    auto iterator = m_audio_cache.find(hash);
+
+    const std::string output_path = std::string(m_AUDIO_DIRECTORY) + FileUtility::get_filename_from_path(path);
+
+    if (iterator == m_audio_cache.end()) {
+        FileUtility::move_file(path, output_path);
+        m_audio_cache.emplace(hash, output_path);
+    }
+}
+
+void AudioManager::write_cache() {
+    nlohmann::json audio_cache = m_audio_cache;
+
+    FileUtility::save_json(audio_cache, m_AUDIO_CACHE_FILE);
 }
 
 ALuint AudioManager::add_audio(const AudioType &audio_type, const std::string &path) {

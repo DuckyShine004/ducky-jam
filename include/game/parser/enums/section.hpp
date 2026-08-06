@@ -4,7 +4,10 @@ namespace game::parser::enums {
 
 enum class Section {
     Default,
+    General,
+    Metadata,
     Difficulty,
+    Events,
     TimingPoints,
     HitObjects
 };

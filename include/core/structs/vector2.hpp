@@ -25,6 +25,13 @@ template <typename T> struct Vector2 {
 
     constexpr Vector2(T x, T y) : x(x), y(y) {
     }
+
+    template <typename S> Vector2 &operator*=(S scalar) {
+        x *= scalar;
+        y *= scalar;
+
+        return *this;
+    }
 };
 
 } // namespace core::structs

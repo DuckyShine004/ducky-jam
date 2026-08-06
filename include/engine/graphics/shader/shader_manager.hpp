@@ -1,19 +1,15 @@
 #pragma once
 
-#include <memory>
-
 #include "engine/graphics/shader/shader.hpp"
+
+#include <memory>
 
 namespace engine::graphics::shader {
 
 class ShaderManager {
   public:
-    ShaderManager(const ShaderManager &) = delete;
-    ShaderManager &operator=(const ShaderManager &) = delete;
+    ShaderManager();
 
-    static ShaderManager &get_instance();
-
-    void initialise();
     engine::graphics::shader::Shader &use_shader(int shader_id);
     engine::graphics::shader::Shader &use_shader(const std::string &name);
     int get_shader_id(const std::string &name) const;
@@ -22,9 +18,6 @@ class ShaderManager {
     engine::graphics::shader::Shader &get_active_shader() const;
 
   private:
-    ShaderManager();
-    ~ShaderManager();
-
     void add_shader(const std::string &path);
 
     static inline constexpr const char *m_VERTEX_SHADER_EXTENSION = ".vert";
@@ -34,6 +27,7 @@ class ShaderManager {
     int m_id;
 
     std::vector<std::unique_ptr<engine::graphics::shader::Shader>> m_shaders;
+
     std::unordered_map<std::string, int> m_shader_references;
 
     engine::graphics::shader::Shader *m_shader;

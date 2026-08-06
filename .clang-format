@@ -81,21 +81,27 @@ ForEachMacros:
   - BOOST_FOREACH
 IfMacros:
   - KJ_IF_MAYBE
-IncludeBlocks: Preserve
+IncludeBlocks: Regroup
 IncludeCategories:
-  - Regex: '^"(llvm|llvm-c|clang|clang-c)/'
+  - Regex: '^"external/(stb|imgui|glad)/'
     Priority: 2
-    SortPriority: 0
     CaseSensitive: false
-  - Regex: '^(<|"(gtest|gmock|isl|json)/)'
+  - Regex: '^"'
+    Priority: 1
+    CaseSensitive: false
+  - Regex: "^<(fmt|GLFW|AL|openssl|sqlite_orm|nlohmann)/"
     Priority: 3
-    SortPriority: 0
+    CaseSensitive: false
+  - Regex: '^<(sndfile\.h|sndfile\.hh|zip\.h|zipconf\.h)>'
+    Priority: 3
+    CaseSensitive: false
+  - Regex: "^<"
+    Priority: 4
     CaseSensitive: false
   - Regex: ".*"
-    Priority: 1
-    SortPriority: 0
+    Priority: 5
     CaseSensitive: false
-IncludeIsMainRegex: "(Test)?$"
+IncludeIsMainRegex: "$"
 IncludeIsMainSourceRegex: ""
 IndentAccessModifiers: false
 IndentCaseLabels: true
@@ -137,7 +143,7 @@ ReflowComments: true
 RemoveBracesLLVM: false
 SeparateDefinitionBlocks: Leave
 ShortNamespaceLines: 1
-SortIncludes: false
+SortIncludes: CaseInsensitive
 SortJavaStaticImport: Before
 SortUsingDeclarations: true
 SpaceAfterCStyleCast: false

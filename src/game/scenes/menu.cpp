@@ -44,15 +44,15 @@ std::unique_ptr<UiNode> Menu::create_root(const ThemeConfig &theme_config) {
         Spectrum{
             Layout{
                 .width = 2560,
-                .height = 360,
+                .height = 480,
                 .align = Align::Bottom,
                 .bloom =
                     {
-                        .intensity = 0.25f,
+                        .intensity = 0.1f,
                     },
                 .colour = theme_config.theme.spectrum,
             },
-            128,
+            64,
             10.0f,
         });
 }

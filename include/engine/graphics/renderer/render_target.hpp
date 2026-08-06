@@ -7,7 +7,7 @@ namespace engine::graphics::renderer {
 class RenderTarget {
   public:
     RenderTarget();
-    RenderTarget(int width, int height, GLenum format = GL_RGBA16F);
+    RenderTarget(int width, int height, GLenum format = GL_R11F_G11F_B10F);
     ~RenderTarget();
 
     RenderTarget(const RenderTarget &) = delete;
@@ -16,7 +16,7 @@ class RenderTarget {
     RenderTarget(RenderTarget &&other) noexcept;
     RenderTarget &operator=(RenderTarget &&other) noexcept;
 
-    void initialise(int width, int height, GLenum format = GL_RGBA16F);
+    void initialise(int width, int height, GLenum format = GL_R11F_G11F_B10F);
     void resize(int width, int height);
     void destroy();
 

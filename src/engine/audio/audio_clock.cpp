@@ -4,7 +4,7 @@
 
 namespace engine::audio {
 
-AudioClock::AudioClock(AudioSource &audio_source, AudioBuffer &audio_buffer, ALuint id) : m_audio_source(audio_source), m_audio_buffer(audio_buffer), m_id(id), m_track_speed(0.75f), m_track_time(0.0f), m_elapsed_time(0.0f), m_is_running(false) {
+AudioClock::AudioClock(AudioSource &audio_source, AudioBuffer &audio_buffer, ALuint id) : m_audio_source(audio_source), m_audio_buffer(audio_buffer), m_id(id), m_track_speed(1.0f), m_track_time(0.0f), m_elapsed_time(0.0f), m_is_running(false) {
 }
 
 void AudioClock::start() {

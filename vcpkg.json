@@ -1,0 +1,12 @@
+{
+  "dependencies": [
+    "fmt",
+    "glfw3",
+    "libsndfile",
+    "libzip",
+    "openal-soft",
+    "openssl",
+    "sqlite-orm",
+    "nlohmann-json"
+  ]
+}

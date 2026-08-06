@@ -1,26 +1,20 @@
-#include "external/imgui/imgui.h"
-
 #include "engine/engine.hpp"
 
+#include "core/logger/logger_macros.hpp"
 #include "engine/audio/audio_manager.hpp"
-
+#include "engine/graphics/effect/effect_manager.hpp"
 #include "engine/graphics/shader/shader_manager.hpp"
 #include "engine/graphics/texture/texture_manager.hpp"
-#include "engine/graphics/effect/effect_manager.hpp"
-
 #include "game/gameplay/effects/lighting_effect.hpp"
 #include "game/gameplay/effects/note_effect.hpp"
-#include "game/gameplay/stage/stage.hpp"
 #include "game/gameplay/stage/drawable/drawable_note.hpp"
-
+#include "game/gameplay/stage/stage.hpp"
 #include "game/parser/converter.hpp"
-
 #include "game/scenes/menu.hpp"
 #include "game/skinning/skin_manager.hpp"
-
 #include "game/ui/theme/theme_config.hpp"
 
-#include "core/logger/logger_macros.hpp"
+#include "external/imgui/imgui.h"
 
 using namespace engine::audio;
 using namespace engine::audio::enums;
@@ -44,80 +38,84 @@ using namespace game::ui::theme;
 
 namespace engine {
 
-Engine::Engine() : m_time(0.0) {
+Engine::Engine(int width, int height) : m_effect_manager(m_shader_manager), m_renderer(width, height, m_shader_manager, m_texture_manager), m_time(0.0) {
+}
+
+Engine::~Engine() {
 }
 
 // NOTE: Suppose beatmap initialisation is done here for now, since we don't have ui yet lol, also
 // sound clock should be the one playing the music, music sync is probably the most important part
-void Engine::initialise(int framebuffer_width, int framebuffer_height) {
-    m_renderer.initialise(framebuffer_width, framebuffer_height);
+// void Engine::initialise(int framebuffer_width, int framebuffer_height) {
+// m_renderer.initialise(framebuffer_width, framebuffer_height);
 
-    // TODO: Effects should be loaded if custom defined
-    EffectManager::get_instance().add_effect("gameplay.lighting", std::make_shared<LightingEffect>(ShaderManager::get_instance().get_shader_id("base")));
-    EffectManager::get_instance().add_effect("gameplay.note", std::make_shared<NoteEffect>(ShaderManager::get_instance().get_shader_id("base")));
-
-    AudioManager &audio_manager = AudioManager::get_instance();
-
-    AudioSource *audio_source = audio_manager.get_empty_audio_source();
-    ALuint id = audio_manager.add_audio(AudioType::Music, "resources/beatmaps/2099753/4404686/bgm.mp3");
-    AudioBuffer *audio_buffer = audio_manager.get_audio_buffer(AudioType::Music, "resources/beatmaps/2099753/4404686/bgm.mp3");
-    // ALuint id = sound_manager.add_sound(SoundType::Music, "resources/beatmaps/2321277/4973089/bgm.mp3");
-    // ALuint id = sound_manager.add_sound(SoundType::Music, "resources/beatmaps/2383964/5154675/bgm.mp3");
-    // ALuint id = sound_manager.add_sound(SoundType::Music, "resources/beatmaps/2325151/4983858/bgm.mp3");
-
-    m_audio_clock.emplace(*audio_source, *audio_buffer, id);
-
-    m_beatmap = Converter::convert("resources/beatmaps/2099753/4404686/beatmap.osu");
-    // m_beatmap = Converter::convert("resources/beatmaps/2321277/4973089/beatmap.osu");
-    // m_beatmap = Converter::convert("resources/beatmaps/2383964/5154675/beatmap.osu");
-    // m_beatmap = Converter::convert("resources/beatmaps/2325151/4983858/beatmap.osu");
-
-    std::sort(m_beatmap.hit_objects.begin(), m_beatmap.hit_objects.end(), [](const auto &a, const auto &b) {
-        return a.start_time < b.start_time;
-    });
-
-    SkinManager &skin_manager = SkinManager::get_instance();
-
-    // NOTE: Load skin textures and skin config for the current beatmap
-    skin_manager.load_textures();
-
-    m_skin_config = skin_manager.load_skin_config(m_beatmap);
-
-    m_stage.emplace(m_skin_config, m_beatmap);
-
-    if (m_audio_clock.has_value()) {
-        m_audio_clock->start();
-    }
-
-    TextureManager::get_instance().load_texture("resources/core/textures/colours/white.png");
-
-    TextureManager::get_instance().upload();
-    ThemeConfig theme_config = ThemeConfig::load();
-    m_scene = std::make_unique<Menu>(theme_config);
-}
+// // TODO: Effects should be loaded if custom defined
+// EffectManager::get_instance().add_effect("gameplay.lighting", std::make_shared<LightingEffect>(ShaderManager::get_instance().get_shader_id("base")));
+// EffectManager::get_instance().add_effect("gameplay.note", std::make_shared<NoteEffect>(ShaderManager::get_instance().get_shader_id("base")));
+//
+// AudioManager &audio_manager = AudioManager::get_instance();
+//
+// AudioSource *audio_source = audio_manager.get_empty_audio_source();
+// ALuint id = audio_manager.add_audio(AudioType::Music, "resources/beatmaps/2099753/4404686/bgm.mp3");
+// AudioBuffer *audio_buffer = audio_manager.get_audio_buffer(AudioType::Music, "resources/beatmaps/2099753/4404686/bgm.mp3");
+// // ALuint id = sound_manager.add_sound(SoundType::Music, "resources/beatmaps/2321277/4973089/bgm.mp3");
+// // ALuint id = sound_manager.add_sound(SoundType::Music, "resources/beatmaps/2383964/5154675/bgm.mp3");
+// // ALuint id = sound_manager.add_sound(SoundType::Music, "resources/beatmaps/2325151/4983858/bgm.mp3");
+//
+// m_audio_clock.emplace(*audio_source, *audio_buffer, id);
+//
+// m_beatmap = Converter::convert("resources/beatmaps/2099753/4404686/beatmap.osu");
+// // m_beatmap = Converter::convert("resources/beatmaps/2321277/4973089/beatmap.osu");
+// // m_beatmap = Converter::convert("resources/beatmaps/2383964/5154675/beatmap.osu");
+// // m_beatmap = Converter::convert("resources/beatmaps/2325151/4983858/beatmap.osu");
+//
+// std::sort(m_beatmap.hit_objects.begin(), m_beatmap.hit_objects.end(), [](const auto &a, const auto &b) {
+//     return a.start_time < b.start_time;
+// });
+//
+// SkinManager &skin_manager = SkinManager::get_instance();
+//
+// // NOTE: Load skin textures and skin config for the current beatmap
+// skin_manager.load_textures();
+//
+// m_skin_config = skin_manager.load_skin_config(m_beatmap);
+//
+// m_stage.emplace(m_skin_config, m_beatmap);
+//
+// if (m_audio_clock.has_value()) {
+//     m_audio_clock->start();
+// }
+//
+// TextureManager::get_instance().load_texture("resources/core/textures/colours/white.png");
+//
+// TextureManager::get_instance().upload();
+// ThemeConfig theme_config = ThemeConfig::load();
+// m_scene = std::make_unique<Menu>(theme_config);
+// }
 
 void Engine::resize(int framebuffer_width, int framebuffer_height) {
     m_renderer.resize(framebuffer_width, framebuffer_height);
 }
 
-void Engine::shutdown() {
-    m_renderer.shutdown();
+void Engine::drop(const std::vector<std::string> &paths) {
+    m_importer.import(paths);
+    // TODO: should invoke notifications (FUTURE)
 }
 
-void Engine::update(GLFWwindow *window, double delta_time) {
+void Engine::update(double delta_time) {
     // SoundManager &sound_manager = SoundManager::get_instance();
     //
     // m_time += delta_time;
 
-    if (m_audio_clock.has_value()) {
-        m_audio_clock->update(delta_time);
-    }
-    const double track_time = m_audio_clock->track_time();
-
-    m_scene->update_by_audio(m_audio_clock->audio_buffer(), track_time);
-    m_scene->update(delta_time);
-
-    m_scene->submit(m_renderer);
+    // if (m_audio_clock.has_value()) {
+    //     m_audio_clock->update(delta_time);
+    // }
+    // const double track_time = m_audio_clock->track_time();
+    //
+    // m_scene->update_by_audio(m_audio_clock->audio_buffer(), track_time);
+    // m_scene->update(delta_time);
+    //
+    // m_scene->submit(m_renderer);
     //
     //
     // m_stage->update(track_time, delta_time);
@@ -137,7 +135,7 @@ void Engine::update(GLFWwindow *window, double delta_time) {
 
 /* TODO: Allow for custom GL flags */
 void Engine::render() {
-    m_renderer.render();
+    // m_renderer.render();
 
     ImGui::SetNextWindowSize(ImVec2(400.0f, 0.0f), ImGuiCond_FirstUseEver);
     ImGui::Begin("Debug");

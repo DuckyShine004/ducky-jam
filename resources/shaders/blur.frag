@@ -9,12 +9,12 @@ uniform sampler2D u_texture;
 uniform bool u_horizontal;
 
 const float WEIGHTS[5] = float[](
-    0.227027,
-    0.1945946,
-    0.1216216,
-    0.054054,
-    0.016216
-);
+        0.227027,
+        0.1945946,
+        0.1216216,
+        0.054054,
+        0.016216
+    );
 
 void main() {
     vec2 uv_offset = 1.0f / vec2(textureSize(u_texture, 0));
@@ -36,5 +36,5 @@ void main() {
         }
     }
 
-    o_colour = vec4(result, 1.0);
+    o_colour = vec4(result, 1.0f);
 }

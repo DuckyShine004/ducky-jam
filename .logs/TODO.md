@@ -29,10 +29,14 @@
 - [ ] Implement menu
 
 #### TODO (01-08-2026)
-- [ ] Implement mip chain bloom algorithm (replace the current Gaussian blur)
+- [x] Implement mip chain bloom algorithm (replace the current Gaussian blur)
 - [ ] Implement font rendering
 
+#### TODO (05-08-2026)
+- [ ] Implement (rather, integrate sqlite) in-memory database
+
 #### FUTURE
+- [ ] Refactor- namespace pollution
 - [ ] Unix integration
 - [ ] Windows integration
 

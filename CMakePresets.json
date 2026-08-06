@@ -2,7 +2,15 @@
   "version": 3,
   "configurePresets": [
     {
+      "name": "vcpkg",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+      }
+    },
+    {
       "name": "release",
+      "inherits": "vcpkg",
       "generator": "Ninja",
       "binaryDir": "build/release",
       "cacheVariables": {
@@ -12,6 +20,7 @@
     },
     {
       "name": "debug",
+      "inherits": "vcpkg",
       "generator": "Ninja",
       "binaryDir": "build/debug",
       "cacheVariables": {
@@ -21,6 +30,7 @@
     },
     {
       "name": "profile",
+      "inherits": "vcpkg",
       "generator": "Ninja",
       "binaryDir": "build/profile",
       "cacheVariables": {

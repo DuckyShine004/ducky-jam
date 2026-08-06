@@ -12,7 +12,7 @@ Framebuffer::~Framebuffer() {
     destroy();
 }
 
-Framebuffer::Framebuffer(Framebuffer &&other) noexcept : m_id(std::exchange(other.m_id, 0)), m_render_targets(std::move(other.m_render_targets)) {
+Framebuffer::Framebuffer(Framebuffer &&other) noexcept : m_id(std::exchange(other.m_id, 0)), m_mips(std::move(other.m_mips)), m_render_targets(std::move(other.m_render_targets)) {
 }
 
 Framebuffer &Framebuffer::operator=(Framebuffer &&other) noexcept {
@@ -23,6 +23,7 @@ Framebuffer &Framebuffer::operator=(Framebuffer &&other) noexcept {
     destroy();
 
     m_id = std::exchange(other.m_id, 0);
+    m_mips = std::move(other.m_mips);
     m_render_targets = std::move(other.m_render_targets);
 
     return *this;
@@ -35,12 +36,20 @@ void Framebuffer::initialise() {
 }
 
 void Framebuffer::destroy() {
+    m_mips.clear();
     m_render_targets.clear();
 
     if (m_id != 0) {
         glDeleteFramebuffers(1, &m_id);
         m_id = 0;
     }
+}
+
+void Framebuffer::add_mip(int width, int height, GLenum format) {
+    initialise();
+
+    m_mips.emplace_back(width, height);
+    m_render_targets.emplace_back(width, height, format);
 }
 
 void Framebuffer::add_render_target(int width, int height, GLenum format) {
@@ -74,6 +83,25 @@ void Framebuffer::validate() const {
     clear();
 }
 
+void Framebuffer::validate_render_target(std::size_t index) const {
+    bind_render_target(index);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        clear();
+        throw std::runtime_error("Framebuffer render target is incomplete");
+    }
+
+    clear();
+}
+
+std::vector<Mip> &Framebuffer::mips() {
+    return m_mips;
+}
+
+const std::vector<Mip> &Framebuffer::mips() const {
+    return m_mips;
+}
+
 RenderTarget &Framebuffer::render_target(std::size_t index) {
     return m_render_targets.at(index);
 }
@@ -94,6 +122,16 @@ void Framebuffer::bind() const {
     if (!attachments.empty()) {
         glDrawBuffers(static_cast<GLsizei>(attachments.size()), attachments.data());
     }
+}
+
+void Framebuffer::bind_render_target(std::size_t index) const {
+    const RenderTarget &target = m_render_targets.at(index);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, m_id);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, target.id(), 0);
+
+    constexpr GLenum attachment = GL_COLOR_ATTACHMENT0;
+    glDrawBuffers(1, &attachment);
 }
 
 void Framebuffer::clear() {

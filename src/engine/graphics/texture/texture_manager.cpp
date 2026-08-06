@@ -1,10 +1,10 @@
-#include "external/stb/stb_image.h"
-#include "external/stb/stb_image_write.h"
-
 #include "engine/graphics/texture/texture_manager.hpp"
-#include "engine/graphics/texture/atlas/atlas.hpp"
 
 #include "core/logger/logger_macros.hpp"
+#include "engine/graphics/texture/atlas/atlas.hpp"
+
+#include "external/stb/stb_image.h"
+#include "external/stb/stb_image_write.h"
 
 using namespace engine::graphics::texture::atlas;
 
@@ -12,21 +12,9 @@ using namespace core::logger;
 
 namespace engine::graphics::texture {
 
-TextureManager::TextureManager() = default;
-
-TextureManager::~TextureManager() = default;
-
-TextureManager &TextureManager::get_instance() {
-    static TextureManager instance;
-
-    return instance;
-}
-
-void TextureManager::initialise() {
+TextureManager::TextureManager() : m_id(0) {
     stbi_set_flip_vertically_on_load(true);
     stbi_flip_vertically_on_write(true);
-
-    m_id = 0;
 }
 
 void TextureManager::load_texture(const std::string &path) {

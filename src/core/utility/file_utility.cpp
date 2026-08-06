@@ -1,9 +1,12 @@
+#include <fmt/format.h>
 #include <stack>
 #include <sstream>
 #include <fstream>
 #include <stdexcept>
 #include <filesystem>
 #include <unordered_set>
+
+#include <openssl/evp.h>
 
 #include "core/utility/file_utility.hpp"
 #include "core/utility/string_utility.hpp"
@@ -43,7 +46,7 @@ std::string FileUtility::get_basename_from_path(const std::string &path) {
     return basename;
 }
 
-std::string FileUtility::get_extension_from_path(const std::string &path) {
+std::string FileUtility::get_extension(const std::string &path) {
     std::filesystem::path full_path(path);
 
     std::string extension = full_path.extension();
@@ -122,6 +125,7 @@ bool FileUtility::path_exists(const std::string &path) {
 
 void FileUtility::create_file(const std::string &path) {
     if (FileUtility::path_exists(path)) {
+        LOG_INFO("File '{}' already exists, skipping...", path);
         return;
     }
 
@@ -136,10 +140,15 @@ void FileUtility::load_json(nlohmann::json &json, const std::string &path) {
     std::ifstream file(path);
 
     if (!file.is_open()) {
+        throw std::runtime_error("Error: Failed to open the file: " + path);
         return;
     }
 
-    file >> json;
+    if (file.peek() == std::ifstream::traits_type::eof()) {
+        json = nlohmann::json::object();
+    } else {
+        file >> json;
+    }
 }
 
 void FileUtility::save_json(const nlohmann::json &json, const std::string &path) {
@@ -213,6 +222,57 @@ int FileUtility::get_number_of_files_in_directory(const std::string &directory, 
     }
 
     return number_of_files;
+}
+
+void FileUtility::clear_directory(const std::string &directory) {
+    std::filesystem::path filepath(directory);
+
+    for (const auto &entry : std::filesystem::directory_iterator(filepath)) {
+        std::filesystem::remove_all(entry);
+    }
+}
+
+std::string FileUtility::hash_file(const std::string &path) {
+    std::ifstream file(path, std::ios::binary);
+
+    std::unique_ptr<EVP_MD_CTX, void (*)(EVP_MD_CTX *)> context(EVP_MD_CTX_new(), EVP_MD_CTX_free);
+
+    if (!context) {
+        throw std::runtime_error("Failed to create OpenSSL context");
+    }
+
+    if (EVP_DigestInit_ex(context.get(), EVP_sha256(), nullptr) != 1) {
+        throw std::runtime_error("Failed to initialize SHA-256 digest");
+    }
+
+    // use 4kb for now
+    constexpr std::size_t buffer_size = 4096;
+    std::vector<char> buffer(4096);
+
+    while (file.read(buffer.data(), buffer_size) || file.gcount() > 0) {
+        if (EVP_DigestUpdate(context.get(), buffer.data(), file.gcount()) != 1) {
+            throw std::runtime_error("Failed to update SHA-256 digest");
+        }
+    }
+
+    unsigned char hash[EVP_MAX_MD_SIZE];
+    unsigned int hash_length = 0;
+
+    if (EVP_DigestFinal_ex(context.get(), hash, &hash_length) != 1) {
+        throw std::runtime_error("Failed to finalize SHA-256 digest");
+    }
+
+    std::stringstream hex_stream;
+
+    for (int i = 0; i < hash_length; ++i) {
+        hex_stream << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(hash[i]);
+    }
+
+    return hex_stream.str();
+}
+
+void FileUtility::move_file(const std::string &source, const std::string &target) {
+    std::filesystem::rename(source, target);
 }
 
 } // namespace core::utility
