@@ -1,27 +1,25 @@
-#include <stdexcept>
-
 #include "engine/graphics/effect/bloom_effect.hpp"
 
-using namespace engine::graphics::blending;
-using namespace engine::graphics::blending::enums;
-using namespace engine::graphics::shader;
+#include "core/exceptions/invalid_argument_exception.hpp"
 
 namespace engine::graphics::effect {
 
+namespace exceptions = core::exceptions;
+
 BloomEffect::BloomEffect(int shader_id, float intensity)
     : Effect(shader_id,
-             BlendParameters{
-                 .equation = BlendEquation::Add,
-                 .source = BlendMode::SourceAlpha,
-                 .destination = BlendMode::OneMinusSourceAlpha,
+             blending::BlendParameters{
+                 .equation = blending::enums::BlendEquation::Add,
+                 .source = blending::enums::BlendMode::SourceAlpha,
+                 .destination = blending::enums::BlendMode::OneMinusSourceAlpha,
              }),
       m_intensity(intensity) {
     if (intensity < 0.0f) {
-        throw std::invalid_argument("Bloom intensity cannot be negative");
+        throw exceptions::InvalidArgumentException("Bloom intensity ({}) cannot be negative", intensity);
     }
 }
 
-void BloomEffect::apply_shader_parameters(Shader &shader) const {
+void BloomEffect::apply_shader_parameters(shader::Shader &shader) const {
     shader.set_float("u_bloom_intensity", m_intensity);
 }
 

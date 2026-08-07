@@ -1,17 +1,15 @@
 #include "engine/graphics/renderer/bloom.hpp"
 
-using namespace engine::graphics::shader;
-
 namespace engine::graphics::renderer {
 
-Bloom::Bloom(int width, int height, Fullscreen &fullscreen, Shader &downsample_shader, Shader &upsample_shader) : m_fullscreen(fullscreen), m_downsample_shader(downsample_shader), m_upsample_shader(upsample_shader) {
+Bloom::Bloom(int width, int height, Fullscreen &fullscreen, shader::Shader &downsample_shader, shader::Shader &upsample_shader) : m_fullscreen(fullscreen), m_downsample_shader(downsample_shader), m_upsample_shader(upsample_shader) {
     m_hdr_framebuffer.add_render_target(width, height, GL_RGBA8);
     m_hdr_framebuffer.add_render_target(width, height, GL_RGBA16F);
 
     int mip_width = width;
     int mip_height = height;
 
-    for (int i = 0; i < m_MIP_LEVELS; ++i) {
+    for (int i = 0; i < default_mip_levels; ++i) {
         mip_width = std::max(1, mip_width / 2);
         mip_height = std::max(1, mip_height / 2);
 
@@ -55,7 +53,7 @@ void Bloom::render() {
 
 void Bloom::render_upsamples(engine::graphics::shader::Shader &shader) {
     shader.set_integer("u_texture", 0);
-    shader.set_float("u_filter_radius", m_FILTER_RADIUS);
+    shader.set_float("u_filter_radius", default_filter_radius);
 
     glEnable(GL_BLEND);
     glBlendEquation(GL_FUNC_ADD);
@@ -79,7 +77,7 @@ void Bloom::render_upsamples(engine::graphics::shader::Shader &shader) {
     glDisable(GL_BLEND);
 }
 
-void Bloom::render_downsamples(Shader &shader) {
+void Bloom::render_downsamples(shader::Shader &shader) {
     shader.set_integer("u_texture", 0);
 
     glDisable(GL_BLEND);

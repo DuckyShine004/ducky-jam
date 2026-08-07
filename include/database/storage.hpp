@@ -5,10 +5,16 @@
 
 #include <sqlite_orm/sqlite_orm.h>
 
+#include <filesystem>
+
 namespace database {
 
-inline auto initialise_database(const std::string &path) {
-    return sqlite_orm::make_storage(path,
+inline auto initialise_database(const std::filesystem::path &path) {
+    if (const std::filesystem::path parent = path.parent_path(); !parent.empty()) {
+        std::filesystem::create_directories(parent);
+    }
+
+    return sqlite_orm::make_storage(path.string(),
                                     sqlite_orm::make_table("beatmap_sets",
                                                            sqlite_orm::make_column("id", &database::models::BeatmapSetModel::id, sqlite_orm::primary_key().autoincrement()),
                                                            sqlite_orm::make_column("title", &database::models::BeatmapSetModel::title),
@@ -34,6 +40,6 @@ inline auto initialise_database(const std::string &path) {
                                                            sqlite_orm::foreign_key(&database::models::BeatmapModel::set_id).references(&database::models::BeatmapSetModel::id).on_delete.cascade()));
 }
 
-using Storage = decltype(initialise_database(""));
+using Storage = decltype(initialise_database(std::filesystem::path{}));
 
 } // namespace database

@@ -5,13 +5,13 @@ namespace engine::audio {
 AudioSource::AudioSource() : m_source_id(0), m_buffer_id(0) {
     alGenSources(1, &m_source_id);
 
-    alSourcef(m_source_id, AL_GAIN, m_GAIN);
-    alSourcef(m_source_id, AL_PITCH, m_PITCH);
+    alSourcef(m_source_id, AL_GAIN, default_gain);
+    alSourcef(m_source_id, AL_PITCH, default_pitch);
 
-    alSource3f(m_source_id, AL_POSITION, m_POSITION[0], m_POSITION[1], m_POSITION[2]);
-    alSource3f(m_source_id, AL_VELOCITY, m_VELOCITY[0], m_VELOCITY[1], m_VELOCITY[2]);
+    alSource3f(m_source_id, AL_POSITION, default_position[0], default_position[1], default_position[2]);
+    alSource3f(m_source_id, AL_VELOCITY, default_velocity[0], default_velocity[1], default_velocity[2]);
 
-    alSourcei(m_source_id, AL_LOOPING, m_IS_LOOPING);
+    alSourcei(m_source_id, AL_LOOPING, looping);
     alSourcei(m_source_id, AL_BUFFER, m_buffer_id);
 }
 

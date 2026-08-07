@@ -1,21 +1,21 @@
 #pragma once
 
+#include "core/platform/environment.hpp"
+#include "database/repositories/beatmap_repository.hpp"
 #include "database/storage.hpp"
 
-#include "database/repositories/beatmap_repository.hpp"
+#include <filesystem>
 
 // Number of repositories should be relatively small, so we can just define it all here without extra dependencies
 namespace database {
 
 class Database {
   public:
-    Database(const std::string &path = m_DEVELOPMENT_DATA_PATH);
+    explicit Database(const std::filesystem::path &path = core::platform::app_data_path());
 
     database::repositories::BeatmapRepository &beatmap_repository();
 
   private:
-    static inline constexpr const char *m_DEVELOPMENT_DATA_PATH = ".data/library.db";
-
     database::Storage m_storage;
 
     database::repositories::BeatmapRepository m_beatmap_repository;

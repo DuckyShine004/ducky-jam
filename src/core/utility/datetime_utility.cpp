@@ -1,12 +1,12 @@
+#include "core/utility/datetime_utility.hpp"
+
 #include <ctime>
 #include <iomanip>
 #include <sstream>
 
-#include "core/utility/datetime_utility.hpp"
-
 namespace core::utility {
 
-std::string DatetimeUtility::get_datetime(const std::string &pattern) {
+std::string DatetimeUtility::datetime(const std::string &pattern) {
     std::time_t now = std::time(nullptr);
 
     std::tm time{};

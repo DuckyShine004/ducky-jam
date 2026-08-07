@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-namespace game::parser::enums {
+namespace game::importer::enums {
 
 enum class HitObjectType : std::uint8_t {
     Circle = 1 << 0,
@@ -13,4 +13,4 @@ enum class HitObjectType : std::uint8_t {
     Hold = 1 << 7
 };
 
-} // namespace game::parser::enums
+} // namespace game::importer::enums

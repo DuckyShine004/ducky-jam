@@ -1,6 +1,6 @@
-#include <sstream>
-
 #include "core/utility/string_utility.hpp"
+
+#include <sstream>
 
 namespace core::utility {
 
@@ -15,7 +15,7 @@ std::string StringUtility::to_upper(std::string &string) {
 }
 
 // Inclusive range
-std::string StringUtility::slice_string(const std::string &string, int start, int end) {
+std::string StringUtility::slice(const std::string &string, int start, int end) {
     int length = end - start + 1;
 
     return string.substr(start, length);
@@ -27,6 +27,22 @@ std::string StringUtility::trim(std::string string) {
     }
 
     return string;
+}
+
+std::string StringUtility::join(const std::vector<std::string> &split, const std::string &delimiter) {
+    std::string result = "";
+
+    int size = split.size();
+
+    for (int i = 0; i < size; ++i) {
+        result += split[i];
+
+        if (i < size - 1) {
+            result += delimiter;
+        }
+    }
+
+    return result;
 }
 
 std::vector<std::string> StringUtility::split_string(const std::string &string, const char &delimiter) {

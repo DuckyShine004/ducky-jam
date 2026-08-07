@@ -1,24 +1,28 @@
 #include "engine/graphics/effect/effect_manager.hpp"
 
+#include "core/exceptions/invalid_argument_exception.hpp"
 #include "engine/graphics/effect/base_effect.hpp"
 #include "engine/graphics/effect/bloom_effect.hpp"
 #include "engine/graphics/shader/shader_manager.hpp"
 
-#include <stdexcept>
 #include <utility>
 
 /* FIX: Fix this to cache custom effects */
-using namespace engine::graphics::shader;
-
 namespace engine::graphics::effect {
 
-EffectManager::EffectManager(ShaderManager &shader_manager) : m_shader_manager(shader_manager) {
+namespace exceptions = core::exceptions;
+
+EffectManager::EffectManager(shader::ShaderManager &shader_manager) : m_shader_manager(shader_manager) {
+}
+
+void EffectManager::load_effects() {
     add_effect("base", std::make_shared<BaseEffect>(m_shader_manager.get_shader_id("base")));
 }
 
 void EffectManager::add_effect(const std::string &effect_name, EffectPtr effect) {
-    if (!effect)
-        throw std::invalid_argument("Cannot register a null effect");
+    if (!effect) {
+        throw exceptions::InvalidArgumentException("Cannot register a null effect");
+    }
 
     m_effects.insert_or_assign(effect_name, std::move(effect));
 }

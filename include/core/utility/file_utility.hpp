@@ -1,37 +1,32 @@
 #pragma once
 
-#include <regex>
+#include <filesystem>
 #include <string>
-
-#include <nlohmann/json.hpp>
+#include <vector>
 
 namespace core::utility {
 
 class FileUtility {
   public:
-    static std::string get_file_to_string(const std::string &filename);
-    static std::string get_filename_from_path(const std::string &path);
-    static std::string get_basename_from_path(const std::string &path);
-    static std::string get_extension(const std::string &path);
-    static std::string get_parent_directory(const std::string &path);
-    static std::string get_shader_file(const std::string &path);
+    static std::string to_string(const std::filesystem::path &filename);
+    static std::string filename(const std::filesystem::path &path);
+    static std::string basename(const std::filesystem::path &path);
+    static std::string extension(const std::filesystem::path &path);
+    static std::filesystem::path parent(const std::filesystem::path &path);
+    static bool exists(const std::filesystem::path &path);
 
-    static bool path_exists(const std::string &path);
+    static void create_file(const std::filesystem::path &path);
+    static void create_directory(const std::filesystem::path &path);
 
-    static void create_file(const std::string &path);
-    static void load_json(nlohmann::json &json, const std::string &path);
-    static void save_json(const nlohmann::json &json, const std::string &path);
+    static std::vector<std::filesystem::path> children(const std::filesystem::path &parent);
 
-    static std::vector<std::string> get_files_in_directory(std::string directory);
-    static std::vector<std::string> get_paths_in_directory(std::string directory);
+    static bool is_file(const std::filesystem::path &path);
+    static bool is_directory(const std::filesystem::path &path);
 
-    static bool is_file(const std::string &path);
-    static bool is_directory(const std::string &path);
-    static int get_number_of_files_in_directory(const std::string &directory, const std::regex &pattern);
+    static std::vector<std::string> split(const std::filesystem::path &path);
 
-    static void move_file(const std::string &source, const std::string &target);
-    static void clear_directory(const std::string &path);
-    static std::string hash_file(const std::string &path);
+    static void move(const std::filesystem::path &source, const std::filesystem::path &target);
+    static void clear(const std::filesystem::path &path);
 };
 
 } // namespace core::utility

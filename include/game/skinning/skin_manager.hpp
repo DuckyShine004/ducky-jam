@@ -1,39 +1,36 @@
 #pragma once
 
+#include "engine/graphics/texture/texture_manager.hpp"
+#include "game/importer/beatmap.hpp"
+#include "game/skinning/config/skin_config.hpp"
+
+#include <filesystem>
 #include <string>
 #include <unordered_set>
-
-#include "game/parser/beatmap.hpp"
-
-#include "game/skinning/config/skin_config.hpp"
 
 namespace game::skinning {
 
 class SkinManager {
   public:
-    SkinManager(const SkinManager &) = delete;
-    SkinManager &operator=(const SkinManager &) = delete;
+    explicit SkinManager(engine::graphics::texture::TextureManager &texture_manager);
 
-    static SkinManager &get_instance();
-
-    void initialise();
-    void load_textures(const std::string &path = m_DEFAULT_PATH);
-    game::skinning::config::SkinConfig load_skin_config(game::parser::Beatmap &beatmap);
+    void load_textures(const std::filesystem::path &path);
+    game::skinning::config::SkinConfig load_skin_config(const game::importer::Beatmap &beatmap);
 
   private:
-    SkinManager();
-    ~SkinManager();
+    static inline const std::filesystem::path default_skin_path = "resources/skins/default";
+    static inline const std::filesystem::path skin_configuration_file = "skin.config.json";
 
-    static inline constexpr const char *m_DEFAULT_PATH = "resources/skins/default";
-    static inline constexpr const char *m_CONFIGURATION_FILENAME = "skin.config.json";
-
-    static inline constexpr const char *m_IMAGE_EXTENSIONS[] = {
+    static inline constexpr const char *image_extensions[] = {
         ".png",
         ".jpg",
     };
 
     std::unordered_set<std::string> m_image_extensions;
-    std::string m_configuration_path;
+    std::filesystem::path m_root_path;
+    std::filesystem::path m_configuration_path;
+
+    engine::graphics::texture::TextureManager &m_texture_manager;
 };
 
 } // namespace game::skinning

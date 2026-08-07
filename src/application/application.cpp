@@ -1,6 +1,8 @@
 #include "application/application.hpp"
 
-#include "core/logger/logger_macros.hpp"
+#include "core/exceptions/runtime_exception.hpp"
+#include "core/platform/environment.hpp"
+#include "core/utility/file_utility.hpp"
 #include "engine/engine.hpp"
 
 #include "external/glad/glad.h"
@@ -10,11 +12,13 @@
 
 #include <GLFW/glfw3.h>
 
-using namespace engine;
+#include <filesystem>
 
 namespace application {
 
-Application::Application() : m_last_time(0.0), m_is_mouse_captured(false) {
+namespace exceptions = core::exceptions;
+
+Application::Application() : m_previous_time(0.0) {
 }
 
 Application::~Application() {
@@ -22,11 +26,12 @@ Application::~Application() {
 }
 
 bool Application::initialise() {
-    if (!m_window.create(m_DEFAULT_WIDTH, m_DEFAULT_HEIGHT, m_TITLE, m_FULLSCREEN)) {
+    if (!m_window.create(default_width, default_height, title, fullscreen)) {
         return false;
     }
 
     m_engine.emplace(m_window.physical_resolution().w, m_window.physical_resolution().h);
+    m_game.emplace(m_engine->services());
 
     GLFWwindow *window = m_window.window();
 
@@ -52,23 +57,35 @@ bool Application::initialise() {
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330 core");
 
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
     return true;
 }
 
 void Application::load() {
-    // AudioManager::get_instance().initialise();
-    // ShaderManager::get_instance().initialise();
-    // TextureManager::get_instance().initialise();
-    // SkinManager::get_instance().initialise();
+    const std::filesystem::path app_data_path = core::platform::app_data_path();
 
-    /* NOTE: MUST BE LOADED AFTER SHADERS ARE LOADED */
-    // EffectManager::get_instance().initialise();
+    core::utility::FileUtility::create_directory(app_data_path);
+
+    m_engine->load();
+}
+
+void Application::validate() {
+    if (!m_engine.has_value()) {
+        throw exceptions::RuntimeException("For some reason the engine was never initialised. Did you perhaps forget to invoke application.initialise()?");
+    }
+
+    if (!m_game.has_value()) {
+        throw exceptions::RuntimeException("For some reason the game was never initialised. Did you perhaps forget to invoke application.initialise()?");
+    }
+
+    if (!core::utility::FileUtility::exists(core::platform::app_data_path())) {
+        throw exceptions::RuntimeException("Application data path was never initialised.");
+    }
 }
 
 void Application::run() {
-    if (!m_engine.has_value()) {
-        throw std::runtime_error("For some reason the engine was never initialised...");
-    }
+    validate();
 
     glfwSwapInterval(0);
 
@@ -83,29 +100,26 @@ void Application::run() {
 
 void Application::update() {
     double time = glfwGetTime();
-    double delta_time = time - m_last_time;
+    double delta_time = time - m_previous_time;
 
-    m_last_time = time;
+    m_previous_time = time;
 
-    m_engine->update(delta_time);
+    m_game->update(delta_time);
 }
 
 void Application::render() {
-    const float R = 0.0f;
-    const float G = 0.0f;
-    const float B = 0.0f;
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glClearColor(R, G, B, 0.0f);
+    m_game->render();
 
+    // IMGUI rendering
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
-
     ImGui::NewFrame();
 
-    m_engine->render();
+    m_game->render_imgui();
 
     ImGui::Render();
-
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
@@ -137,7 +151,7 @@ void Application::on_window_resize(GLFWwindow *window, int width, int height) {
 
 void Application::handle_window_resize(GLFWwindow *window, int width, int height) {
     m_window.resize_logical(width, height);
-    m_engine->resize(width, height);
+    // m_engine->resize(width, height);
 }
 
 void Application::on_framebuffer_resize(GLFWwindow *window, int width, int height) {
@@ -147,7 +161,7 @@ void Application::on_framebuffer_resize(GLFWwindow *window, int width, int heigh
 
 void Application::handle_framebuffer_resize(GLFWwindow *window, int width, int height) {
     m_window.resize_physical(width, height);
-    m_engine->resize(width, height);
+    // m_engine->resize(width, height);
 }
 
 void Application::on_cursor(GLFWwindow *window, double x, double y) {
@@ -166,19 +180,19 @@ void Application::on_scroll(GLFWwindow *window, double x, double y) {
 void Application::handle_scroll(GLFWwindow *window, double x, double y) {
 }
 
-void Application::on_drop(GLFWwindow *window, int count, const char **paths) {
+void Application::on_drop(GLFWwindow *window, int count, const char **raw_paths) {
     Application *application = static_cast<Application *>(glfwGetWindowUserPointer(window));
-    application->handle_drop(window, count, paths);
+    application->handle_drop(window, count, raw_paths);
 }
 
-void Application::handle_drop(GLFWwindow *window, int count, const char **paths) {
-    std::vector<std::string> string_paths(count);
+void Application::handle_drop(GLFWwindow *window, int count, const char **raw_paths) {
+    std::vector<std::filesystem::path> paths(count);
 
     for (int i = 0; i < count; ++i) {
-        string_paths[i] = paths[i];
+        paths[i] = raw_paths[i];
     }
 
-    m_engine->drop(string_paths);
+    m_game->import(paths);
 }
 
 void Application::close() {

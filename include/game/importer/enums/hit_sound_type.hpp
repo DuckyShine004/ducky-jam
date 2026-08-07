@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-namespace game::parser::enums {
+namespace game::importer::enums {
 
 enum class HitSoundType : std::uint8_t {
     Normal = 1 << 0,
@@ -11,4 +11,4 @@ enum class HitSoundType : std::uint8_t {
     Clap = 1 << 3
 };
 
-} // namespace game::parser::enums
+} // namespace game::importer::enums

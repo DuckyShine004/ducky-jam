@@ -1,24 +1,23 @@
-#include "external/stb/stb_image.h"
-#include "external/stb/stb_image_write.h"
-
 #include "engine/graphics/texture/atlas/atlas.hpp"
+
 #include "engine/graphics/texture/atlas/rectangle.hpp"
 
-#include "core/logger/logger_macros.hpp"
+#include "external/stb/stb_image.h"
+#include "external/stb/stb_image_write.h"
 
 namespace engine::graphics::texture::atlas {
 
 using engine::graphics::texture::atlas::Rectangle;
 
-Atlas::Atlas(int id) : Texture(id, m_MAX_WIDTH, m_MAX_HEIGHT) {
-    m_rectangles.emplace_back(m_PADDING, m_PADDING, m_MAX_WIDTH - (m_PADDING << 1), m_MAX_HEIGHT - (m_PADDING << 1));
+Atlas::Atlas(int id) : Texture(id, max_width, max_height) {
+    m_rectangles.emplace_back(padding, padding, max_width - (padding << 1), max_height - (padding << 1));
 }
 
 bool Atlas::can_fit(int width, int height) {
-    int dw = width + (m_PADDING << 1);
-    int dh = height + (m_PADDING << 1);
+    int dw = width + (padding << 1);
+    int dh = height + (padding << 1);
 
-    return dw <= m_MAX_WIDTH && dh <= m_MAX_HEIGHT;
+    return dw <= max_width && dh <= max_height;
 }
 
 bool Atlas::add_texture(const Image &image) {
@@ -26,7 +25,7 @@ bool Atlas::add_texture(const Image &image) {
     int height = image.height();
 
     // fit the image into a free rectangle based on max rect algorithm
-    int best_score = m_MAX_WIDTH * m_MAX_HEIGHT;
+    int best_score = max_width * max_height;
     Rectangle best_rectangle;
 
     for (const Rectangle &rectangle : m_rectangles) {
@@ -89,14 +88,14 @@ int Atlas::best_area_fit(int width, int height, const Rectangle &rectangle) {
 void Atlas::place_image(const std::vector<std::uint8_t> &image_data, int x, int y, int width, int height) {
     for (int dy = 0; dy < height; ++dy) {
         for (int dx = 0; dx < width; ++dx) {
-            int image_data_offset = +(dy * width + dx) * m_CHANNELS;
+            int image_data_offset = +(dy * width + dx) * default_channels;
 
             std::uint8_t r = image_data[image_data_offset + 0];
             std::uint8_t g = image_data[image_data_offset + 1];
             std::uint8_t b = image_data[image_data_offset + 2];
             std::uint8_t a = image_data[image_data_offset + 3];
 
-            int data_offset = ((y + dy) * m_MAX_WIDTH + (x + dx)) * m_CHANNELS;
+            int data_offset = ((y + dy) * max_width + (x + dx)) * default_channels;
 
             m_data[data_offset + 0] = r;
             m_data[data_offset + 1] = g;
@@ -128,14 +127,14 @@ void Atlas::split_rectangle(const Rectangle &free, const Rectangle &placed, std:
 }
 
 void Atlas::split_left(const Rectangle &free, const Rectangle &placed, std::vector<Rectangle> &rectangles) {
-    if (placed.x - m_PADDING <= free.x) {
+    if (placed.x - padding <= free.x) {
         return;
     }
 
     Rectangle rectangle{
         .x = free.x,
         .y = free.y,
-        .width = (placed.x - m_PADDING) - free.x,
+        .width = (placed.x - padding) - free.x,
         .height = free.height,
     };
 
@@ -143,14 +142,14 @@ void Atlas::split_left(const Rectangle &free, const Rectangle &placed, std::vect
 }
 
 void Atlas::split_right(const Rectangle &free, const Rectangle &placed, std::vector<Rectangle> &rectangles) {
-    if (placed.x + placed.width + m_PADDING >= free.x + free.width) {
+    if (placed.x + placed.width + padding >= free.x + free.width) {
         return;
     }
 
     Rectangle rectangle{
-        .x = placed.x + placed.width + m_PADDING,
+        .x = placed.x + placed.width + padding,
         .y = free.y,
-        .width = (free.x + free.width) - (placed.x + placed.width + m_PADDING),
+        .width = (free.x + free.width) - (placed.x + placed.width + padding),
         .height = free.height,
     };
 
@@ -158,7 +157,7 @@ void Atlas::split_right(const Rectangle &free, const Rectangle &placed, std::vec
 }
 
 void Atlas::split_top(const Rectangle &free, const Rectangle &placed, std::vector<Rectangle> &rectangles) {
-    if (placed.y - m_PADDING <= free.y) {
+    if (placed.y - padding <= free.y) {
         return;
     }
 
@@ -166,21 +165,21 @@ void Atlas::split_top(const Rectangle &free, const Rectangle &placed, std::vecto
         .x = free.x,
         .y = free.y,
         .width = free.width,
-        .height = (placed.y - m_PADDING) - free.y,
+        .height = (placed.y - padding) - free.y,
     };
 
     rectangles.emplace_back(std::move(rectangle));
 }
 
 void Atlas::split_bottom(const Rectangle &free, const Rectangle &placed, std::vector<Rectangle> &rectangles) {
-    if (placed.y + placed.height + m_PADDING >= free.y + free.height) {
+    if (placed.y + placed.height + padding >= free.y + free.height) {
         return;
     }
 
     int x = free.x;
-    int y = placed.y + placed.height + m_PADDING;
+    int y = placed.y + placed.height + padding;
     int width = free.width;
-    int height = (free.y + free.height) - (placed.y + placed.height + m_PADDING);
+    int height = (free.y + free.height) - (placed.y + placed.height + padding);
 
     rectangles.emplace_back(x, y, width, height);
 }

@@ -1,21 +1,19 @@
-#include <glm/gtc/type_ptr.hpp>
-
-#include "external/glad/glad.h"
-
 #include "engine/graphics/shader/shader.hpp"
 
 #include "core/logger/logger_macros.hpp"
 #include "core/utility/file_utility.hpp"
 
-using namespace core::logger;
-using namespace core::structs;
-using namespace core::utility;
+#include "external/glad/glad.h"
+
+#include <glm/gtc/type_ptr.hpp>
 
 namespace engine::graphics::shader {
 
+namespace utility = core::utility;
+
 Shader::Shader() = default;
 
-Shader::Shader(const std::string &vertex_shader_path, const std::string &fragment_shader_path) : m_vertex_shader_path(vertex_shader_path), m_fragment_shader_path(fragment_shader_path) {
+Shader::Shader(const std::filesystem::path &vertex_shader_path, const std::filesystem::path &fragment_shader_path) : m_vertex_shader_path(vertex_shader_path), m_fragment_shader_path(fragment_shader_path) {
     this->initialise();
 }
 
@@ -36,8 +34,8 @@ void Shader::detach() {
 }
 
 void Shader::create_shaders() {
-    std::string vertex_shader_source = FileUtility::get_shader_file(m_vertex_shader_path);
-    std::string fragment_shader_source = FileUtility::get_shader_file(m_fragment_shader_path);
+    std::string vertex_shader_source = utility::FileUtility::to_string(m_vertex_shader_path);
+    std::string fragment_shader_source = utility::FileUtility::to_string(m_fragment_shader_path);
 
     const char *vertex_shader_code = vertex_shader_source.c_str();
     const char *fragment_shader_code = fragment_shader_source.c_str();
@@ -113,7 +111,7 @@ void Shader::set_vector2f(const GLchar *name, float x, float y) {
     glUniform2f(location, x, y);
 }
 
-void Shader::set_vector2f(const GLchar *name, const Vector2<float> &vector) {
+void Shader::set_vector2f(const GLchar *name, const core::structs::Vector2<float> &vector) {
     GLint location = glGetUniformLocation(m_program, name);
     glUniform2f(location, vector.x, vector.y);
 }

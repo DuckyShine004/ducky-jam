@@ -9,7 +9,7 @@ enum class Severity : int {
 };
 
 // clang-format off
-inline static constexpr const char *_NAMES[] = {
+inline constexpr const char *names[] = {
     "INFO",
     "DEBUG",
     "WARN",
@@ -17,7 +17,7 @@ inline static constexpr const char *_NAMES[] = {
     "FATAL",
 };
 
-inline static constexpr const char *_BACKGROUND_COLOURS[] = {
+inline constexpr const char *background_colours[] = {
     "#a6e3a1",
     "#89b4fa",
     "#f9e2af",
@@ -25,7 +25,7 @@ inline static constexpr const char *_BACKGROUND_COLOURS[] = {
     "#f38ba8",
 };
 
-inline static constexpr const char *_TEXT_COLOURS[] = {
+inline constexpr const char *text_colours[] = {
     "#11111b",
     "#11111b",
     "#11111b",

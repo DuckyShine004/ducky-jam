@@ -1,9 +1,12 @@
 #include "engine/graphics/renderer/framebuffer.hpp"
 
-#include <stdexcept>
+#include "core/exceptions/runtime_exception.hpp"
+
 #include <utility>
 
 namespace engine::graphics::renderer {
+
+namespace exceptions = core::exceptions;
 
 Framebuffer::Framebuffer() : m_id(0) {
 }
@@ -77,7 +80,7 @@ void Framebuffer::validate() const {
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         clear();
-        throw std::runtime_error("Framebuffer is incomplete");
+        throw exceptions::RuntimeException("Framebuffer is incomplete");
     }
 
     clear();
@@ -88,7 +91,7 @@ void Framebuffer::validate_render_target(std::size_t index) const {
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         clear();
-        throw std::runtime_error("Framebuffer render target is incomplete");
+        throw exceptions::RuntimeException("Framebuffer render target is incomplete");
     }
 
     clear();

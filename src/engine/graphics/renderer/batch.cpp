@@ -1,14 +1,11 @@
 #include "engine/graphics/renderer/batch.hpp"
 
-using namespace engine::graphics::model;
-using namespace engine::graphics::texture;
-
 namespace engine::graphics::renderer {
 
 Batch::Batch(const BatchKey &key) : m_key(key) {
 }
 
-void Batch::add(const Quad &quad) {
+void Batch::add(const model::Quad &quad) {
     float x0 = quad.x;
     float y0 = quad.y;
     float x1 = x0 + quad.width;
@@ -33,7 +30,7 @@ const BatchKey &Batch::key() const {
     return m_key;
 }
 
-const std::vector<Vertex> &Batch::vertices() const {
+const std::vector<model::Vertex> &Batch::vertices() const {
     return m_vertices;
 }
 

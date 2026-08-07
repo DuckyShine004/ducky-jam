@@ -13,6 +13,8 @@ class EffectManager {
   public:
     EffectManager(engine::graphics::shader::ShaderManager &shader_manager);
 
+    void load_effects();
+
     void add_effect(const std::string &effect_name, engine::graphics::effect::EffectPtr effect);
 
     engine::graphics::effect::EffectPtr get_effect(const std::string &name) const;

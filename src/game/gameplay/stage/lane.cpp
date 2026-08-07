@@ -1,10 +1,8 @@
 #include "game/gameplay/stage/lane.hpp"
 
-using namespace engine::graphics::animation;
-
-using namespace game::gameplay::stage::drawable;
-
 namespace game::gameplay::stage {
+
+namespace graphics = engine::graphics;
 
 Lane::Lane(int lighting_frame_rate) : m_lighting_hold(lighting_frame_rate), m_lighting_normal(lighting_frame_rate), m_note_offset(0) {
 }
@@ -23,28 +21,28 @@ void Lane::update(double track_time, double delta_time) {
         ++m_note_offset;
     }
 
-    for (DrawableNote *note : m_active_notes) {
+    for (drawable::DrawableNote *note : m_active_notes) {
         note->update(track_time);
     }
 
-    std::erase_if(m_active_notes, [&](const DrawableNote *note) {
+    std::erase_if(m_active_notes, [&](const drawable::DrawableNote *note) {
         return note->note().y + note->note().height < y;
     });
 }
 
-void Lane::add_note(std::unique_ptr<DrawableNote> note) {
+void Lane::add_note(std::unique_ptr<drawable::DrawableNote> note) {
     m_notes.emplace_back(std::move(note));
 }
 
-const std::vector<DrawableNote *> &Lane::active_notes() const {
+const std::vector<drawable::DrawableNote *> &Lane::active_notes() const {
     return m_active_notes;
 }
 
-AnimationPlayer &Lane::lighting_hold() {
+graphics::animation::AnimationPlayer &Lane::lighting_hold() {
     return m_lighting_hold;
 }
 
-AnimationPlayer &Lane::lighting_normal() {
+graphics::animation::AnimationPlayer &Lane::lighting_normal() {
     return m_lighting_normal;
 }
 

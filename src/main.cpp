@@ -1,11 +1,8 @@
 #include "application/application.hpp"
-
 #include "core/logger/logger_macros.hpp"
 
-using namespace application;
-
 int main() {
-    Application application;
+    application::Application application;
 
     if (!application.initialise()) {
         LOG_ERROR("Failed to initialise application");

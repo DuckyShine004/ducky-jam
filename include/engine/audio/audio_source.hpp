@@ -17,13 +17,13 @@ class AudioSource {
     bool is_playing();
 
   private:
-    static inline constexpr float m_GAIN = 1.0f;
-    static inline constexpr float m_PITCH = 1.0f;
+    static inline constexpr float default_gain = 1.0f;
+    static inline constexpr float default_pitch = 1.0f;
 
-    static inline constexpr float m_POSITION[3] = {0, 0, 0};
-    static inline constexpr float m_VELOCITY[3] = {0, 0, 0};
+    static inline constexpr float default_position[3] = {0, 0, 0};
+    static inline constexpr float default_velocity[3] = {0, 0, 0};
 
-    static inline constexpr bool m_IS_LOOPING = false;
+    static inline constexpr bool looping = false;
 
     ALuint m_source_id;
     ALuint m_buffer_id;

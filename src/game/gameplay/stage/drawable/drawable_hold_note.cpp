@@ -1,12 +1,11 @@
 
 #include "game/gameplay/stage/drawable/drawable_hold_note.hpp"
 
-using namespace engine::graphics::renderer;
-using namespace engine::graphics::drawable;
-
 namespace game::gameplay::stage::drawable {
 
-DrawableHoldNote::DrawableHoldNote(const Note &note, const Sprite &head, const Sprite &body, const Sprite &tail) : DrawableNote(note, head), m_body(body), m_tail(tail) {
+namespace graphics = engine::graphics;
+
+DrawableHoldNote::DrawableHoldNote(const Note &note, const graphics::drawable::Sprite &head, const graphics::drawable::Sprite &body, const graphics::drawable::Sprite &tail) : DrawableNote(note, head), m_body(body), m_tail(tail) {
 }
 
 void DrawableHoldNote::update(double track_time) {
@@ -20,7 +19,7 @@ void DrawableHoldNote::update(double track_time) {
     m_tail.set_offset_y(-offset_y);
 }
 
-void DrawableHoldNote::submit(Renderer &renderer) const {
+void DrawableHoldNote::submit(graphics::renderer::Renderer &renderer) const {
     m_head.submit(renderer);
     m_body.submit(renderer);
     m_tail.submit(renderer);

@@ -1,22 +1,20 @@
-#include <sstream>
+#include "game/importer/converter.hpp"
 
-#include "game/parser/parser.hpp"
-#include "game/parser/converter.hpp"
-#include "game/parser/enums/section.hpp"
-
-#include "core/logger/logger_macros.hpp"
 #include "core/utility/file_utility.hpp"
 #include "core/utility/string_utility.hpp"
+#include "game/importer/enums/section.hpp"
+#include "game/importer/parser.hpp"
 
-using namespace core::logger;
-using namespace core::utility;
+#include <sstream>
 
-namespace game::parser {
+namespace game::importer {
 
-using game::parser::enums::Section;
+namespace utility = core::utility;
 
-Beatmap Converter::convert(const std::string &path) {
-    const std::string &raw_content = FileUtility::get_file_to_string(path);
+using game::importer::enums::Section;
+
+Beatmap Converter::convert(const std::filesystem::path &path) {
+    const std::string &raw_content = utility::FileUtility::to_string(path);
     const std::vector<std::string> content = get_content(raw_content);
 
     Parser parser;
@@ -57,7 +55,7 @@ std::vector<std::string> Converter::get_content(const std::string &raw_content) 
     std::vector<std::string> content;
 
     while (std::getline(stream, token)) {
-        token = StringUtility::trim(token);
+        token = utility::StringUtility::trim(token);
 
         if (!token.empty()) {
             content.emplace_back(token);
@@ -68,7 +66,7 @@ std::vector<std::string> Converter::get_content(const std::string &raw_content) 
 }
 
 Section Converter::get_section(const std::string &line) {
-    std::string section = StringUtility::slice_string(line, 1, line.length() - 2);
+    std::string section = utility::StringUtility::slice(line, 1, line.length() - 2);
 
     if (section == "General") {
         return Section::General;
@@ -97,4 +95,4 @@ Section Converter::get_section(const std::string &line) {
     return Section::Default;
 }
 
-} // namespace game::parser
+} // namespace game::importer

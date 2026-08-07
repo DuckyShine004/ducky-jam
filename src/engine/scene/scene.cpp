@@ -2,14 +2,10 @@
 
 #include "engine/ui/constraint.hpp"
 
-using namespace engine::graphics::renderer;
-
-using namespace engine::ui;
-
 namespace engine::scene {
 
-void Scene::submit(Renderer &renderer) {
-    Constraint constraint{
+void Scene::submit(graphics::renderer::Renderer &renderer) {
+    ui::Constraint constraint{
         .minimum = {0.0f, 0.0f},
         .maximum = {2560.0f, 1440.0f},
     };

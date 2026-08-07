@@ -1,7 +1,7 @@
 #pragma once
 
+#include <filesystem>
 #include <memory>
-#include <string>
 
 #include "engine/graphics/effect/effect.hpp"
 #include "engine/graphics/texture/uv.hpp"
@@ -12,10 +12,8 @@ namespace engine::graphics::drawable {
 
 class Sprite : public Drawable {
   public:
-    Sprite(double x, double y, double width, double height, const std::string &texturePath, const std::string &effectName = "base");
-    Sprite(double x, double y, double width, double height, const texture::UV &uv, const std::string &texturePath, const std::string &effectName = "base");
-    Sprite(double x, double y, double width, double height, const std::string &texture_path, engine::graphics::effect::EffectPtr effect);
-    Sprite(double x, double y, double width, double height, const texture::UV &uv, const std::string &texture_path, engine::graphics::effect::EffectPtr effect);
+    Sprite(double x, double y, double width, double height, const std::filesystem::path &texture_path, engine::graphics::effect::EffectPtr effect);
+    Sprite(double x, double y, double width, double height, const texture::UV &uv, const std::filesystem::path &texture_path, engine::graphics::effect::EffectPtr effect);
 
     void set_offset_x(double x);
     void set_offset_y(double y);
@@ -31,13 +29,11 @@ class Sprite : public Drawable {
     double width() const;
     double height() const;
 
-    int texture_id() const;
-
     const engine::graphics::effect::EffectPtr &effect() const;
 
     const engine::graphics::texture::UV &uv() const;
 
-    const std::string &texture_path() const;
+    const std::filesystem::path &texture_path() const;
 
   private:
     double m_x;
@@ -49,12 +45,11 @@ class Sprite : public Drawable {
     double m_width;
     double m_height;
 
-    int m_texture_id;
     engine::graphics::effect::EffectPtr m_effect;
 
     engine::graphics::texture::UV m_uv;
 
-    std::string m_texture_path;
+    std::filesystem::path m_texture_path;
 };
 
 } // namespace engine::graphics::drawable

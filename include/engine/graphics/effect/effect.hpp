@@ -20,7 +20,7 @@ class Effect {
     Effect(Effect &&) = delete;
     Effect &operator=(Effect &&) = delete;
 
-    void apply() const;
+    void apply(engine::graphics::shader::Shader &shader) const;
 
     int shader_id() const;
 

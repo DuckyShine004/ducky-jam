@@ -1,13 +1,14 @@
-#include <iostream>
-
 #include "core/logger/logger.hpp"
 
-#include "core/utility/file_utility.hpp"
 #include "core/utility/datetime_utility.hpp"
+#include "core/utility/file_utility.hpp"
+#include "core/utility/json_utility.hpp"
 
-using namespace core::utility;
+#include <iostream>
 
 namespace core::logger {
+
+namespace utility = core::utility;
 
 Logger::Logger() {
     this->initialise();
@@ -22,12 +23,13 @@ Logger &Logger::get_instance() {
 }
 
 void Logger::initialise() {
-    std::string filename = DatetimeUtility::get_datetime("%d-%m-%Y_%H-%M-%S") + ".log";
+    std::string filename = utility::DatetimeUtility::datetime("%d-%m-%Y_%H-%M-%S") + ".log";
 
-    m_log_path = ".cache/logs/" + filename;
+    m_log_path = std::filesystem::path(".cache/logs") / filename;
     m_json = nlohmann::json::array();
 
-    FileUtility::create_file(m_log_path);
+    utility::FileUtility::create_directory(m_log_path.parent_path());
+    utility::FileUtility::create_file(m_log_path);
 }
 
 // NOTE: Added a scoped lock. In deployment must remove lock for parallelism.
@@ -36,7 +38,7 @@ void Logger::log(Severity severity, const char *file, const char *function, int 
 
     {
         std::lock_guard<std::mutex> lock(m_log_mutex);
-        this->add_entry(entry);
+        add_entry(entry);
     }
 
     std::cout << entry.to_string() << std::endl;
@@ -50,7 +52,7 @@ void Logger::add_entry(Entry entry) {
 }
 
 void Logger::save() {
-    FileUtility::save_json(m_json, m_log_path);
+    utility::JsonUtility::save(m_json, m_log_path);
 }
 
 } // namespace core::logger

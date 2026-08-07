@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mutex>
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -32,7 +33,7 @@ class Logger {
 
     std::vector<core::logger::Entry> m_entries;
 
-    std::string m_log_path;
+    std::filesystem::path m_log_path;
 };
 
 } // namespace core::logger

@@ -1,13 +1,13 @@
 #pragma once
 
-#include <string>
+#include <filesystem>
 
 namespace game::skinning::config {
 
 struct Note {
-    std::string head;
-    std::string body;
-    std::string tail;
+    std::filesystem::path head;
+    std::filesystem::path body;
+    std::filesystem::path tail;
 
     float width;
 };

@@ -1,38 +1,33 @@
-#include "engine/ui/enums/align.hpp"
-#include "engine/ui/components/layout.hpp"
-#include "engine/ui/container.hpp"
-
 #include "game/scenes/menu.hpp"
 
+#include "engine/ui/components/layout.hpp"
+#include "engine/ui/container.hpp"
+#include "engine/ui/enums/align.hpp"
 #include "game/ui/spectrum.hpp"
-
-using namespace engine::audio;
-
-using namespace engine::ui;
-using namespace engine::ui::enums;
-using namespace engine::ui::components;
-
-using namespace game::ui;
-using namespace game::ui::theme;
 
 namespace game::scenes {
 
-Menu::Menu(const ThemeConfig &theme_config) : Scene(create_root(theme_config)) {
+namespace audio = engine::audio;
+
+namespace game_ui = game::ui;
+namespace engine_ui = engine::ui;
+
+Menu::Menu(const game_ui::theme::ThemeConfig &theme_config) : Scene(create_root(theme_config)) {
 }
 
-std::unique_ptr<UiNode> Menu::create_root(const ThemeConfig &theme_config) {
-    return std::make_unique<Container>(
-        Layout{
+std::unique_ptr<engine_ui::UiNode> Menu::create_root(const game_ui::theme::ThemeConfig &theme_config) {
+    return std::make_unique<engine_ui::Container>(
+        engine_ui::components::Layout{
             .width = 2560,
             .height = 1440,
-            .align = Align::TopLeft,
+            .align = engine_ui::enums::Align::TopLeft,
             .colour = theme_config.theme.background,
         },
-        Container{
-            Layout{
+        engine_ui::Container{
+            engine_ui::components::Layout{
                 .width = 2560,
                 .height = 80,
-                .align = Align::TopLeft,
+                .align = engine_ui::enums::Align::TopLeft,
                 .shadow =
                     {
                         .blur_radius = 10.0f,
@@ -41,11 +36,11 @@ std::unique_ptr<UiNode> Menu::create_root(const ThemeConfig &theme_config) {
                 .colour = theme_config.theme.topbar,
             },
         },
-        Spectrum{
-            Layout{
+        game_ui::Spectrum{
+            engine_ui::components::Layout{
                 .width = 2560,
                 .height = 480,
-                .align = Align::Bottom,
+                .align = engine_ui::enums::Align::Bottom,
                 .bloom =
                     {
                         .intensity = 0.1f,
@@ -61,7 +56,7 @@ void Menu::update(double delta_time) {
     m_root->update(delta_time);
 }
 
-void Menu::update_by_audio(AudioBuffer &audio_buffer, double track_time) {
+void Menu::update_by_audio(audio::AudioBuffer &audio_buffer, double track_time) {
     m_root->update_by_audio(audio_buffer, track_time);
 }
 

@@ -1,13 +1,11 @@
 #include "engine/graphics/animation/animation_player.hpp"
 
-using namespace engine::graphics::drawable;
-
 namespace engine::graphics::animation {
 
 AnimationPlayer::AnimationPlayer(double frame_rate) : m_frame_rate(frame_rate), m_elapsed_time(0.0), m_frame_index(0), m_playing(false) {
 }
 
-void AnimationPlayer::add_frame(const Sprite &sprite) {
+void AnimationPlayer::add_frame(const drawable::Sprite &sprite) {
     m_frames.emplace_back(sprite);
 }
 
@@ -29,7 +27,7 @@ void AnimationPlayer::update(double delta_time) {
     m_frame_index = elapsed_frames % m_frames.size();
 }
 
-void AnimationPlayer::submit(engine::graphics::renderer::Renderer &renderer) const {
+void AnimationPlayer::submit(renderer::Renderer &renderer) const {
     if (m_playing) {
         m_frames[m_frame_index].submit(renderer);
     }

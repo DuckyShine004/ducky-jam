@@ -18,10 +18,10 @@ class Bloom {
     GLuint blur_texture();
 
   private:
-    static inline constexpr int m_MIP_LEVELS = 5;
+    static inline constexpr int default_mip_levels = 5;
 
     // smaller for sharper bloom but also more costly so probably just keep it broad
-    static inline constexpr float m_FILTER_RADIUS = 1.0f;
+    static inline constexpr float default_filter_radius = 1.0f;
 
     engine::graphics::renderer::Framebuffer m_hdr_framebuffer;
     engine::graphics::renderer::Framebuffer m_blur_framebuffer;

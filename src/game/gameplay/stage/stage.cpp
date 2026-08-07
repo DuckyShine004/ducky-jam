@@ -8,17 +8,18 @@
 #include "game/gameplay/stage/drawable/drawable_hold_note.hpp"
 #include "game/gameplay/stage/drawable/drawable_normal_note.hpp"
 
-#include "game/parser/components/hit_object.hpp"
+#include "game/importer/components/hit_object.hpp"
 
 #include "core/logger/logger_macros.hpp"
 
 using namespace engine::graphics::texture;
 using namespace engine::graphics::drawable;
+using namespace engine::graphics::effect;
 
 using namespace game::skinning::config;
 
-using namespace game::parser;
-using namespace game::parser::components;
+using namespace game::importer;
+using namespace game::importer::components;
 
 using namespace game::gameplay::stage::drawable;
 
@@ -26,7 +27,10 @@ using namespace core::logger;
 
 namespace game::gameplay::stage {
 
-Stage::Stage(const SkinConfig &skin_config, const Beatmap &beatmap) : m_judge(create_judge(skin_config, beatmap)) {
+Stage::Stage(const SkinConfig &skin_config, const Beatmap &beatmap, TextureManager &texture_manager, EffectManager &effect_manager)
+    : m_judge(create_judge(skin_config, beatmap, effect_manager.get_effect("gameplay.note"))) {
+    const EffectPtr lighting_effect = effect_manager.get_effect("gameplay.lighting");
+    const EffectPtr note_effect = effect_manager.get_effect("gameplay.note");
 
     for (int i = 0; i < beatmap.circle_size; ++i) {
         Lane &lane = m_lanes.emplace_back(skin_config.lighting_frame_rate);
@@ -43,16 +47,16 @@ Stage::Stage(const SkinConfig &skin_config, const Beatmap &beatmap) : m_judge(cr
         // double offset_y = -0.5f * height;
         double offset_y = 0.0f;
 
-        for (const std::string &texture_path : skin_config.lighting_hold) {
-            Sprite lighting(x, y, width, height, texture_path, "gameplay.lighting");
+        for (const std::filesystem::path &texture_path : skin_config.lighting_hold) {
+            Sprite lighting(x, y, width, height, texture_path, lighting_effect);
 
             lighting.set_offset_x(offset_x);
 
             lane.lighting_hold().add_frame(lighting);
         }
 
-        for (const std::string &texture_path : skin_config.lighting_normal) {
-            Sprite lighting(x, y, width, height, texture_path, "gameplay.lighting");
+        for (const std::filesystem::path &texture_path : skin_config.lighting_normal) {
+            Sprite lighting(x, y, width, height, texture_path, lighting_effect);
 
             lighting.set_offset_x(offset_x);
 
@@ -81,10 +85,10 @@ Stage::Stage(const SkinConfig &skin_config, const Beatmap &beatmap) : m_judge(cr
         double x = width * lane;
         double y = approach_rate * start_time;
 
-        Sprite head(x, y, width, head_height, skin_config.notes[lane].head, "gameplay.note");
+        Sprite head(x, y, width, head_height, skin_config.notes[lane].head, note_effect);
 
         if (hit_object.hold_time > 0) {
-            const Region &tail_region = TextureManager::get_instance().get_texture(skin_config.notes[lane].tail).get_region(skin_config.notes[lane].tail);
+            const Region &tail_region = texture_manager.get_texture(skin_config.notes[lane].tail).get_region(skin_config.notes[lane].tail);
 
             double end_y = approach_rate * end_time;
             double hold_height = approach_rate * (end_time - start_time);
@@ -115,8 +119,8 @@ Stage::Stage(const SkinConfig &skin_config, const Beatmap &beatmap) : m_judge(cr
                 .end_time = end_time,
             };
 
-            Sprite body(x, body_y, width, body_height, skin_config.notes[lane].body, "gameplay.note");
-            Sprite tail(x, tail_y, width, tail_height, tail_uv, skin_config.notes[lane].tail, "gameplay.note");
+            Sprite body(x, body_y, width, body_height, skin_config.notes[lane].body, note_effect);
+            Sprite tail(x, tail_y, width, tail_height, tail_uv, skin_config.notes[lane].tail, note_effect);
 
             m_lanes[lane].add_note(std::make_unique<DrawableHoldNote>(note, head, body, tail));
         } else {
@@ -144,13 +148,13 @@ std::vector<Lane> &Stage::lanes() {
     return m_lanes;
 }
 
-Sprite Stage::create_judge(const SkinConfig &skin_config, const Beatmap &beatmap) {
+Sprite Stage::create_judge(const SkinConfig &skin_config, const Beatmap &beatmap, EffectPtr effect) {
     double total_width = 0.0f;
     for (int i = 0; i < beatmap.circle_size; ++i) {
         total_width += skin_config.notes[i].width;
     }
 
-    Sprite judge(0, skin_config.hit_position + 0.5f * 100.0f, total_width, 100.0f, skin_config.judge, "gameplay.note");
+    Sprite judge(0, skin_config.hit_position + 0.5f * 100.0f, total_width, 100.0f, skin_config.judge, std::move(effect));
 
     return judge;
 }

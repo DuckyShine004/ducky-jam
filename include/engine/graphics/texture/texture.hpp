@@ -1,16 +1,15 @@
 #pragma once
 
-#include <glm/fwd.hpp>
-
-#include <string>
-#include <vector>
-#include <cstdint>
-#include <unordered_map>
+#include "engine/graphics/texture/image.hpp"
+#include "engine/graphics/texture/region.hpp"
 
 #include "external/glad/glad.h"
 
-#include "engine/graphics/texture/region.hpp"
-#include "engine/graphics/texture/image.hpp"
+#include <cstdint>
+#include <filesystem>
+#include <glm/fwd.hpp>
+#include <unordered_map>
+#include <vector>
 
 namespace engine::graphics::texture {
 
@@ -21,13 +20,13 @@ class Texture {
     virtual ~Texture() = default;
 
     void upload();
-    const engine::graphics::texture::Region &get_region(const std::string &path) const;
+    const engine::graphics::texture::Region &get_region(const std::filesystem::path &path) const;
 
     int id() const;
     GLuint texture_id() const;
 
   protected:
-    static inline constexpr int m_CHANNELS = 4;
+    static inline constexpr int default_channels = 4;
 
     int m_width;
     int m_height;
@@ -38,7 +37,7 @@ class Texture {
 
     std::vector<std::uint8_t> m_data;
 
-    std::unordered_map<std::string, engine::graphics::texture::Region> m_regions;
+    std::unordered_map<std::filesystem::path, engine::graphics::texture::Region> m_regions;
 };
 
 } // namespace engine::graphics::texture

@@ -1,22 +1,26 @@
-#include <cmath>
-#include <stdexcept>
+#include "engine/graphics/texture/image.hpp"
+
+#include "core/exceptions/runtime_exception.hpp"
 
 #include "external/stb/stb_image.h"
 #include "external/stb/stb_image_resize2.h"
 
-#include "engine/graphics/texture/image.hpp"
+#include <cmath>
 
 namespace engine::graphics::texture {
 
-Image::Image(const std::string &path) : m_path(path) {
+namespace exceptions = core::exceptions;
+
+Image::Image(const std::filesystem::path &path) : m_path(path) {
     int width;
     int height;
     int channels;
 
-    unsigned char *image_data = stbi_load(path.c_str(), &width, &height, &channels, m_CHANNELS);
+    const std::string path_string = path.string();
+    unsigned char *image_data = stbi_load(path_string.c_str(), &width, &height, &channels, default_channels);
 
     if (!image_data) {
-        throw std::runtime_error("ERROR: Could not load image: " + path + "\n\n" + stbi_failure_reason());
+        throw exceptions::RuntimeException("Could not load image '{}'. Reason: \n\n {}", path_string, stbi_failure_reason());
     }
 
     m_source_width = width;
@@ -25,13 +29,13 @@ Image::Image(const std::string &path) : m_path(path) {
     // preserve aspect ratio
     double scale = 1.0f;
 
-    scale = std::min(scale, static_cast<double>(m_MAX_WIDTH) / width);
-    scale = std::min(scale, static_cast<double>(m_MAX_HEIGHT) / height);
+    scale = std::min(scale, static_cast<double>(max_width) / width);
+    scale = std::min(scale, static_cast<double>(max_height) / height);
 
     m_width = std::max(1, static_cast<int>(std::lround(width * scale)));
     m_height = std::max(1, static_cast<int>(std::lround(height * scale)));
 
-    int size = m_width * m_height * m_CHANNELS;
+    int size = m_width * m_height * channels;
 
     if (m_width == width && m_height == height) {
         m_data = std::vector<uint8_t>(image_data, image_data + size);
@@ -43,7 +47,7 @@ Image::Image(const std::string &path) : m_path(path) {
 
     if (!stbir_resize_uint8_linear(image_data, width, height, 0, m_data.data(), m_width, m_height, 0, STBIR_RGBA)) {
         stbi_image_free(image_data);
-        throw std::runtime_error("ERROR: Could not resize image: " + path);
+        throw exceptions::RuntimeException("Could not resize image '{}'", path_string);
     };
 }
 
@@ -63,7 +67,7 @@ int Image::source_height() const {
     return m_source_height;
 }
 
-const std::string &Image::path() const {
+const std::filesystem::path &Image::path() const {
     return m_path;
 }
 

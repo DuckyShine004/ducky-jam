@@ -1,43 +1,39 @@
 #include "engine/graphics/renderer/renderer.hpp"
 
-#include "core/logger/logger_macros.hpp"
+#include "core/exceptions/invalid_argument_exception.hpp"
 #include "engine/graphics/drawable/sprite.hpp"
 #include "engine/graphics/model/enums/topology_type.hpp"
 #include "engine/graphics/shader/shader.hpp"
 #include "engine/graphics/shader/shader_manager.hpp"
 #include "engine/graphics/texture/texture_manager.hpp"
 
-#include <algorithm>
 #include <glm/ext/matrix_clip_space.hpp>
-#include <stdexcept>
-
-using namespace core::logger;
-
-using namespace engine::graphics::shader;
-
-using namespace engine::graphics::texture;
-
-using namespace engine::graphics::drawable;
-
-using namespace engine::graphics::model;
-using namespace engine::graphics::model::enums;
 
 namespace engine::graphics::renderer {
 
-Renderer::Renderer(int width, int height, ShaderManager &shader_manager, TextureManager &texture_manager)
-    : m_width(width), m_height(height), m_bloom(width, height, m_fullscreen, shader_manager.get_shader("downsample"), shader_manager.get_shader("upsample")), m_shader_manager(shader_manager), m_texture_manager(texture_manager) {
+namespace exceptions = core::exceptions;
+
+using engine::graphics::model::enums::TopologyType;
+
+Renderer::Renderer(int width, int height, shader::ShaderManager &shader_manager, texture::TextureManager &texture_manager, effect::EffectManager &effect_manager)
+    : m_width(width), m_height(height), m_shader_manager(shader_manager), m_texture_manager(texture_manager), m_effect_manager(effect_manager) {
+}
+
+/* WARN: We expect bloom for now, later we add option to disable- performane issue on low end devices */
+void Renderer::load() {
+    m_bloom.emplace(m_width, m_height, m_fullscreen, m_shader_manager.get_shader("downsample"), m_shader_manager.get_shader("upsample"));
 }
 
 void Renderer::resize(int width, int height) {
     m_width = width;
     m_height = height;
 
-    m_bloom.resize(width, height);
+    m_bloom->resize(width, height);
 }
 
-void Renderer::queue(const Quad &quad) {
+void Renderer::queue(const model::Quad &quad) {
     if (!quad.effect) {
-        throw std::invalid_argument("Cannot queue a quad without an effect");
+        throw exceptions::InvalidArgumentException("Cannot queue a quad without an effect");
     }
 
     BatchKey batch_key{
@@ -54,39 +50,56 @@ void Renderer::queue(const Quad &quad) {
 
 // NOTE: Should maybe pass drawable instead of sprite, because sprite in this case refers to quad
 // But then if I want to debug e.g., AABB then I need to pass draw lines
-void Renderer::queue(const Sprite &sprite) {
-    const UV &texture_uv = m_texture_manager.get_texture(sprite.texture_id()).get_region(sprite.texture_path()).uv;
-    const UV &sprite_uv = sprite.uv();
+void Renderer::queue(const drawable::Sprite &sprite) {
+    const texture::Texture &texture = m_texture_manager.get_texture(sprite.texture_path());
+    const texture::UV &texture_uv = texture.get_region(sprite.texture_path()).uv;
+    const texture::UV &sprite_uv = sprite.uv();
 
-    UV uv{
+    texture::UV uv{
         .u0 = std::lerp(texture_uv.u0, texture_uv.u1, sprite_uv.u0),
         .u1 = std::lerp(texture_uv.u0, texture_uv.u1, sprite_uv.u1),
         .v0 = std::lerp(texture_uv.v0, texture_uv.v1, sprite_uv.v0),
         .v1 = std::lerp(texture_uv.v0, texture_uv.v1, sprite_uv.v1),
     };
 
-    queue(Quad{
+    queue(model::Quad{
         .x = static_cast<float>(sprite.x() + sprite.offset_x()),
         .y = static_cast<float>(sprite.y() + sprite.offset_y()),
         .width = static_cast<float>(sprite.width()),
         .height = static_cast<float>(sprite.height()),
-        .texture_id = sprite.texture_id(),
+        .texture_id = texture.id(),
         .effect = sprite.effect(),
         .uv = uv,
     });
 }
 
+int Renderer::texture_id(const std::filesystem::path &path) const {
+    return m_texture_manager.get_texture_id(path);
+}
+
+const texture::Texture &Renderer::texture(const std::filesystem::path &path) const {
+    return m_texture_manager.get_texture(path);
+}
+
+int Renderer::shader_id(const std::string &name) const {
+    return m_shader_manager.get_shader_id(name);
+}
+
+effect::EffectPtr Renderer::bloom_effect(float intensity) {
+    return m_effect_manager.get_bloom_effect(intensity);
+}
+
 // WARN: Should render based on batch geometry instead of manual type
 void Renderer::render() {
     render_scene();
-    m_bloom.render();
+    m_bloom->render();
     render_composite();
 
     m_batches.clear();
 }
 
 void Renderer::render_scene() {
-    m_bloom.bind_hdr_framebuffer();
+    m_bloom->bind_hdr_framebuffer();
 
     glViewport(0, 0, m_width, m_height);
 
@@ -102,13 +115,12 @@ void Renderer::render_scene() {
 
 void Renderer::render_batch(const Batch &batch) {
     const glm::mat4 model = glm::mat4(1.0f);
-    const glm::mat4 projection = glm::ortho(0.0f, m_LOGICAL_WIDTH, 0.0f, m_LOGICAL_HEIGHT, -1.0f, 1.0f);
+    const glm::mat4 projection = glm::ortho(0.0f, logical_width, 0.0f, logical_height, -1.0f, 1.0f);
 
     m_mesh.upload(batch.vertices(), batch.indices());
 
-    batch.key().effect->apply();
-
-    Shader &shader = m_shader_manager.get_active_shader();
+    shader::Shader &shader = m_shader_manager.use_shader(batch.key().effect->shader_id());
+    batch.key().effect->apply(shader);
 
     shader.set_matrix4fv("u_model", model);
     shader.set_matrix4fv("u_projection", projection);
@@ -130,17 +142,17 @@ void Renderer::render_composite() {
     glDisable(GL_BLEND);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    Shader &shader = m_shader_manager.use_shader("composite");
+    shader::Shader &shader = m_shader_manager.use_shader("composite");
 
     shader.set_integer("u_scene", 0);
     shader.set_integer("u_bloom", 1);
-    shader.set_float("u_bloom_strength", m_BLOOM_STRENGTH);
+    shader.set_float("u_bloom_strength", default_bloom_strength);
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_bloom.hdr_texture());
+    glBindTexture(GL_TEXTURE_2D, m_bloom->hdr_texture());
 
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, m_bloom.blur_texture());
+    glBindTexture(GL_TEXTURE_2D, m_bloom->blur_texture());
 
     m_fullscreen.render();
 

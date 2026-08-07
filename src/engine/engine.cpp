@@ -1,47 +1,29 @@
 #include "engine/engine.hpp"
 
-#include "core/logger/logger_macros.hpp"
-#include "engine/audio/audio_manager.hpp"
 #include "engine/graphics/effect/effect_manager.hpp"
-#include "engine/graphics/shader/shader_manager.hpp"
-#include "engine/graphics/texture/texture_manager.hpp"
-#include "game/gameplay/effects/lighting_effect.hpp"
-#include "game/gameplay/effects/note_effect.hpp"
-#include "game/gameplay/stage/drawable/drawable_note.hpp"
-#include "game/gameplay/stage/stage.hpp"
-#include "game/parser/converter.hpp"
-#include "game/scenes/menu.hpp"
-#include "game/skinning/skin_manager.hpp"
-#include "game/ui/theme/theme_config.hpp"
-
-#include "external/imgui/imgui.h"
-
-using namespace engine::audio;
-using namespace engine::audio::enums;
-
-using namespace engine::graphics::effect;
-using namespace engine::graphics::shader;
-using namespace engine::graphics::texture;
-
-using namespace game::gameplay::effects;
-using namespace game::gameplay::stage;
-using namespace game::gameplay::stage::drawable;
-
-using namespace game::parser;
-using namespace game::parser::components;
-
-using namespace game::skinning;
-
-using namespace game::scenes;
-
-using namespace game::ui::theme;
 
 namespace engine {
 
-Engine::Engine(int width, int height) : m_effect_manager(m_shader_manager), m_renderer(width, height, m_shader_manager, m_texture_manager), m_time(0.0) {
+Engine::Engine(int width, int height) : m_effect_manager(m_shader_manager), m_renderer(width, height, m_shader_manager, m_texture_manager, m_effect_manager) {
 }
 
-Engine::~Engine() {
+void Engine::load() {
+    m_texture_manager.load_textures();
+    m_shader_manager.load_shaders();
+    m_effect_manager.load_effects();
+    m_renderer.load();
+
+    m_texture_manager.upload();
+}
+
+EngineServices Engine::services() {
+    return {
+        .audio_manager = m_audio_manager,
+        .texture_manager = m_texture_manager,
+        .shader_manager = m_shader_manager,
+        .effect_manager = m_effect_manager,
+        .renderer = m_renderer,
+    };
 }
 
 // NOTE: Suppose beatmap initialisation is done here for now, since we don't have ui yet lol, also
@@ -93,69 +75,44 @@ Engine::~Engine() {
 // m_scene = std::make_unique<Menu>(theme_config);
 // }
 
-void Engine::resize(int framebuffer_width, int framebuffer_height) {
-    m_renderer.resize(framebuffer_width, framebuffer_height);
-}
+// void Engine::resize(int framebuffer_width, int framebuffer_height) {
+//     m_renderer.resize(framebuffer_width, framebuffer_height);
+// }
+//
+// void Engine::drop(const std::vector<std::string> &paths) {
+//     m_importer.import(paths);
+//     // TODO: should invoke notifications (FUTURE)
+// }
 
-void Engine::drop(const std::vector<std::string> &paths) {
-    m_importer.import(paths);
-    // TODO: should invoke notifications (FUTURE)
-}
+// void Engine::update(double delta_time) {
+// SoundManager &sound_manager = SoundManager::get_instance();
+//
+// m_time += delta_time;
 
-void Engine::update(double delta_time) {
-    // SoundManager &sound_manager = SoundManager::get_instance();
-    //
-    // m_time += delta_time;
-
-    // if (m_audio_clock.has_value()) {
-    //     m_audio_clock->update(delta_time);
-    // }
-    // const double track_time = m_audio_clock->track_time();
-    //
-    // m_scene->update_by_audio(m_audio_clock->audio_buffer(), track_time);
-    // m_scene->update(delta_time);
-    //
-    // m_scene->submit(m_renderer);
-    //
-    //
-    // m_stage->update(track_time, delta_time);
-    //
-    // for (Lane &lane : m_stage->lanes()) {
-    //     for (const DrawableNote *note : lane.active_notes()) {
-    //         note->submit(m_renderer);
-    //     }
-    // }
-    //
-    // m_stage->judge().submit(m_renderer);
-    //
-    // for (Lane &lane : m_stage->lanes()) {
-    //     lane.lighting_hold().submit(m_renderer);
-    // }
-}
-
-/* TODO: Allow for custom GL flags */
-void Engine::render() {
-    // m_renderer.render();
-
-    ImGui::SetNextWindowSize(ImVec2(400.0f, 0.0f), ImGuiCond_FirstUseEver);
-    ImGui::Begin("Debug");
-
-    if (ImGui::CollapsingHeader("Engine", ImGuiTreeNodeFlags_DefaultOpen)) {
-        if (ImGui::BeginTable("engine_table", 2, ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_BordersInnerV)) {
-            ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed, 100.0f);
-            ImGui::TableSetupColumn("Control", ImGuiTableColumnFlags_WidthStretch);
-
-            ImGui::TableNextRow();
-            ImGui::TableSetColumnIndex(0);
-            ImGui::TextUnformatted("FPS");
-            ImGui::TableSetColumnIndex(1);
-            ImGui::Text("%.1f FPS (%.3f ms)", ImGui::GetIO().Framerate, 1000.0f / ImGui::GetIO().Framerate);
-
-            ImGui::EndTable();
-        }
-    }
-
-    ImGui::End();
-}
+// if (m_audio_clock.has_value()) {
+//     m_audio_clock->update(delta_time);
+// }
+// const double track_time = m_audio_clock->track_time();
+//
+// m_scene->update_by_audio(m_audio_clock->audio_buffer(), track_time);
+// m_scene->update(delta_time);
+//
+// m_scene->submit(m_renderer);
+//
+//
+// m_stage->update(track_time, delta_time);
+//
+// for (Lane &lane : m_stage->lanes()) {
+//     for (const DrawableNote *note : lane.active_notes()) {
+//         note->submit(m_renderer);
+//     }
+// }
+//
+// m_stage->judge().submit(m_renderer);
+//
+// for (Lane &lane : m_stage->lanes()) {
+//     lane.lighting_hold().submit(m_renderer);
+// }
+// }
 
 } // namespace engine

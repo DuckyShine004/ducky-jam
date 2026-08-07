@@ -1,10 +1,10 @@
 
 #pragma once
 
-#include "external/glad/glad.h"
-
-#include "engine/graphics/model/vertex.hpp"
 #include "engine/graphics/model/enums/topology_type.hpp"
+#include "engine/graphics/model/vertex.hpp"
+
+#include "external/glad/glad.h"
 
 namespace engine::graphics::model {
 
@@ -31,9 +31,9 @@ class Mesh {
     void clear();
 
   private:
-    static inline constexpr unsigned int m_POSITION_ATTRIBUTE = 0;
-    static inline constexpr unsigned int m_UV_ATTRIBUTE = 1;
-    static inline constexpr unsigned int m_COLOUR_ATTRIBUTE = 2;
+    static inline constexpr unsigned int position_attribute = 0;
+    static inline constexpr unsigned int uv_attribute = 1;
+    static inline constexpr unsigned int colour_attribute = 2;
 
     GLuint m_vao;
     GLuint m_vbo;

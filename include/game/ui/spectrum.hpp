@@ -2,7 +2,6 @@
 
 #include "engine/audio/audio_buffer.hpp"
 #include "engine/audio/fft/fft.hpp"
-
 #include "engine/ui/ui_node.hpp"
 
 namespace game::ui {
@@ -17,14 +16,14 @@ class Spectrum final : public engine::ui::UiNode {
     void submit(engine::graphics::renderer::Renderer &renderer) const override;
 
   private:
-    static inline constexpr float m_ATTACK_SPEED = 0.025f;
-    static inline constexpr float m_RELEASE_SPEED = 0.18f;
+    static inline constexpr float default_attack_speed = 0.025f;
+    static inline constexpr float default_release_speed = 0.18f;
 
-    static inline constexpr float m_MINIMUM_FREQUENCY = 50.0f;
-    static inline constexpr float m_MAXIMUM_FREQUENCY = 20000.0f;
+    static inline constexpr float minimum_frequency = 50.0f;
+    static inline constexpr float maximum_frequency = 20000.0f;
 
-    static inline constexpr float m_MINIMUM_DECIBELS = -70.0f;
-    static inline constexpr float m_MAXIMUM_DECIBELS = 0.0f;
+    static inline constexpr float minimum_decibels = -70.0f;
+    static inline constexpr float maximum_decibels = 0.0f;
 
     int m_bars;
     float m_gap;

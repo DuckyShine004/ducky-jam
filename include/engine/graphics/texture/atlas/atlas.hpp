@@ -1,13 +1,12 @@
 #pragma once
 
-#include <string>
-#include <vector>
+#include "engine/graphics/texture/atlas/rectangle.hpp"
+#include "engine/graphics/texture/image.hpp"
+#include "engine/graphics/texture/texture.hpp"
 
 #include "external/glad/glad.h"
 
-#include "engine/graphics/texture/image.hpp"
-#include "engine/graphics/texture/texture.hpp"
-#include "engine/graphics/texture/atlas/rectangle.hpp"
+#include <vector>
 
 namespace engine::graphics::texture::atlas {
 
@@ -20,6 +19,12 @@ class Atlas final : public engine::graphics::texture::Texture {
     bool add_texture(const engine::graphics::texture::Image &image);
 
   private:
+    static inline constexpr int max_width = 2048;
+    static inline constexpr int max_height = 2048;
+    static inline constexpr int padding = 1;
+
+    std::vector<engine::graphics::texture::atlas::Rectangle> m_rectangles;
+
     int calculate_score(int width, int height, const engine::graphics::texture::atlas::Rectangle &rectangle);
 
     /**
@@ -54,12 +59,6 @@ class Atlas final : public engine::graphics::texture::Texture {
     void prune(const std::vector<engine::graphics::texture::atlas::Rectangle> &rectangles);
 
     void create_region(const engine::graphics::texture::Image &image, const engine::graphics::texture::atlas::Rectangle &rectangle);
-
-    static inline constexpr int m_MAX_WIDTH = 2048;
-    static inline constexpr int m_MAX_HEIGHT = 2048;
-    static inline constexpr int m_PADDING = 1;
-
-    std::vector<engine::graphics::texture::atlas::Rectangle> m_rectangles;
 };
 
 } // namespace engine::graphics::texture::atlas

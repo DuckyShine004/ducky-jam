@@ -1,27 +1,27 @@
 #pragma once
 
-#include <string>
+#include "core/logger/logger_macros.hpp"
+#include "core/utility/colour_utility.hpp"
+#include "core/utility/json_utility.hpp"
+#include "game/ui/theme/theme.hpp"
+
 #include <nlohmann/json_fwd.hpp>
 
-#include "core/logger/logger_macros.hpp"
-#include "core/utility/file_utility.hpp"
-#include "core/utility/colour_utility.hpp"
-
-#include "game/ui/theme/theme.hpp"
+#include <filesystem>
 
 /* NOTE: SHould change, bad pattern, always bad to rely on static method */
 namespace game::ui::theme {
 
 struct ThemeConfig {
-    static inline constexpr const char *CONFIGURATION_PATH = "resources/core/ui/themes/default.json";
+    static inline const std::filesystem::path default_configuration_path = "resources/core/ui/themes/default.json";
 
     Theme theme;
 
-    static ThemeConfig load(const std::string &path = CONFIGURATION_PATH) {
-        LOG_INFO("Loading theme: {}", CONFIGURATION_PATH);
+    static ThemeConfig load(const std::filesystem::path &path = default_configuration_path) {
+        LOG_INFO("Loading theme: {}", path.string());
 
         nlohmann::json theme_config;
-        core::utility::FileUtility::load_json(theme_config, CONFIGURATION_PATH);
+        core::utility::JsonUtility::load(theme_config, path);
 
         std::unordered_map<std::string, std::string> colours;
 

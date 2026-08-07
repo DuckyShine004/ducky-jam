@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-namespace game::parser::components {
+namespace game::importer::components {
 
 struct HitObject {
     glm::ivec2 position; // actual position of the hit object
@@ -15,4 +15,4 @@ struct HitObject {
     }
 };
 
-} // namespace game::parser::components
+} // namespace game::importer::components

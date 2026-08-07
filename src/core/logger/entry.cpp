@@ -1,24 +1,24 @@
-#include <sstream>
-
 #include "core/logger/entry.hpp"
 
-#include "core/utility/file_utility.hpp"
 #include "core/utility/colour_utility.hpp"
 #include "core/utility/datetime_utility.hpp"
+#include "core/utility/file_utility.hpp"
 
-using namespace core::utility;
+#include <sstream>
 
 namespace core::logger {
+
+namespace utility = core::utility;
 
 Entry::Entry(Severity severity, const char *file, const char *function, int line, std::string message) : m_severity(severity), m_file(file), m_function(function), m_line(line), m_message(message) {
     int severityLevel = static_cast<int>(severity);
 
-    m_severityName = _NAMES[severityLevel];
-    m_backgroundColour = ColourUtility::get_ansi_background_from_hex(_BACKGROUND_COLOURS[severityLevel]);
-    m_textColour = ColourUtility::get_ansi_foreground_from_hex(_TEXT_COLOURS[severityLevel]);
-    m_date = DatetimeUtility::get_datetime("%A %d %Y");
-    m_time = DatetimeUtility::get_datetime("%H:%M:%S");
-    m_filename = FileUtility::get_filename_from_path(file);
+    m_severityName = names[severityLevel];
+    m_backgroundColour = utility::ColourUtility::get_ansi_background_from_hex(background_colours[severityLevel]);
+    m_textColour = utility::ColourUtility::get_ansi_foreground_from_hex(text_colours[severityLevel]);
+    m_date = utility::DatetimeUtility::datetime("%A %d %Y");
+    m_time = utility::DatetimeUtility::datetime("%H:%M:%S");
+    m_filename = utility::FileUtility::filename(file);
     m_severityLevel = severityLevel;
 
     this->to_json();

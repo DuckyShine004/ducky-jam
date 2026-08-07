@@ -1,36 +1,37 @@
 #include "engine/audio/audio_manager.hpp"
 
+#include "core/exceptions/runtime_exception.hpp"
 #include "core/logger/logger_macros.hpp"
 #include "core/utility/file_utility.hpp"
 
 #include <AL/alext.h>
 
-using namespace core::logger;
-using namespace core::utility;
-
 namespace engine::audio {
+
+namespace utility = core::utility;
+namespace exceptions = core::exceptions;
 
 using engine::audio::enums::AudioType;
 
-AudioManager::AudioManager() : m_audio_cache(initialise_audio_cache()) {
+AudioManager::AudioManager() {
     const ALCchar *device_name = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
 
     m_device = alcOpenDevice(device_name);
 
     if (!m_device) {
-        throw std::runtime_error("Failed to get audio device");
+        throw exceptions::RuntimeException("Failed to get audio device");
     }
 
     m_context = alcCreateContext(m_device, nullptr);
 
     if (!m_context) {
-        throw std::runtime_error("Failed to set audio context");
+        throw exceptions::RuntimeException("Failed to set audio context");
     }
 
     ALCboolean is_context_current = alcMakeContextCurrent(m_context);
 
     if (!is_context_current) {
-        throw std::runtime_error("Failed to make audio context current");
+        throw exceptions::RuntimeException("Failed to make audio context current");
     }
 }
 
@@ -40,35 +41,9 @@ AudioManager::~AudioManager() {
     alcCloseDevice(m_device);
 }
 
-std::unordered_map<std::string, std::string> AudioManager::initialise_audio_cache() {
-    FileUtility::create_file(m_AUDIO_CACHE_FILE);
-
-    nlohmann::json cache;
-    FileUtility::load_json(cache, m_AUDIO_CACHE_FILE);
-
-    return std::move(cache.get<std::unordered_map<std::string, std::string>>());
-}
-
-void AudioManager::cache_audio(const std::string &path, const std::string &hash) {
-    auto iterator = m_audio_cache.find(hash);
-
-    const std::string output_path = std::string(m_AUDIO_DIRECTORY) + FileUtility::get_filename_from_path(path);
-
-    if (iterator == m_audio_cache.end()) {
-        FileUtility::move_file(path, output_path);
-        m_audio_cache.emplace(hash, output_path);
-    }
-}
-
-void AudioManager::write_cache() {
-    nlohmann::json audio_cache = m_audio_cache;
-
-    FileUtility::save_json(audio_cache, m_AUDIO_CACHE_FILE);
-}
-
-ALuint AudioManager::add_audio(const AudioType &audio_type, const std::string &path) {
-    if (!FileUtility::path_exists(path)) {
-        LOG_ERROR("Audio file '{}' does not exist", path);
+ALuint AudioManager::add_audio(const AudioType &audio_type, const std::filesystem::path &path) {
+    if (!utility::FileUtility::exists(path)) {
+        LOG_ERROR("Audio file '{}' does not exist", path.string());
         return 0;
     }
 
@@ -79,7 +54,7 @@ ALuint AudioManager::add_audio(const AudioType &audio_type, const std::string &p
     return audio_buffer.id();
 }
 
-void AudioManager::play(const AudioType &audio_type, const std::string &name) {
+void AudioManager::play(const AudioType &audio_type, const std::filesystem::path &path) {
     auto type_iterator = m_audios.find(audio_type);
 
     if (type_iterator == m_audios.end()) {
@@ -87,17 +62,17 @@ void AudioManager::play(const AudioType &audio_type, const std::string &name) {
         return;
     }
 
-    std::unordered_map<std::string, AudioBuffer> &audio_buffers = type_iterator->second;
+    std::unordered_map<std::filesystem::path, AudioBuffer> &audio_buffers = type_iterator->second;
 
     if (audio_buffers.empty()) {
         LOG_WARN("Audio buffers are empty");
         return;
     }
 
-    auto buffer_iterator = audio_buffers.find(name);
+    auto buffer_iterator = audio_buffers.find(path);
 
     if (buffer_iterator == audio_buffers.end()) {
-        LOG_ERROR("Audio name '{}' not found", name);
+        LOG_ERROR("Audio path '{}' not found", path.string());
         return;
     }
 
@@ -105,12 +80,12 @@ void AudioManager::play(const AudioType &audio_type, const std::string &name) {
     AudioSource *audio_source = get_empty_audio_source();
 
     if (!audio_source) {
-        LOG_WARN("No sources found. Skipping '{}'", buffer_iterator->first);
+        LOG_WARN("No sources found. Skipping '{}'", buffer_iterator->first.string());
     }
 }
 
 AudioSource *AudioManager::get_empty_audio_source() {
-    for (int i = 0; i < m_MAX_SOURCES; ++i) {
+    for (int i = 0; i < max_audio_sources; ++i) {
         AudioSource &audio_source = m_audio_sources[i];
 
         if (!audio_source.is_playing()) {
@@ -121,7 +96,7 @@ AudioSource *AudioManager::get_empty_audio_source() {
     return nullptr;
 }
 
-AudioBuffer *AudioManager::get_audio_buffer(const AudioType &audio_type, const std::string &name) {
+AudioBuffer *AudioManager::get_audio_buffer(const AudioType &audio_type, const std::filesystem::path &path) {
     auto type_iterator = m_audios.find(audio_type);
 
     if (type_iterator == m_audios.end()) {
@@ -129,17 +104,17 @@ AudioBuffer *AudioManager::get_audio_buffer(const AudioType &audio_type, const s
         return nullptr;
     }
 
-    std::unordered_map<std::string, AudioBuffer> &audio_buffers = type_iterator->second;
+    std::unordered_map<std::filesystem::path, AudioBuffer> &audio_buffers = type_iterator->second;
 
     if (audio_buffers.empty()) {
         LOG_WARN("Audio buffers are empty");
         return nullptr;
     }
 
-    auto buffer_iterator = audio_buffers.find(name);
+    auto buffer_iterator = audio_buffers.find(path);
 
     if (buffer_iterator == audio_buffers.end()) {
-        LOG_ERROR("Audio name '{}' not found", name);
+        LOG_ERROR("Audio path '{}' not found", path.string());
         return nullptr;
     }
 

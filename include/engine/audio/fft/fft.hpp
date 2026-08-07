@@ -1,13 +1,13 @@
 #pragma once
 
-#include <vector>
 #include <complex>
+#include <vector>
 
 namespace engine::audio::fft {
 
 class FFT {
   public:
-    FFT(int resolution = m_RESOLUTION);
+    FFT(int resolution = default_resolution);
 
     std::vector<std::complex<float>> update(const std::vector<std::complex<float>> &a);
 
@@ -16,9 +16,7 @@ class FFT {
     float hann_window_total() const;
 
   private:
-    std::vector<std::complex<float>> bit_reverse_copy(const std::vector<std::complex<float>> &a);
-
-    static inline constexpr std::size_t m_RESOLUTION = 2048;
+    static inline constexpr std::size_t default_resolution = 2048;
 
     std::size_t m_resolution;
 
@@ -27,6 +25,8 @@ class FFT {
     std::vector<int> m_bit_reversed_indices;
     std::vector<float> m_hann_window;
     std::vector<std::complex<float>> m_twiddle_factors;
+
+    std::vector<std::complex<float>> bit_reverse_copy(const std::vector<std::complex<float>> &a);
 };
 
 } // namespace engine::audio::fft

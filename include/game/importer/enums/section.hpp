@@ -1,6 +1,6 @@
 #pragma once
 
-namespace game::parser::enums {
+namespace game::importer::enums {
 
 enum class Section {
     Default,
@@ -12,4 +12,4 @@ enum class Section {
     HitObjects
 };
 
-} // namespace game::parser::enums
+} // namespace game::importer::enums

@@ -2,6 +2,7 @@
 
 #include "application/window.hpp"
 #include "engine/engine.hpp"
+#include "game/game.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -24,27 +25,28 @@ class Application {
     void run();
 
   private:
-    static inline constexpr int m_DEFAULT_WIDTH = 2560;
-    static inline constexpr int m_DEFAULT_HEIGHT = 1440;
+    static inline constexpr int default_width = 2560;
+    static inline constexpr int default_height = 1440;
 
-    static inline constexpr const char *m_TITLE = "Ducky Jam";
+    static inline constexpr const char *title = "Ducky Jam";
 
-    static inline constexpr bool m_FULLSCREEN = true;
+    static inline constexpr bool fullscreen = true;
 
     application::Window m_window;
 
     std::optional<engine::Engine> m_engine;
+    std::optional<game::Game> m_game;
 
-    double m_last_time;
-
-    bool m_is_mouse_captured;
+    double m_previous_time;
 
     static void on_key_press(GLFWwindow *window, int key, int scanmode, int action, int mods);
     static void on_window_resize(GLFWwindow *window, int width, int height);
     static void on_framebuffer_resize(GLFWwindow *window, int width, int height);
     static void on_cursor(GLFWwindow *window, double x, double y);
     static void on_scroll(GLFWwindow *window, double x, double y);
-    static void on_drop(GLFWwindow *window, int count, const char **paths);
+    static void on_drop(GLFWwindow *window, int count, const char **raw_paths);
+
+    void validate();
 
     void update();
     void render();
@@ -54,7 +56,7 @@ class Application {
     void handle_framebuffer_resize(GLFWwindow *window, int width, int height);
     void handle_cursor(GLFWwindow *window, double x, double y);
     void handle_scroll(GLFWwindow *window, double x, double y);
-    void handle_drop(GLFWwindow *window, int count, const char **paths);
+    void handle_drop(GLFWwindow *window, int count, const char **raw_paths);
 
     void close();
 };

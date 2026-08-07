@@ -1,44 +1,19 @@
-#include <utility>
+#include "engine/graphics/drawable/sprite.hpp"
 
 #include "engine/graphics/renderer/renderer.hpp"
 
-#include "engine/graphics/drawable/sprite.hpp"
-
-#include "engine/graphics/effect/effect_manager.hpp"
-
-#include "engine/graphics/texture/texture_manager.hpp"
-
-using namespace engine::graphics::effect;
-using namespace engine::graphics::renderer;
-using namespace engine::graphics::texture;
+#include <utility>
 
 namespace engine::graphics::drawable {
 
-Sprite::Sprite(double x, double y, double width, double height, const std::string &texturePath, const std::string &effectName) : Sprite(x, y, width, height, UV{}, texturePath, effectName) {
+Sprite::Sprite(double x, double y, double width, double height, const std::filesystem::path &texture_path, effect::EffectPtr effect) : Sprite(x, y, width, height, texture::UV{}, texture_path, std::move(effect)) {
 }
 
-Sprite::Sprite(double x, double y, double width, double height, const UV &uv, const std::string &texture_path, const std::string &effect_name)
-    : Sprite(x, y, width, height, uv, texture_path, EffectManager::get_instance().get_effect(effect_name)) {
+Sprite::Sprite(double x, double y, double width, double height, const texture::UV &uv, const std::filesystem::path &texture_path, effect::EffectPtr effect)
+    : m_x(x), m_y(y), m_offset_x(0.0f), m_offset_y(0.0f), m_width(width), m_height(height), m_effect(std::move(effect)), m_uv(uv), m_texture_path(texture_path) {
 }
 
-Sprite::Sprite(double x, double y, double width, double height, const std::string &texture_path, EffectPtr effect)
-    : Sprite(x, y, width, height, UV{}, texture_path, std::move(effect)) {
-}
-
-Sprite::Sprite(double x, double y, double width, double height, const UV &uv, const std::string &texture_path, EffectPtr effect)
-    : m_x(x),
-      m_y(y),
-      m_offset_x(0.0f),
-      m_offset_y(0.0f),
-      m_width(width),
-      m_height(height),
-      m_effect(std::move(effect)),
-      m_uv(uv),
-      m_texture_path(texture_path) {
-    m_texture_id = TextureManager::get_instance().get_texture_id(texture_path);
-}
-
-void Sprite::submit(Renderer &renderer) const {
+void Sprite::submit(renderer::Renderer &renderer) const {
     renderer.queue(*this);
 }
 
@@ -74,19 +49,15 @@ double Sprite::height() const {
     return m_height;
 }
 
-int Sprite::texture_id() const {
-    return m_texture_id;
-}
-
-const EffectPtr &Sprite::effect() const {
+const effect::EffectPtr &Sprite::effect() const {
     return m_effect;
 }
 
-const UV &Sprite::uv() const {
+const texture::UV &Sprite::uv() const {
     return m_uv;
 }
 
-const std::string &Sprite::texture_path() const {
+const std::filesystem::path &Sprite::texture_path() const {
     return m_texture_path;
 }
 

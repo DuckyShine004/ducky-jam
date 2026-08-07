@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-#include <string>
+#include <filesystem>
 
 #include "core/structs/vector2.hpp"
 #include "external/glad/glad.h"
@@ -12,7 +12,7 @@ namespace engine::graphics::shader {
 class Shader {
   public:
     Shader();
-    Shader(const std::string &vertex_shader_path, const std::string &fragment_shader_path);
+    Shader(const std::filesystem::path &vertex_shader_path, const std::filesystem::path &fragment_shader_path);
 
     void use();
     void detach();
@@ -32,8 +32,8 @@ class Shader {
     void set_matrix4fv(const GLchar *name, glm::mat4 matrix);
 
   private:
-    std::string m_vertex_shader_path;
-    std::string m_fragment_shader_path;
+    std::filesystem::path m_vertex_shader_path;
+    std::filesystem::path m_fragment_shader_path;
 
     GLuint m_vertex_shader;
     GLuint m_fragment_shader;

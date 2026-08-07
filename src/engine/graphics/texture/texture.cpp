@@ -1,18 +1,16 @@
-#include <glm/glm.hpp>
-
-#include "external/stb/stb_image.h"
-#include "external/stb/stb_image_write.h"
-
 #include "engine/graphics/texture/texture.hpp"
 
 #include "core/logger/logger_macros.hpp"
 
-using namespace core::logger;
+#include "external/stb/stb_image.h"
+#include "external/stb/stb_image_write.h"
+
+#include <glm/glm.hpp>
 
 namespace engine::graphics::texture {
 
 Texture::Texture(int id, int width, int height) : m_id(id), m_width(width), m_height(height), m_texture_id(0) {
-    m_data.assign(width * height * m_CHANNELS, 0);
+    m_data.assign(width * height * default_channels, 0);
 }
 
 Texture::Texture(int id, Image &image) : m_id(id) {
@@ -32,14 +30,14 @@ Texture::Texture(int id, Image &image) : m_id(id) {
     m_regions.emplace(image.path(), region);
 }
 
-const Region &Texture::get_region(const std::string &path) const {
+const Region &Texture::get_region(const std::filesystem::path &path) const {
     return m_regions.at(path);
 }
 
 void Texture::upload() {
     std::string tmp_path = ".tmp/texture-" + std::to_string(m_id) + ".png";
 
-    int success = stbi_write_png(tmp_path.c_str(), m_width, m_height, m_CHANNELS, m_data.data(), m_width * m_CHANNELS);
+    int success = stbi_write_png(tmp_path.c_str(), m_width, m_height, default_channels, m_data.data(), m_width * default_channels);
 
     if (!success) {
         LOG_ERROR("Failed to write image to: {}", tmp_path);

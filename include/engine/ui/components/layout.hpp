@@ -1,25 +1,23 @@
 #pragma once
 
-#include <cstdint>
-
 #include "core/structs/vector4.hpp"
-
+#include "engine/ui/components/bloom.hpp"
+#include "engine/ui/components/border.hpp"
 #include "engine/ui/components/margin.hpp"
 #include "engine/ui/components/padding.hpp"
-#include "engine/ui/components/border.hpp"
-#include "engine/ui/components/bloom.hpp"
 #include "engine/ui/components/shadow.hpp"
-
 #include "engine/ui/enums/align.hpp"
+
+#include <cstdint>
 
 namespace engine::ui::components {
 
 struct Layout {
-    static inline constexpr int MAX_WIDTH = 1 << 16;
-    static inline constexpr int MAX_HEIGHT = 1 << 16;
+    static inline constexpr int max_width = 1 << 16;
+    static inline constexpr int max_height = 1 << 16;
 
-    float width = MAX_WIDTH;
-    float height = MAX_HEIGHT;
+    float width = max_width;
+    float height = max_height;
 
     Margin margin;
     Padding padding;

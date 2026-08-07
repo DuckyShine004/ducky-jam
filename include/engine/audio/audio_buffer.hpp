@@ -1,7 +1,7 @@
 #pragma once
 
 #include <span>
-#include <string>
+#include <filesystem>
 #include <vector>
 #include <cstdint>
 
@@ -18,7 +18,7 @@ class AudioBuffer {
     ~AudioBuffer();
 
     void initialise();
-    void add_audio(const std::string &path);
+    void add_audio(const std::filesystem::path &path);
 
     ALuint id() const;
 

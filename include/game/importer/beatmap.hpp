@@ -2,9 +2,9 @@
 
 #include <string>
 
-#include "game/parser/components/hit_object.hpp"
+#include "game/importer/components/hit_object.hpp"
 
-namespace game::parser {
+namespace game::importer {
 
 class Beatmap {
   public:
@@ -25,7 +25,7 @@ class Beatmap {
     float circle_size;
     float overall_difficulty;
 
-    std::vector<game::parser::components::HitObject> hit_objects;
+    std::vector<game::importer::components::HitObject> hit_objects;
 };
 
-} // namespace game::parser
+} // namespace game::importer

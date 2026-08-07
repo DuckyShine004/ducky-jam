@@ -12,13 +12,14 @@ AudioBuffer::AudioBuffer() : m_id(0), m_frames(0), m_channels(0), m_samplerate(0
 AudioBuffer::~AudioBuffer() {
 }
 
-void AudioBuffer::add_audio(const std::string &path) {
+void AudioBuffer::add_audio(const std::filesystem::path &path) {
     SF_INFO audio_info{};
 
-    SNDFILE *audio_file = sf_open(path.c_str(), SFM_READ, &audio_info);
+    const std::string path_string = path.string();
+    SNDFILE *audio_file = sf_open(path_string.c_str(), SFM_READ, &audio_info);
 
     if (audio_file == nullptr) {
-        LOG_ERROR("Could not open audio in {}: {}", path, sf_strerror(audio_file));
+        LOG_ERROR("Could not open audio in {}: {}", path.string(), sf_strerror(audio_file));
         sf_close(audio_file);
         return;
     }
