@@ -1,16 +1,21 @@
 #include "game/importer/importer.hpp"
 
 #include "core/exceptions/runtime_exception.hpp"
+#include "core/logger/logger_macros.hpp"
 #include "core/platform/environment.hpp"
 #include "core/utility/file_utility.hpp"
 #include "core/utility/hash_utility.hpp"
 #include "core/utility/string_utility.hpp"
+#include "database/models/beatmap_set_model.hpp"
+#include "database/repositories/beatmap_repository.hpp"
 #include "game/importer/beatmap.hpp"
 #include "game/importer/converter.hpp"
 
 #include <zip.h>
 #include <zipconf.h>
 
+#include <algorithm>
+#include <filesystem>
 #include <fstream>
 
 namespace game::importer {
@@ -19,7 +24,7 @@ namespace utility = core::utility;
 namespace platform = core::platform;
 namespace exceptions = core::exceptions;
 
-Importer::Importer() {
+Importer::Importer(database::repositories::BeatmapRepository &beatmap_repository) : m_beatmap_repository(beatmap_repository), m_image_extensions(std::begin(image_extensions), std::end(image_extensions)), m_valid_extensions(std::begin(valid_extensions), std::end(valid_extensions)) {
 }
 
 void Importer::import(const std::vector<std::filesystem::path> &paths) {
@@ -27,17 +32,85 @@ void Importer::import(const std::vector<std::filesystem::path> &paths) {
         const std::string extension = utility::FileUtility::extension(path);
 
         if (extension != ".osz") {
+            LOG_WARN("Unhandled file type '{}', skipping import...", extension);
             continue;
         }
 
         const std::vector<std::filesystem::path> &extracted_paths = extract(path);
 
-        std::unordered_map<std::string, std::string> audio_hashes = handle_audio_files(extracted_paths);
-        handle_beatmap_files(extracted_paths, audio_hashes);
+        std::unordered_map<std::string, std::string> audio_hashes;
+        std::unordered_map<std::string, std::string> image_hashes;
 
-        // we only need to temporarily parse the beatmap to get the metadata
+        int beatmap_set_id = m_beatmap_repository.create_set({});
+
+        database::models::BeatmapSetModel beatmap_set_model = m_beatmap_repository.get_set(beatmap_set_id);
+
+        bool beatmap_set_initialised = false;
+
+        for (const std::filesystem::path &extracted_path : extracted_paths) {
+            const std::string extracted_file_extension = utility::FileUtility::extension(extracted_path);
+
+            if (!m_valid_extensions.contains(extracted_file_extension)) {
+                LOG_WARN("Unhandled file type: {}, skipping zip extraction...", extracted_file_extension);
+                continue;
+            }
+
+            const std::string hash = utility::HashUtility::hash_file(extracted_path);
+            const std::string shard = utility::StringUtility::slice(hash, 0, 1);
+            const std::string filename = utility::FileUtility::filename(extracted_path);
+            const std::string basename = utility::FileUtility::basename(extracted_path);
+
+            if (extracted_file_extension == ".mp3") {
+                audio_hashes.emplace(filename, hash);
+            } else if (m_image_extensions.contains(extracted_file_extension)) {
+                image_hashes.emplace(filename, hash);
+            } else if (extracted_file_extension == ".osu") {
+                Beatmap beatmap = Converter::convert(extracted_path);
+
+                if (!beatmap_set_initialised) {
+                    beatmap_set_model.title = beatmap.title;
+                    beatmap_set_model.title_unicode = beatmap.title_unicode;
+                    beatmap_set_model.artist = beatmap.artist;
+                    beatmap_set_model.artist_unicode = beatmap.artist_unicode;
+                    beatmap_set_model.creator = beatmap.creator;
+                    beatmap_set_model.source = beatmap.source;
+                    beatmap_set_model.tags = beatmap.tags;
+
+                    beatmap_set_initialised = true;
+                }
+
+                // TODO: remember to parse normal and hold notes
+                m_beatmap_repository.create({
+                    .set_id = beatmap_set_id,
+                    .audio_title = basename,
+                    .version = beatmap.version,
+                    .key_count = static_cast<int>(beatmap.circle_size),
+                    .health_drain_rate = beatmap.health_drain_rate,
+                    .overall_difficulty = beatmap.overall_difficulty,
+                    .hash = hash,
+                    .audio_hash = audio_hashes[beatmap.audio_filename],
+                    .background_hash = image_hashes[beatmap.background_filename],
+                });
+            }
+
+            m_beatmap_repository.update_set(beatmap_set_model);
+
+            std::filesystem::path hash_path = platform::objects_path() / shard / (hash + extracted_file_extension);
+
+            utility::FileUtility::create_directory(hash_path.parent_path());
+
+            try {
+                utility::FileUtility::move(extracted_path, hash_path);
+            } catch (std::filesystem::filesystem_error &error) {
+                LOG_ERROR("Cannot move file. Reason: {}", error.what());
+            }
+
+            LOG_DEBUG("Successfully moved file from '{}' to '{}'", extracted_path.string(), hash_path.string());
+        }
+
+        utility::FileUtility::clear(core::platform::tmp_path());
     }
-    // if extracted successfully, we can safely delete the .osz file and clear the tmp directory
+    // TODO: (Fine to not remove if DEV), if extracted successfully, we can safely delete the .osz file and clear the tmp directory
 }
 
 std::vector<std::filesystem::path> Importer::extract(const std::filesystem::path &path) {
@@ -91,43 +164,14 @@ std::vector<std::filesystem::path> Importer::extract(const std::filesystem::path
         output_paths.emplace_back(output_path);
     }
 
+    // NOTE: we can either do two-pass or partition the output paths based on extension - .osu last
+    std::partition(output_paths.begin(), output_paths.end(), [](const std::filesystem::path &output_path) {
+        const std::string &extension = utility::FileUtility::extension(output_path);
+
+        return extension != ".osu";
+    });
+
     return output_paths;
-}
-
-std::unordered_map<std::string, std::string> Importer::handle_audio_files(const std::vector<std::filesystem::path> &paths) {
-    std::unordered_map<std::string, std::string> audio_hashes;
-
-    // get hash: basename, hash
-    for (const std::filesystem::path &path : paths) {
-        const std::string extension = utility::FileUtility::extension(path);
-
-        if (extension == ".mp3") {
-            const std::string hash = utility::HashUtility::hash_file(path);
-            const std::string shard = utility::StringUtility::slice(hash, 0, 1);
-            const std::string filename = utility::FileUtility::filename(path);
-
-            // NOTE: app_data/objects/shard/hash.ext
-            std::filesystem::path hash_path = platform::objects_path() / shard / (hash + extension);
-
-            utility::FileUtility::create_directory(hash_path.parent_path());
-            utility::FileUtility::move(path, hash_path);
-
-            audio_hashes.emplace(filename, hash);
-        }
-    }
-
-    return audio_hashes;
-}
-
-// TODO: Handle beatmap file
-void Importer::handle_beatmap_files(const std::vector<std::filesystem::path> &paths, const std::unordered_map<std::string, std::string> &audio_hashes) {
-    for (const std::filesystem::path &path : paths) {
-        const std::string extension = utility::FileUtility::extension(path);
-
-        if (extension == ".osu") {
-            Beatmap beatmap = Converter::convert(path);
-        }
-    }
 }
 
 } // namespace game::importer

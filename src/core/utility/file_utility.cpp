@@ -87,8 +87,21 @@ std::vector<std::string> FileUtility::split(const std::filesystem::path &path) {
     return parts;
 }
 
-void FileUtility::move(const std::filesystem::path &source, const std::filesystem::path &target) {
-    std::filesystem::rename(source, target);
+/* TODO: Gracefully handle the move operation */
+void FileUtility::move(const std::filesystem::path &source, const std::filesystem::path &destination) {
+    std::error_code error;
+
+    std::filesystem::rename(source, destination, error);
+
+    if (!error) {
+        return;
+    }
+
+    std::filesystem::copy_file(source, destination, error);
+
+    if (!error) {
+        std::filesystem::remove(source);
+    }
 }
 
 void FileUtility::clear(const std::filesystem::path &path) {

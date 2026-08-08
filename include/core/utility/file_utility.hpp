@@ -25,7 +25,7 @@ class FileUtility {
 
     static std::vector<std::string> split(const std::filesystem::path &path);
 
-    static void move(const std::filesystem::path &source, const std::filesystem::path &target);
+    static void move(const std::filesystem::path &source, const std::filesystem::path &destination);
     static void clear(const std::filesystem::path &path);
 };
 

@@ -7,7 +7,7 @@
 
 namespace game {
 
-Game::Game(engine::EngineServices engine_services) : m_services(engine_services), m_skin_manager(m_services.texture_manager) {
+Game::Game(engine::EngineServices engine_services) : m_services(engine_services), m_skin_manager(m_services.texture_manager), m_importer(m_database.beatmap_repository()) {
     ui::theme::ThemeConfig theme_config = ui::theme::ThemeConfig::load();
 
     m_scene_manager.add_scene("menu", std::make_unique<scenes::Menu>(theme_config));

@@ -18,7 +18,7 @@ std::filesystem::path app_data_path() {
 }
 
 std::filesystem::path tmp_path() {
-    return std::filesystem::temp_directory_path();
+    return std::filesystem::temp_directory_path() / core::config::application_name;
 }
 
 } // namespace core::platform

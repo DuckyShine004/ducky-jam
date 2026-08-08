@@ -5,7 +5,7 @@
 namespace database::models {
 
 struct BeatmapSetModel {
-    int id;
+    int id = 0;
 
     std::string title;
     std::string title_unicode;

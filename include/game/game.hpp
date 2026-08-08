@@ -1,5 +1,6 @@
 #pragma once
 
+#include "database/database.hpp"
 #include "engine/engine.hpp"
 #include "engine/scene/scene_manager.hpp"
 #include "game/importer/importer.hpp"
@@ -41,6 +42,7 @@ class Game {
 
     engine::scene::SceneManager m_scene_manager;
 
+    database::Database m_database;
     game::importer::Importer m_importer;
     game::skinning::SkinManager m_skin_manager;
 };

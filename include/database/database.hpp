@@ -11,11 +11,15 @@ namespace database {
 
 class Database {
   public:
-    explicit Database(const std::filesystem::path &path = core::platform::app_data_path());
+    explicit Database(const std::filesystem::path &path = database_path);
 
     database::repositories::BeatmapRepository &beatmap_repository();
 
   private:
+    static inline constexpr const char *database_name = "application.db";
+
+    static inline const std::filesystem::path database_path = core::platform::app_data_path() / database_name;
+
     database::Storage m_storage;
 
     database::repositories::BeatmapRepository m_beatmap_repository;

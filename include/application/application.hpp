@@ -22,6 +22,8 @@ class Application {
 
     bool initialise();
     void load();
+    void validate();
+
     void run();
 
   private:
@@ -45,8 +47,6 @@ class Application {
     static void on_cursor(GLFWwindow *window, double x, double y);
     static void on_scroll(GLFWwindow *window, double x, double y);
     static void on_drop(GLFWwindow *window, int count, const char **raw_paths);
-
-    void validate();
 
     void update();
     void render();

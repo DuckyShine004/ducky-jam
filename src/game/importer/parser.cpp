@@ -1,5 +1,6 @@
 #include "game/importer/parser.hpp"
 
+#include "core/logger/logger_macros.hpp"
 #include "core/utility/string_utility.hpp"
 #include "game/importer/enums/hit_object_type.hpp"
 #include "game/importer/enums/hit_sound_type.hpp"
@@ -69,7 +70,7 @@ void Parser::parse_metadata(Beatmap &beatmap) {
         std::vector<std::string> split = utility::StringUtility::split_string(line, ':');
 
         const std::string &key = split[0];
-        const std::string &value = utility::StringUtility::trim(split[1]);
+        const std::string &value = split.size() <= 1 ? "" : utility::StringUtility::trim(split[1]);
 
         if (key == "Title") {
             beatmap.title = value;

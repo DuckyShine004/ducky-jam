@@ -63,10 +63,6 @@ bool Application::initialise() {
 }
 
 void Application::load() {
-    const std::filesystem::path app_data_path = core::platform::app_data_path();
-
-    core::utility::FileUtility::create_directory(app_data_path);
-
     m_engine->load();
 }
 
@@ -85,8 +81,6 @@ void Application::validate() {
 }
 
 void Application::run() {
-    validate();
-
     glfwSwapInterval(0);
 
     while (!m_window.should_close()) {
