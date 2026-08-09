@@ -9,12 +9,17 @@ class AudioSource {
     AudioSource();
     ~AudioSource();
 
+    void initialise();
+
     void play(const ALuint buffer_id);
 
     float get_position();
     float get_pitch() const;
 
-    bool is_playing();
+    bool playing();
+    bool reserved();
+
+    void set_reserved(bool state);
 
   private:
     static inline constexpr float default_gain = 1.0f;
@@ -27,6 +32,8 @@ class AudioSource {
 
     ALuint m_source_id;
     ALuint m_buffer_id;
+
+    bool m_reserved;
 };
 
 } // namespace engine::audio

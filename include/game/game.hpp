@@ -3,6 +3,7 @@
 #include "database/database.hpp"
 #include "engine/engine.hpp"
 #include "engine/scene/scene_manager.hpp"
+#include "game/audio/music_player.hpp"
 #include "game/importer/importer.hpp"
 #include "game/skinning/skin_manager.hpp"
 
@@ -22,14 +23,6 @@ class Game {
      */
     void resize_ui(int width, int height);
 
-    /**
-     * @brief Resizes components which rely on actual pixel coords.
-     *
-     * @param width the new framebuffer width.
-     * @param height the new framebuffer height.
-     */
-    void resize(int width, int height);
-
     void import(const std::vector<std::filesystem::path> &paths);
 
     void update(double delta_time);
@@ -38,6 +31,7 @@ class Game {
     void render_imgui();
 
   private:
+    // likewise with engine services, we should make resource pool
     engine::EngineServices m_services;
 
     engine::scene::SceneManager m_scene_manager;
@@ -45,6 +39,7 @@ class Game {
     database::Database m_database;
     game::importer::Importer m_importer;
     game::skinning::SkinManager m_skin_manager;
+    game::audio::MusicPlayer m_music_player;
 };
 
 } // namespace game

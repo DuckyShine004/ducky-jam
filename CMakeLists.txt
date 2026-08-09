@@ -63,7 +63,6 @@ else()
 endif()
 
 # target_link_options(ducky-jam PRIVATE $<$<CONFIG:Debug>:-fsanitize=address>)
-# target_link_options(ducky-jam PRIVATE $<$<CONFIG:Debug>:-fsanitize=address>)
 
 target_compile_options(
   ducky-jam

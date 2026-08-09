@@ -2,6 +2,7 @@
 
 #include "database/models/beatmap_model.hpp"
 #include "database/models/beatmap_set_model.hpp"
+#include "database/models/resource_model.hpp"
 
 #include <sqlite_orm/sqlite_orm.h>
 
@@ -35,7 +36,13 @@ inline auto initialise_database(const std::filesystem::path &path) {
                                                            sqlite_orm::make_column("hash", &database::models::BeatmapModel::hash),
                                                            sqlite_orm::make_column("audio_hash", &database::models::BeatmapModel::audio_hash),
                                                            sqlite_orm::make_column("background_hash", &database::models::BeatmapModel::background_hash),
-                                                           sqlite_orm::foreign_key(&database::models::BeatmapModel::set_id).references(&database::models::BeatmapSetModel::id).on_delete.cascade()));
+                                                           sqlite_orm::foreign_key(&database::models::BeatmapModel::set_id).references(&database::models::BeatmapSetModel::id).on_delete.cascade()),
+
+                                    sqlite_orm::make_table("resources",
+                                                           sqlite_orm::make_column("id", &database::models::ResourceModel::id, sqlite_orm::primary_key().autoincrement()),
+                                                           sqlite_orm::make_column("hash", &database::models::ResourceModel::hash),
+                                                           sqlite_orm::make_column("filename", &database::models::ResourceModel::filename),
+                                                           sqlite_orm::make_column("extension", &database::models::ResourceModel::extension)));
 }
 
 using Storage = decltype(initialise_database(std::filesystem::path{}));

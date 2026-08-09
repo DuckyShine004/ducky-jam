@@ -1,6 +1,7 @@
 #pragma once
 
 #include "database/repositories/beatmap_repository.hpp"
+#include "database/repositories/resource_repository.hpp"
 
 #include <filesystem>
 #include <string>
@@ -12,7 +13,7 @@ namespace game::importer {
 // Accepts .osz ONLY, skins should rely only on ducky jam schema
 class Importer {
   public:
-    Importer(database::repositories::BeatmapRepository &beatmap_repository);
+    Importer(database::repositories::BeatmapRepository &beatmap_repository, database::repositories::ResourceRepository &resource_repository);
 
     void import(const std::vector<std::filesystem::path> &paths);
 
@@ -41,6 +42,7 @@ class Importer {
     std::vector<std::filesystem::path> extract(const std::filesystem::path &path);
 
     database::repositories::BeatmapRepository &m_beatmap_repository;
+    database::repositories::ResourceRepository &m_resource_repository;
 };
 
 } // namespace game::importer

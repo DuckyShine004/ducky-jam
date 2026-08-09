@@ -1,16 +1,16 @@
 #pragma once
 
-#include "engine/audio/audio_manager.hpp"
+#include "engine/audio/audio_pool.hpp"
 #include "engine/graphics/effect/effect_manager.hpp"
 #include "engine/graphics/renderer/renderer.hpp"
 #include "engine/graphics/shader/shader_manager.hpp"
 #include "engine/graphics/texture/texture_manager.hpp"
 
-// Could be better design, idk acts as service locator for now
+// NOTE: Could be better design, idk acts as service locator for now
 namespace engine {
 
 struct EngineServices {
-    audio::AudioManager &audio_manager;
+    audio::AudioPool &audio_pool;
 
     graphics::texture::TextureManager &texture_manager;
     graphics::shader::ShaderManager &shader_manager;
@@ -24,11 +24,12 @@ class Engine {
     Engine(int width, int height);
 
     void load();
+    void resize_framebuffer(int width, int height);
 
     EngineServices services();
 
   private:
-    engine::audio::AudioManager m_audio_manager;
+    engine::audio::AudioPool m_audio_pool;
     engine::graphics::shader::ShaderManager m_shader_manager;
     engine::graphics::texture::TextureManager m_texture_manager;
     engine::graphics::effect::EffectManager m_effect_manager;

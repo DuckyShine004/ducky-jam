@@ -4,7 +4,7 @@
 #include "engine/audio/fft/fft.hpp"
 #include "engine/ui/ui_node.hpp"
 
-namespace game::ui {
+namespace game::ui::menu {
 
 class Spectrum final : public engine::ui::UiNode {
   public:
@@ -34,4 +34,4 @@ class Spectrum final : public engine::ui::UiNode {
     std::vector<float> m_displayed_levels;
 };
 
-} // namespace game::ui
+} // namespace game::ui::menu

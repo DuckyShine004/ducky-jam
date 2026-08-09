@@ -2,7 +2,14 @@
 
 namespace engine::audio {
 
-AudioSource::AudioSource() : m_source_id(0), m_buffer_id(0) {
+AudioSource::AudioSource() : m_source_id(0), m_buffer_id(0), m_reserved(false) {
+}
+
+AudioSource::~AudioSource() {
+    alDeleteSources(1, &m_source_id);
+}
+
+void AudioSource::initialise() {
     alGenSources(1, &m_source_id);
 
     alSourcef(m_source_id, AL_GAIN, default_gain);
@@ -13,10 +20,6 @@ AudioSource::AudioSource() : m_source_id(0), m_buffer_id(0) {
 
     alSourcei(m_source_id, AL_LOOPING, looping);
     alSourcei(m_source_id, AL_BUFFER, m_buffer_id);
-}
-
-AudioSource::~AudioSource() {
-    alDeleteSources(1, &m_source_id);
 }
 
 void AudioSource::play(const ALuint buffer_id) {
@@ -37,12 +40,20 @@ float AudioSource::get_position() {
     return position * 1000.0f;
 }
 
-bool AudioSource::is_playing() {
+bool AudioSource::playing() {
     ALint state;
 
     alGetSourcei(m_source_id, AL_SOURCE_STATE, &state);
 
     return state == AL_PLAYING;
+}
+
+bool AudioSource::reserved() {
+    return m_reserved;
+}
+
+void AudioSource::set_reserved(bool state) {
+    m_reserved = state;
 }
 
 } // namespace engine::audio

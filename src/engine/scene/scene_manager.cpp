@@ -13,7 +13,7 @@ void SceneManager::add_scene(const std::string &name, std::unique_ptr<Scene> sce
     m_scenes.emplace(name, std::move(scene));
 }
 
-void SceneManager::load_scene(const std::string &name) {
+void SceneManager::set_scene(const std::string &name) {
     auto iterator = m_scenes.find(name);
 
     if (iterator == m_scenes.end()) {

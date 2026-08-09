@@ -1,5 +1,8 @@
 #include "game/game.hpp"
 
+#include "core/utility/string_utility.hpp"
+#include "database/models/resource_model.hpp"
+#include "game/audio/music_track.hpp"
 #include "game/scenes/menu.hpp"
 #include "game/ui/theme/theme_config.hpp"
 
@@ -7,16 +10,38 @@
 
 namespace game {
 
-Game::Game(engine::EngineServices engine_services) : m_services(engine_services), m_skin_manager(m_services.texture_manager), m_importer(m_database.beatmap_repository()) {
+Game::Game(engine::EngineServices engine_services) : m_services(engine_services), m_skin_manager(m_services.texture_manager), m_importer(m_database.beatmap_repository(), m_database.resource_repository()), m_music_player(engine_services.audio_pool) {
     ui::theme::ThemeConfig theme_config = ui::theme::ThemeConfig::load();
 
     m_scene_manager.add_scene("menu", std::make_unique<scenes::Menu>(theme_config));
-
-    m_scene_manager.load_scene("menu");
+    m_scene_manager.set_scene("menu");
 }
 
 void Game::load() {
-    // m_services.effect_manager.add_effect();
+    std::vector<database::models::ResourceModel> audio_resources = m_database.resource_repository().find_all_audios();
+
+    std::vector<audio::MusicTrack> music_playlist;
+
+    for (auto &audio_resource : audio_resources) {
+        const std::string &hash = audio_resource.hash;
+        const std::string shard = core::utility::StringUtility::slice(hash, 0, 1);
+
+        const std::filesystem::path path = core::platform::objects_path() / shard / (hash + audio_resource.extension);
+
+        music_playlist.emplace_back(audio_resource.filename, path);
+    }
+
+    LOG_DEBUG("Music playlist size: {}", music_playlist.size());
+
+    std::filesystem::path bruh = music_playlist[0].path;
+
+    LOG_DEBUG("Playing: {}", bruh.string());
+
+    m_music_player.play(bruh);
+    m_music_player.update_playlist(music_playlist);
+}
+
+void Game::resize_ui(int width, int height) {
 }
 
 void Game::import(const std::vector<std::filesystem::path> &paths) {

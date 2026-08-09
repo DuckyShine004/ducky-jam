@@ -24,7 +24,8 @@ namespace utility = core::utility;
 namespace platform = core::platform;
 namespace exceptions = core::exceptions;
 
-Importer::Importer(database::repositories::BeatmapRepository &beatmap_repository) : m_beatmap_repository(beatmap_repository), m_image_extensions(std::begin(image_extensions), std::end(image_extensions)), m_valid_extensions(std::begin(valid_extensions), std::end(valid_extensions)) {
+Importer::Importer(database::repositories::BeatmapRepository &beatmap_repository, database::repositories::ResourceRepository &resource_repository)
+    : m_beatmap_repository(beatmap_repository), m_resource_repository(resource_repository), m_image_extensions(std::begin(image_extensions), std::end(image_extensions)), m_valid_extensions(std::begin(valid_extensions), std::end(valid_extensions)) {
 }
 
 void Importer::import(const std::vector<std::filesystem::path> &paths) {
@@ -59,6 +60,12 @@ void Importer::import(const std::vector<std::filesystem::path> &paths) {
             const std::string shard = utility::StringUtility::slice(hash, 0, 1);
             const std::string filename = utility::FileUtility::filename(extracted_path);
             const std::string basename = utility::FileUtility::basename(extracted_path);
+
+            m_resource_repository.create({
+                .hash = hash,
+                .filename = filename,
+                .extension = extracted_file_extension,
+            });
 
             if (extracted_file_extension == ".mp3") {
                 audio_hashes.emplace(filename, hash);

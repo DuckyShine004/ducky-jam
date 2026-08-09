@@ -2,6 +2,7 @@
 
 #include "core/platform/environment.hpp"
 #include "database/repositories/beatmap_repository.hpp"
+#include "database/repositories/resource_repository.hpp"
 #include "database/storage.hpp"
 
 #include <filesystem>
@@ -14,6 +15,7 @@ class Database {
     explicit Database(const std::filesystem::path &path = database_path);
 
     database::repositories::BeatmapRepository &beatmap_repository();
+    database::repositories::ResourceRepository &resource_repository();
 
   private:
     static inline constexpr const char *database_name = "application.db";
@@ -23,6 +25,7 @@ class Database {
     database::Storage m_storage;
 
     database::repositories::BeatmapRepository m_beatmap_repository;
+    database::repositories::ResourceRepository m_resource_repository;
 };
 
 } // namespace database

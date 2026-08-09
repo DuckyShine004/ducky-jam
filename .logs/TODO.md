@@ -33,10 +33,13 @@
 - [ ] Implement font rendering
 
 #### TODO (05-08-2026)
-- [ ] Implement (rather, integrate sqlite) in-memory database
+- [x] Implement (rather, integrate sqlite) in-memory database
+- [x] Refactor- namespace pollution
+
+#### TODO (08-08-2026)
+- [x] Implement importer. TODO: error handling
 
 #### FUTURE
-- [ ] Refactor- namespace pollution
 - [ ] Unix integration
 - [ ] Windows integration
 

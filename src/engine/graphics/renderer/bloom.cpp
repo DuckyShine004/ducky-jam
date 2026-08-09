@@ -52,6 +52,8 @@ void Bloom::render() {
 }
 
 void Bloom::render_upsamples(engine::graphics::shader::Shader &shader) {
+    shader.use();
+
     shader.set_integer("u_texture", 0);
     shader.set_float("u_filter_radius", default_filter_radius);
 
@@ -78,7 +80,10 @@ void Bloom::render_upsamples(engine::graphics::shader::Shader &shader) {
 }
 
 void Bloom::render_downsamples(shader::Shader &shader) {
+    shader.use();
+
     shader.set_integer("u_texture", 0);
+    shader.set_float("u_filter_radius", default_filter_radius);
 
     glDisable(GL_BLEND);
 

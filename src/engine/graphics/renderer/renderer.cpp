@@ -1,6 +1,7 @@
 #include "engine/graphics/renderer/renderer.hpp"
 
 #include "core/exceptions/invalid_argument_exception.hpp"
+#include "core/logger/logger_macros.hpp"
 #include "engine/graphics/drawable/sprite.hpp"
 #include "engine/graphics/model/enums/topology_type.hpp"
 #include "engine/graphics/shader/shader.hpp"
@@ -17,6 +18,10 @@ using engine::graphics::model::enums::TopologyType;
 
 Renderer::Renderer(int width, int height, shader::ShaderManager &shader_manager, texture::TextureManager &texture_manager, effect::EffectManager &effect_manager)
     : m_width(width), m_height(height), m_shader_manager(shader_manager), m_texture_manager(texture_manager), m_effect_manager(effect_manager) {
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+
+    LOG_DEBUG("renderer={}x{}, viewport=({}, {}, {}x{})", m_width, m_height, viewport[0], viewport[1], viewport[2], viewport[3]);
 }
 
 /* WARN: We expect bloom for now, later we add option to disable- performane issue on low end devices */
@@ -24,7 +29,7 @@ void Renderer::load() {
     m_bloom.emplace(m_width, m_height, m_fullscreen, m_shader_manager.get_shader("downsample"), m_shader_manager.get_shader("upsample"));
 }
 
-void Renderer::resize(int width, int height) {
+void Renderer::resize_framebuffer(int width, int height) {
     m_width = width;
     m_height = height;
 

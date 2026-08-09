@@ -1,5 +1,6 @@
 #include "engine/ui/ui_node.hpp"
 
+#include "core/logger/logger_macros.hpp"
 #include "engine/graphics/effect/quad_effect.hpp"
 #include "engine/graphics/model/quad.hpp"
 
@@ -134,6 +135,8 @@ void UiNode::submit(graphics::renderer::Renderer &renderer) const {
     const float draw_x = m_bound.x - padding;
     const float draw_top = m_bound.y - padding;
     const float draw_y = 1440.0f - draw_top - draw_size.h;
+
+    // LOG_DEBUG("{} {}", draw_x, draw_top);
 
     renderer.queue(graphics::model::Quad{
         .x = draw_x,

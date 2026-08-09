@@ -54,7 +54,9 @@ void main() {
     }
 
     // The shadow is behind the fill, so retain only the portion not covered by it.
-    float shadow_alpha = u_shadow_colour.a * shadow_coverage * (1.0f - fill_alpha);
+    float outside_fill = smoothstep(0.0, fill_smoothing, fill_distance);
+    float shadow_alpha = u_shadow_colour.a * shadow_coverage * outside_fill * (1.0 - fill_alpha);
+
     float alpha = fill_alpha + shadow_alpha;
 
     if (alpha <= 0.0001f) {

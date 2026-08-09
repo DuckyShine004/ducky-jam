@@ -1,24 +1,19 @@
 #pragma once
 
-#include <span>
-#include <filesystem>
-#include <vector>
-#include <cstdint>
-
 #include <AL/al.h>
 #include <AL/alc.h>
-
 #include <sndfile.h>
+
+#include <cstdint>
+#include <filesystem>
+#include <span>
+#include <vector>
 
 namespace engine::audio {
 
 class AudioBuffer {
   public:
-    AudioBuffer();
-    ~AudioBuffer();
-
-    void initialise();
-    void add_audio(const std::filesystem::path &path);
+    AudioBuffer(const std::filesystem::path &path);
 
     ALuint id() const;
 

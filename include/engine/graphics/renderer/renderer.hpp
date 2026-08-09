@@ -22,7 +22,7 @@ class Renderer {
     Renderer(int width, int height, engine::graphics::shader::ShaderManager &shader_manager, engine::graphics::texture::TextureManager &texture_manager, engine::graphics::effect::EffectManager &effect_manager);
 
     void load();
-    void resize(int width, int height);
+    void resize_framebuffer(int width, int height);
 
     void queue(const engine::graphics::model::Quad &quad);
     void queue(const engine::graphics::drawable::Sprite &sprite);

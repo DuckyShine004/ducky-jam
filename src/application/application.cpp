@@ -1,6 +1,7 @@
 #include "application/application.hpp"
 
 #include "core/exceptions/runtime_exception.hpp"
+#include "core/logger/logger_macros.hpp"
 #include "core/platform/environment.hpp"
 #include "core/utility/file_utility.hpp"
 #include "engine/engine.hpp"
@@ -30,10 +31,15 @@ bool Application::initialise() {
         return false;
     }
 
-    m_engine.emplace(m_window.physical_resolution().w, m_window.physical_resolution().h);
+    m_engine.emplace(m_window.framebuffer_resolution().w, m_window.framebuffer_resolution().h);
     m_game.emplace(m_engine->services());
 
     GLFWwindow *window = m_window.window();
+
+    // renderer=2560x1403, viewport=(0, 0, 2560x1403)
+    GLFWmonitor *attached_monitor = glfwGetWindowMonitor(window);
+
+    LOG_DEBUG("Fullscreen monitor attached: {}", attached_monitor != nullptr);
 
     glfwSetWindowUserPointer(window, this);
 
@@ -64,6 +70,7 @@ bool Application::initialise() {
 
 void Application::load() {
     m_engine->load();
+    m_game->load();
 }
 
 void Application::validate() {
@@ -145,7 +152,8 @@ void Application::on_window_resize(GLFWwindow *window, int width, int height) {
 
 void Application::handle_window_resize(GLFWwindow *window, int width, int height) {
     m_window.resize_logical(width, height);
-    // m_engine->resize(width, height);
+    m_game->resize_ui(width, height);
+    LOG_DEBUG("Window resized to {}x{}", width, height);
 }
 
 void Application::on_framebuffer_resize(GLFWwindow *window, int width, int height) {
@@ -154,8 +162,9 @@ void Application::on_framebuffer_resize(GLFWwindow *window, int width, int heigh
 }
 
 void Application::handle_framebuffer_resize(GLFWwindow *window, int width, int height) {
-    m_window.resize_physical(width, height);
-    // m_engine->resize(width, height);
+    m_window.resize_framebuffer(width, height);
+    m_engine->resize_framebuffer(width, height);
+    LOG_DEBUG("Framebuffer resized to {}x{}", width, height);
 }
 
 void Application::on_cursor(GLFWwindow *window, double x, double y) {

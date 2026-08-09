@@ -1,12 +1,12 @@
-#include "game/ui/spectrum.hpp"
+#include "game/ui/menu/spectrum.hpp"
 
 #include "engine/graphics/model/quad.hpp"
 
 #include <algorithm>
 
-namespace game::ui {
+namespace game::ui::menu {
 
-namespace audio = engine::audio;
+namespace engine_audio = engine::audio;
 namespace graphics = engine::graphics;
 
 Spectrum::Spectrum(const engine::ui::components::Layout &layout, int bars, float gap) : UiNode(layout), m_bars(bars), m_gap(gap), m_target_levels(bars, 0.0f), m_displayed_levels(bars, 0.0f) {
@@ -23,7 +23,7 @@ void Spectrum::update(double delta_time) {
     }
 }
 
-void Spectrum::update_by_audio(audio::AudioBuffer &audio_buffer, double track_time) {
+void Spectrum::update_by_audio(engine_audio::AudioBuffer &audio_buffer, double track_time) {
     const int N = m_fft.resolution();
     const int N_HALF = N >> 1;
 
@@ -142,4 +142,4 @@ void Spectrum::submit(graphics::renderer::Renderer &renderer) const {
     }
 }
 
-} // namespace game::ui
+} // namespace game::ui::menu

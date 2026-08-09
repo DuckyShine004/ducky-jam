@@ -52,7 +52,7 @@ bool Window::create(int width, int height, const std::string &title, bool fullsc
     glfwMakeContextCurrent(m_window);
 
     glfwGetWindowSize(m_window, &m_logical_resolution.w, &m_logical_resolution.h);
-    glfwGetFramebufferSize(m_window, &m_physical_resolution.w, &m_physical_resolution.h);
+    glfwGetFramebufferSize(m_window, &m_framebuffer_resolution.w, &m_framebuffer_resolution.h);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         LOG_ERROR("Failed to initialise GLAD");
@@ -60,7 +60,7 @@ bool Window::create(int width, int height, const std::string &title, bool fullsc
         return false;
     }
 
-    resize_physical(m_physical_resolution.w, m_physical_resolution.h);
+    resize_framebuffer(m_framebuffer_resolution.w, m_framebuffer_resolution.h);
 
     m_fullscreen = fullscreen;
 
@@ -72,9 +72,9 @@ void Window::resize_logical(int width, int height) {
     m_logical_resolution.h = height;
 }
 
-void Window::resize_physical(int width, int height) {
-    m_physical_resolution.w = width;
-    m_physical_resolution.h = height;
+void Window::resize_framebuffer(int width, int height) {
+    m_framebuffer_resolution.w = width;
+    m_framebuffer_resolution.h = height;
 
     glViewport(0, 0, width, height);
 }
@@ -108,8 +108,8 @@ const core::structs::Vector2<int> &Window::logical_resolution() const {
     return m_logical_resolution;
 }
 
-const core::structs::Vector2<int> &Window::physical_resolution() const {
-    return m_physical_resolution;
+const core::structs::Vector2<int> &Window::framebuffer_resolution() const {
+    return m_framebuffer_resolution;
 }
 
 } // namespace application

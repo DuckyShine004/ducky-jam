@@ -17,7 +17,7 @@ class SceneManager {
      *
      * @throws std::invalid_argument if scene name is invalid.
      */
-    void load_scene(const std::string &name);
+    void set_scene(const std::string &name);
 
     Scene *scene();
 

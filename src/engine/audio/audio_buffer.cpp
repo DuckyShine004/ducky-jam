@@ -1,27 +1,23 @@
-#include <AL/alext.h>
-
 #include "engine/audio/audio_buffer.hpp"
 
+#include "core/exceptions/runtime_exception.hpp"
 #include "core/logger/logger_macros.hpp"
+
+#include <AL/alext.h>
 
 namespace engine::audio {
 
-AudioBuffer::AudioBuffer() : m_id(0), m_frames(0), m_channels(0), m_samplerate(0) {
-}
+namespace exceptions = core::exceptions;
 
-AudioBuffer::~AudioBuffer() {
-}
-
-void AudioBuffer::add_audio(const std::filesystem::path &path) {
+AudioBuffer::AudioBuffer(const std::filesystem::path &path) : m_id(0), m_frames(0), m_channels(0), m_samplerate(0) {
     SF_INFO audio_info{};
 
     const std::string path_string = path.string();
     SNDFILE *audio_file = sf_open(path_string.c_str(), SFM_READ, &audio_info);
 
     if (audio_file == nullptr) {
-        LOG_ERROR("Could not open audio in {}: {}", path.string(), sf_strerror(audio_file));
         sf_close(audio_file);
-        return;
+        throw exceptions::RuntimeException("Could not open audio '{}'. Reason: \n\n {}", path.string(), sf_strerror(audio_file));
     }
 
     m_frames = static_cast<std::int64_t>(audio_info.frames);
@@ -45,9 +41,8 @@ void AudioBuffer::add_audio(const std::filesystem::path &path) {
     sf_close(audio_file);
 
     if (frame_count <= 0) {
-        LOG_ERROR("Failed to read audio file frames");
         m_samples.clear();
-        return;
+        throw exceptions::RuntimeException("Failed to read audio file frames");
     }
 
     const std::size_t actual_sample_count = static_cast<std::size_t>(frame_count) * static_cast<std::size_t>(m_channels);

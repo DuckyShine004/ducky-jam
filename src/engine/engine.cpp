@@ -16,9 +16,13 @@ void Engine::load() {
     m_texture_manager.upload();
 }
 
+void Engine::resize_framebuffer(int width, int height) {
+    m_renderer.resize_framebuffer(width, height);
+}
+
 EngineServices Engine::services() {
     return {
-        .audio_manager = m_audio_manager,
+        .audio_pool = m_audio_pool,
         .texture_manager = m_texture_manager,
         .shader_manager = m_shader_manager,
         .effect_manager = m_effect_manager,
@@ -35,11 +39,11 @@ EngineServices Engine::services() {
 // EffectManager::get_instance().add_effect("gameplay.lighting", std::make_shared<LightingEffect>(ShaderManager::get_instance().get_shader_id("base")));
 // EffectManager::get_instance().add_effect("gameplay.note", std::make_shared<NoteEffect>(ShaderManager::get_instance().get_shader_id("base")));
 //
-// AudioManager &audio_manager = AudioManager::get_instance();
+// AudioPool &audio_pool = AudioPool::get_instance();
 //
-// AudioSource *audio_source = audio_manager.get_empty_audio_source();
-// ALuint id = audio_manager.add_audio(AudioType::Music, "resources/beatmaps/2099753/4404686/bgm.mp3");
-// AudioBuffer *audio_buffer = audio_manager.get_audio_buffer(AudioType::Music, "resources/beatmaps/2099753/4404686/bgm.mp3");
+// AudioSource *audio_source = audio_pool.get_empty_audio_source();
+// ALuint id = audio_pool.add_audio(AudioType::Music, "resources/beatmaps/2099753/4404686/bgm.mp3");
+// AudioBuffer *audio_buffer = audio_pool.get_audio_buffer(AudioType::Music, "resources/beatmaps/2099753/4404686/bgm.mp3");
 // // ALuint id = sound_manager.add_sound(SoundType::Music, "resources/beatmaps/2321277/4973089/bgm.mp3");
 // // ALuint id = sound_manager.add_sound(SoundType::Music, "resources/beatmaps/2383964/5154675/bgm.mp3");
 // // ALuint id = sound_manager.add_sound(SoundType::Music, "resources/beatmaps/2325151/4983858/bgm.mp3");
